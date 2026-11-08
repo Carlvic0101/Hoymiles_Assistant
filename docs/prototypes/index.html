@@ -1,0 +1,1170 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>禾迈电力电子销售助手</title>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;600&display=swap">
+  <style>
+    * { box-sizing: border-box; }
+    html, body { height: 100%; margin: 0; }
+    body {
+      font-family: "Noto Sans SC", "Segoe UI", "Microsoft YaHei", sans-serif;
+      background: #F7F8FA; color: #1F2933; font-size: 15px; line-height: 24px;
+    }
+    button, input, select, textarea { font: inherit; color: inherit; }
+    button { cursor: pointer; }
+    :focus-visible { outline: 2px solid #0B6E5A; outline-offset: 2px; }
+    h1 { font-size: 26px; line-height: 34px; font-weight: 600; margin: 0 0 8px; }
+    h2 { font-size: 16px; line-height: 24px; font-weight: 600; margin: 16px 0 8px; }
+    .muted { color: #5C6770; font-size: 13px; line-height: 20px; }
+    .error { color: #9B2C2C; }
+    .login-screen { position: relative; min-height: 100vh; display: flex; justify-content: center; padding: 48px 24px; overflow: auto; }
+    .login-screen::before { content: ""; position: fixed; inset: 0; background: #E7EEF3 url("login-bg.jpg") center / contain no-repeat; z-index: 0; }
+    .login-panel { position: relative; z-index: 1; width: min(680px, 100%); margin: auto; padding: 32px 28px; background: rgba(255,255,255,0.92); border-radius: 16px; box-shadow: 0 8px 24px rgba(31, 41, 51, 0.12); }
+    .login-form { display: flex; align-items: center; gap: 12px; }
+    .login-fields { flex: 1; min-width: 0; display: flex; align-items: center; height: 48px; background: #fff; border-radius: 24px; box-shadow: 0 0 0 1px #E5E7EB; }
+    .login-fields:focus-within { box-shadow: 0 0 0 1px #0B6E5A; }
+    .login-field { flex: 1; min-width: 0; display: flex; align-items: center; gap: 8px; margin: 0; padding: 0 14px; color: #8B95A1; }
+    .login-field + .login-field { border-left: 1px solid #E5E7EB; }
+    .login-field svg { flex: none; }
+    .login-field input[type="email"], .login-field input[type="password"] { width: 100%; height: 46px; border: 0; border-radius: 0; background: transparent; padding: 0; }
+    .login-field input[type="email"]:focus, .login-field input[type="password"]:focus { border: 0; outline: none; }
+    .email-pick { position: relative; flex: 1; min-width: 0; display: flex; align-items: center; gap: 8px; }
+    .email-menu { display: none; position: absolute; z-index: 6; top: calc(100% + 10px); left: -32px; width: max(320px, calc(100% + 32px)); padding: 6px; background: #fff; border-radius: 12px; box-shadow: 0 8px 24px rgba(31, 41, 51, 0.12), 0 0 0 1px #E5E7EB; }
+    .login-field.open .email-menu { display: block; }
+    .email-option { display: block; width: 100%; padding: 8px 10px; border: 0; border-radius: 8px; background: transparent; text-align: left; }
+    .email-option:hover, .email-option:focus-visible { background: #F7F8FA; }
+    .email-option strong { display: block; color: #1F2933; font-weight: 600; }
+    .email-option span { display: block; color: #5C6770; font-size: 12px; line-height: 18px; }
+    .login-form .btn-primary { height: 48px; padding: 0 22px; border-radius: 24px; flex: none; }
+    @media (max-width: 640px) {
+      .login-form { flex-direction: column; align-items: stretch; }
+      .login-fields { flex-direction: column; height: auto; border-radius: 16px; }
+      .login-field { height: 48px; }
+      .login-field + .login-field { border-left: 0; border-top: 1px solid #E5E7EB; }
+      .login-form .btn-primary { width: 100%; }
+    }
+    .logo { width: 240px; margin: 0 0 28px; }
+    .logo img { display: block; width: 100%; height: auto; }
+    label { display: block; margin-bottom: 16px; }
+    .field { display: block; margin-bottom: 8px; font-weight: 600; }
+    input[type="email"], input[type="password"], input[type="text"], select, textarea {
+      width: 100%; height: 44px; padding: 0 12px; border: 1px solid #E5E7EB; border-radius: 10px; background: #fff;
+    }
+    textarea.draft { width: 100%; height: auto; min-height: 48px; max-height: 160px; resize: none; border: 0; border-radius: 0; background: transparent; padding: 12px 8px 4px; line-height: 20px; font-size: 14px; }
+    textarea.draft::placeholder { color: #9CA3AF; }
+    textarea.draft:focus { border-color: transparent; outline: none; }
+    input:focus, select:focus, textarea:focus { border-color: #0B6E5A; outline: none; }
+    .btn-primary, .btn-secondary, .btn-text, .plugin, .nav-btn { border-radius: 10px; transition: background 150ms ease, color 150ms ease; }
+    .btn-primary { height: 40px; padding: 0 16px; border: 0; background: #0B6E5A; color: #fff; font-weight: 600; }
+    .btn-primary:hover { background: #085646; }
+    .btn-primary:disabled, .btn-secondary:disabled { background: #E5E7EB; color: #5C6770; cursor: not-allowed; }
+    .btn-secondary { height: 40px; padding: 0 16px; background: #fff; color: #1F2933; border: 1px solid #E5E7EB; font-weight: 600; }
+    .btn-secondary:hover { background: #F7F8FA; }
+    .btn-secondary.danger { color: #9B2C2C; }
+    .btn-text { height: 40px; padding: 0 12px; border: 0; background: transparent; color: #0B6E5A; font-weight: 600; }
+    .btn-text:hover { background: #E7EEEF; }
+    .app { height: 100vh; display: flex; background: #F7F8FA; }
+    .side { width: 224px; flex: none; display: flex; flex-direction: column; padding: 16px 12px; border-right: 1px solid #E5E7EB; }
+    .brand-row { display: flex; align-items: center; justify-content: space-between; gap: 4px; padding: 0 0 12px; }
+    .brand { flex: 1; min-width: 0; display: flex; align-items: center; }
+    .brand img { display: block; width: 100%; max-width: 132px; height: auto; }
+    .brand-tools { display: flex; flex: none; gap: 2px; }
+    .icon-btn { width: 36px; height: 36px; border: 0; border-radius: 8px; background: transparent; color: #5C6770; display: inline-flex; align-items: center; justify-content: center; }
+    .icon-btn:hover { background: #fff; color: #1F2933; }
+    .rail { display: none; width: 64px; flex: none; flex-direction: column; align-items: center; gap: 8px; padding: 12px 0; background: #F7F8FA; border-right: 1px solid #E5E7EB; }
+    .rail-mark { width: 36px; height: 36px; border: 0; border-radius: 8px; background: transparent; padding: 0; display: inline-flex; align-items: center; justify-content: center; }
+    .rail-mark img { width: 32px; height: 32px; display: block; object-fit: contain; }
+    .rail-mark:hover { background: #fff; }
+    .rail-nav { display: flex; flex-direction: column; gap: 4px; }
+    .rail-user { margin-top: auto; }
+    .rail-btn { width: 40px; height: 40px; border: 0; border-radius: 10px; background: transparent; color: #5C6770; display: inline-flex; align-items: center; justify-content: center; }
+    .rail-btn:hover { background: #fff; color: #1F2933; }
+    .rail-btn.current { background: #fff; color: #0B6E5A; }
+    .app.side-hidden .side { display: none; }
+    .app.side-hidden .rail { display: flex; }
+    .nav { display: flex; flex-direction: column; gap: 4px; }
+    .nav-btn { height: 40px; text-align: left; padding: 0 12px; border: 0; background: transparent; }
+    .nav-btn:hover { background: #fff; }
+    .nav-btn.current { background: #fff; color: #0B6E5A; font-weight: 600; box-shadow: 0 1px 2px rgba(31, 41, 51, 0.06); }
+    .history { flex: 1; min-height: 80px; overflow: auto; margin-top: 8px; padding-top: 0; }
+    .history-label { margin: 4px 4px 8px; padding: 12px 8px 0; border-top: 1px solid #E5E7EB; font-size: 12px; line-height: 16px; font-weight: 600; letter-spacing: 0.06em; color: #8B95A1; }
+    .history-row { position: relative; display: flex; align-items: center; width: 100%; min-height: 36px; border-radius: 8px; }
+    .history-row:hover, .history-row.menu-open, .history-empty:hover { background: #fff; }
+    .history-row.current .history-item { color: #0B6E5A; font-weight: 600; }
+    .history-item, .history-empty { display: flex; align-items: center; gap: 8px; width: 100%; min-width: 0; min-height: 36px; padding: 6px 8px; border: 0; border-radius: 8px; background: transparent; text-align: left; color: #5C6770; }
+    .history-item { flex: 1; }
+    .history-item:hover, .history-empty:hover { color: #1F2933; }
+    .history-item .history-title { display: block; overflow: hidden; min-width: 0; text-overflow: ellipsis; white-space: nowrap; }
+    .history-title-text { display: inline-block; white-space: nowrap; }
+    .history-age { flex: none; width: 36px; margin-right: 8px; text-align: right; font-size: 12px; line-height: 16px; font-variant-numeric: tabular-nums; color: #5C6770; }
+    .history-row:hover .history-age, .history-row.menu-open .history-age { visibility: hidden; }
+    .history-more { display: none; position: absolute; right: 4px; width: 28px; height: 28px; align-items: center; justify-content: center; border: 0; border-radius: 6px; background: transparent; color: #1F2933; }
+    .history-row:hover .history-more, .history-row.menu-open .history-more { display: inline-flex; }
+    .history-more:hover, .history-more[aria-expanded="true"] { background: #EEF1F4; }
+    .history-more svg { width: 16px; height: 16px; fill: currentColor; }
+    .history-pop { position: fixed; z-index: 30; min-width: 120px; padding: 4px; background: #fff; border-radius: 8px; box-shadow: 0 8px 24px rgba(31, 41, 51, 0.12), 0 0 0 1px #E5E7EB; }
+    .history-pop button { display: block; width: 100%; min-height: 36px; padding: 8px 10px; border: 0; border-radius: 6px; background: transparent; text-align: left; color: #9B1C1C; }
+    .history-pop button:hover { background: #FDECEC; }
+    @keyframes history-marquee { 0%, 12% { transform: translateX(0); } 88%, 100% { transform: translateX(var(--shift, 0px)); } }
+    @media (prefers-reduced-motion: reduce) {
+      .history-row:hover .history-title, .history-row.menu-open .history-title { overflow-x: auto; }
+      .history-title-text { animation: none !important; }
+    }
+    .side-foot { margin-top: auto; padding: 12px 4px 0; border-top: 1px solid #E5E7EB; }
+    .user-row { display: flex; align-items: center; gap: 8px; }
+    .avatar { width: 32px; height: 32px; border-radius: 50%; background: #0B6E5A; color: #fff; display: inline-flex; align-items: center; justify-content: center; font-weight: 600; flex: none; }
+    .user-name { font-weight: 600; line-height: 20px; }
+    .main { position: relative; flex: 1; min-width: 0; display: flex; flex-direction: column; background: #fff; }
+    .lang-switch { position: absolute; z-index: 2; top: 20px; right: 24px; display: flex; background: #fff; border: 1px solid #E5E7EB; border-radius: 10px; overflow: hidden; }
+    .lang-switch button { height: 36px; padding: 0 12px; border: 0; background: transparent; color: #1F2933; font-weight: 600; font-size: 13px; }
+    .lang-switch button.current { background: #0B6E5A; color: #fff; }
+    .page { flex: 1; min-height: 0; overflow: hidden; display: flex; flex-direction: column; }
+    .wrap { width: min(880px, 100%); margin: 0 auto; padding: 32px 24px 48px; overflow: auto; }
+    .record { display: block; width: 100%; text-align: left; background: transparent; border: 0; border-bottom: 1px solid #E5E7EB; padding: 16px 0; }
+    .record.selected { background: #F7F8FA; }
+    .rec-title, .record .muted { display: block; }
+    .rec-title { font-weight: 600; }
+    .badge { display: inline-block; margin-top: 8px; padding: 2px 8px; border-radius: 10px; font-size: 13px; font-weight: 600; }
+    .badge.caution { color: #8A5A12; background: #F8F1E7; }
+    .badge.signal { color: #0B6E5A; background: #E7F3EF; }
+    .badge.danger { color: #9B2C2C; background: #F8EEEE; }
+    .assistant { flex: 1; min-height: 0; display: flex; flex-direction: column; }
+    .assistant.is-center { justify-content: center; }
+    .assistant.is-center .thread { flex: none; overflow: visible; }
+    .assistant.is-center .empty-hello { margin: 0 0 20px; text-align: center; }
+    .assistant.is-center .composer-wrap { padding-bottom: 8px; }
+    .composer-tools { display: flex; align-items: center; gap: 8px; }
+    .thread { flex: 1; overflow: auto; }
+    .thread-inner, .composer-wrap { width: min(860px, 100%); margin: 0 auto; }
+    .thread-inner { padding: 32px 24px 16px; }
+    .empty-hello { margin: 48px 0; font-size: 22px; font-weight: 600; }
+    .block { margin: 0 0 16px; }
+    .composer-wrap { padding: 0 24px 20px; }
+    .composer-box { background: rgba(255,255,255,0.92); border-radius: 20px; box-shadow: 0 4px 12px -4px rgba(0,0,0,0.06), 0 0 0 1px rgba(0,0,0,0.06); padding: 4px 6px 8px; }
+    .composer-box:focus-within { box-shadow: 0 4px 12px -4px rgba(0,0,0,0.08), 0 0 0 1px rgba(0,0,0,0.14); }
+    .composer-bar { display: flex; align-items: center; justify-content: space-between; gap: 8px; min-height: 36px; padding: 0 4px; flex-wrap: wrap; }
+    .composer-left { display: flex; align-items: center; gap: 4px; min-width: 0; flex: 1; }
+    .composer-left .round-add { margin: 0; flex: none; background: #F4F6F8; color: #1F2933; border: 1px solid #E6E8EB; }
+    .composer-left .round-add:hover { background: #fff; color: #0B6E5A; border-color: #B7D9CF; }
+    .composer-tools { flex: none; }
+    .composer-actions { display: flex; gap: 8px; align-items: center; }
+    .round-btn { width: 32px; height: 32px; border-radius: 50%; border: 0; display: inline-flex; align-items: center; justify-content: center; cursor: pointer; }
+    .round-add { background: #fff; color: #5C6770; }
+    .round-add:hover { background: #F7F8FA; color: #1F2933; }
+    .round-add.listening { background: #F8EEEE; color: #9B2C2C; }
+    .round-send { background: #0B6E5A; color: #fff; }
+    .round-send:hover { background: #085646; }
+    .plugins { display: flex; align-items: center; flex-wrap: wrap; gap: 6px; margin: 0; flex: 1; min-width: 0; }
+    .plugin { height: 28px; padding: 0 12px; background: #F4F6F8; border: 1px solid #E6E8EB; border-radius: 14px; color: #3E4C59; font-size: 13px; font-weight: 600; }
+    .plugin:hover { color: #1F2933; background: #fff; border-color: #D5D9DE; }
+    .plugin.current { color: #0B6E5A; background: #E7F3EF; border-color: #B7D9CF; }
+    .archive-ask, .bind-ask, .remember-ask { width: min(860px, 100%); margin: 0 auto; padding: 0 24px 12px; }
+    .bind-ask select { height: 36px; margin: 0 8px 8px 0; }
+    .suggest { width: min(860px, 100%); margin: 4px auto 0; padding: 8px 24px 0; }
+    .suggest-item { position: relative; display: flex; align-items: center; gap: 12px; width: 100%; min-height: 56px; padding: 0 4px; border: 0; background: transparent; text-align: left; color: #5C6770; font-size: 14px; font-weight: 400; line-height: 22px; }
+    .suggest-item::after { content: ""; position: absolute; left: 0; right: 0; bottom: 0; height: 1px; background: #E5E7EB; }
+    .suggest-item:last-child::after { display: none; }
+    .suggest-item:hover { background: #F7F8FA; color: #1F2933; }
+    .suggest-text { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .suggest-chip { flex: none; display: inline-flex; align-items: center; height: 24px; max-width: 140px; padding: 0 8px; border-radius: 8px; background: #F4F6F8; color: #5C6770; font-size: 12px; font-weight: 600; }
+    .suggest-arrow { flex: none; color: #8B95A1; }
+    .review { flex: 1; min-height: 0; display: flex; padding-top: 64px; }
+    .review-list { width: 300px; flex: none; overflow: auto; border-right: 1px solid #E5E7EB; padding: 16px; }
+    .review-detail { flex: 1; min-width: 0; overflow: auto; padding: 24px 32px 48px; }
+    .detail-title { font-size: 20px; line-height: 28px; font-weight: 600; margin: 0 0 8px; }
+    .sticky-status { position: sticky; top: 0; background: #fff; padding-bottom: 8px; }
+    .later-action { margin-top: 24px; }
+    .back-list { display: none; }
+    @media (max-width: 768px) {
+      .rail { display: flex; }
+      .app.side-hidden .side { display: flex; }
+      .side { position: fixed; inset: 0 auto 0 0; z-index: 3; width: 224px; background: #F7F8FA; transform: translateX(-100%); }
+      .side.open { transform: none; box-shadow: 0 8px 24px rgba(31, 41, 51, 0.12); }
+      .review { flex-direction: column; }
+      .review-list { width: auto; max-height: 240px; }
+      .review.show-detail .review-list { display: none; }
+      .review.show-detail .back-list { display: inline-flex; }
+      .wrap, .thread-inner, .composer-wrap { padding-left: 16px; padding-right: 16px; }
+      .lang-switch { right: 16px; }
+      h1 { font-size: 22px; }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      * { transition: none !important; }
+    }
+  </style>
+</head>
+<body>
+  <div id="app"></div>
+  <script>
+    const USERS = {
+      "customer@hoymiles.demo": { id: "cust-zhang", name: "张敏", firstName: "Min", role: "终端客户", staff: false, proxy: false },
+      "dealer@hoymiles.demo": { id: "cust-dealer", name: "华东经销", firstName: "Huadong", role: "经销商", staff: false, proxy: false },
+      "sales@hoymiles.demo": { id: "staff-li", name: "李航", firstName: "Hang", role: "美洲大区-销售工程师", staff: true, proxy: true },
+      "reviewer@hoymiles.demo": { id: "staff-zhou", name: "周宁", firstName: "Ning", role: "解决方案工程师", staff: true, proxy: true }
+    };
+    const NAMES = { "cust-zhang": "张敏", "cust-dealer": "华东经销", "staff-li": "李航", "staff-zhou": "周宁" };
+    const PASSWORD = "demo123";
+    const PLUGINS = ["产品选型", "方案报价", "标书管理", "合同管理", "故障诊断"];
+    const EXAMPLES = {
+      "产品选型": ["户用约 8kW 并网，请推荐适用型号并写明依据", "这套配置和原有汇流箱能否混接", "并网电压不满足时，这版能不能用于报价", "海上平台这种条件，种子里有没有合适型号"],
+      "方案报价": ["对可用于报价的这版配置做正式报价", "指定 HM-HMS-2000 做单产品报价", "按当前混接组合报价，不要借用别的选型", "价表冲突时先不要写出金额"],
+      "标书管理": ["按已给的招标要求整理响应和满足情况", "核对这些资质材料是否还在有效期内", "章节草稿和已发布报价有没有不一致", "招标要求还没给全，请先说明缺什么"],
+      "合同管理": ["对照已发布报价，检查这份合同的产品和金额", "标出偏离标准条款的位置", "提取交付、验收、付款和质保事项", "还没有合同正文，请说明现在能做什么"],
+      "故障诊断": ["逆变器告警后停机，请先说明要补充什么", "帮我整理已核实事实、疑似原因和证据缺口", "现场有焦糊味，请立刻停止普通排查", "报告通过后，正式报修需要单独授权"]
+    };
+    const PROGRESS = ["处理中", "待审核", "待技术确认", "待商务确认", "待发布", "已发布", "已通过", "未通过", "提交结果未知"];
+    const TYPE_NAME = { selection: "选型", quote: "报价", bid: "标书", contract: "合同", diagnosis: "诊断" };
+    const EN = {
+      "语言": "Language", "工作台": "Workbench", "助手": "Assistant", "新任务": "New task", "历史对话": "History", "开始你的第一个任务": "Start your first task", "去新任务": "New task", "审核与发布": "Review & publish", "退出": "Sign out", "菜单": "Menu",
+      "转人工": "Talk to a person", "隐藏侧边栏": "Hide sidebar", "显示侧边栏": "Show sidebar", "邮箱": "Email", "密码": "Password", "登录": "Sign in",
+      "邮箱或口令不正确": "Incorrect email or password",
+      "终端客户": "End customer", "经销商": "Distributor", "普通企业客户": "Enterprise customer", "美洲大区-销售工程师": "Americas - Sales Engineer", "解决方案工程师": "Solutions Engineer",
+      "这里只看你能查看的进度。发起业务请到助手。": "This page only shows progress you can view. Start work in the assistant.",
+      "还没有记录。": "No records yet.", "去助手": "Open assistant", "去审核与发布": "Open review & publish",
+      "权限不足": "Access denied", "审核与发布只对授权员工开放。": "Review and publish is only for authorized staff.",
+      "今天需要处理什么业务？": "What should we work on today?", "当前记录": "Current record", "任务内容": "Request", "发送": "Send", "添加附件": "Add attachment", "语音输入": "Voice input", "停止语音输入": "Stop voice input",
+      "正在听。再点一次麦克风，结束并转成文字。": "Listening. Tap the microphone again to stop and transcribe.",
+      "正在识别。": "Transcribing.",
+      "没有拿到麦克风权限。请允许浏览器使用麦克风后再试。": "Microphone permission was not granted. Allow the microphone and try again.",
+      "请用本地语音服务打开页面后再试。": "Open this page through the local speech server and try again.",
+      "没有识别到文字。": "No speech was recognized.",
+      "客户": "Customer", "项目": "Project", "请选择客户": "Choose a customer", "请选择项目": "Choose a project",
+      "张敏": "Zhang Min", "华东经销": "East China Distributor",
+      "执行前先确定客户和项目。不能默认代选。": "Choose the customer and project before this runs. Do not assume a customer.",
+      "确定本次归属": "Use this attribution", "沿用已记住": "Use remembered", "本次归属": "This task",
+      "来源：上次记住": "Source: remembered last time", "来源：本次执行前确定": "Source: chosen before this run",
+      "更改": "Change",
+      "要记住本次客户和项目，供下次引用吗？这不创建记录，也不修改已经生成的归属。": "Remember this customer and project for next time? This does not create a record or change an existing owner.",
+      "记住本次客户和项目": "Remember this customer and project", "这次不记住": "Not now",
+      "已记住。下次可以沿用这一对客户和项目。已经生成的记录归属不变。": "Remembered for next time. Records already created keep their owner.",
+      "这次不记住。已经生成的记录归属不变。": "Not remembered. Records already created keep their owner.",
+      "请先选择客户。不能默认代选。": "Choose a customer first. Do not assume one.",
+      "请选择项目，或明确选择未分项目。": "Choose a project, or explicitly choose no project.",
+      "执行前要先确定客户和项目。不能默认代选，也还没有建立记录。": "Choose the customer and project before this runs. Nothing has been created.",
+      "内容已生成，按你的要求尚未送审。": "The content is ready and, as you asked, it has not been submitted for review.",
+      "客户当前看不到这些报价内容。": "The customer cannot see this quotation yet.",
+      "尚未送审的报价内容": "Quotation not yet submitted",
+      "演示步骤": "Demo steps",
+      "演示步骤，不表示真实模型或工具已经执行。": "Demo steps. They do not mean a real model or tool has run.",
+      "请通知现场人员。还没有交接回执，不能写成已经交接完成。": "Notify people on site. There is no handover receipt, so this is not a completed handover.",
+      "正在确认是否有紧急风险。": "Checking for an immediate hazard.",
+      "正在识别当前请求。": "Identifying this request.",
+      "产品选型": "Product selection", "方案报价": "Quotation", "标书管理": "Bid response", "合同管理": "Contract review", "故障诊断": "Fault diagnosis",
+      "户用约 8kW 并网，请推荐适用型号并写明依据": "About 8 kW residential grid-tie. Recommend a model and cite the evidence.",
+      "这套配置和原有汇流箱能否混接": "Can this configuration be mixed with the existing combiner?",
+      "并网电压不满足时，这版能不能用于报价": "If the grid voltage fails, can this version be quoted?",
+      "海上平台这种条件，种子里有没有合适型号": "Is there a seed model for an offshore platform?",
+      "对可用于报价的这版配置做正式报价": "Make a formal quote for this version that is ready for quotation.",
+      "指定 HM-HMS-2000 做单产品报价": "Quote the single product HM-HMS-2000.",
+      "按当前混接组合报价，不要借用别的选型": "Quote this mixed combination. Do not borrow another selection.",
+      "价表冲突时先不要写出金额": "If price lists conflict, do not write an amount yet.",
+      "按已给的招标要求整理响应和满足情况": "Arrange responses and compliance against the bid requirements already given.",
+      "核对这些资质材料是否还在有效期内": "Check whether these qualification documents are still valid.",
+      "章节草稿和已发布报价有没有不一致": "Does the chapter draft disagree with the published quote?",
+      "招标要求还没给全，请先说明缺什么": "The bid requirements are incomplete. Say what is missing first.",
+      "对照已发布报价，检查这份合同的产品和金额": "Check this contract's products and amounts against the published quote.",
+      "标出偏离标准条款的位置": "Mark where it departs from the standard terms.",
+      "提取交付、验收、付款和质保事项": "Extract delivery, acceptance, payment, and warranty items.",
+      "还没有合同正文，请说明现在能做什么": "There is no contract text yet. Say what can be done now.",
+      "逆变器告警后停机，请先说明要补充什么": "The inverter stopped after an alarm. Say what to add first.",
+      "帮我整理已核实事实、疑似原因和证据缺口": "Separate verified facts, suspected causes, and evidence gaps.",
+      "现场有焦糊味，请立刻停止普通排查": "There is a burning smell. Stop ordinary troubleshooting now.",
+      "报告通过后，正式报修需要单独授权": "After the report is approved, a formal repair needs separate authorization.",
+      "选型": "Selection", "报价": "Quote", "标书": "Bid", "合同": "Contract", "诊断": "Diagnosis", "说明": "Note",
+      "处理中": "In progress", "待审核": "Pending review", "待技术确认": "Pending technical confirmation", "待商务确认": "Pending commercial confirmation",
+      "待发布": "Pending publish", "已发布": "Published", "已通过": "Approved", "未通过": "Not approved", "提交结果未知": "Submission result unknown",
+      "可用于报价": "Ready for quotation", "校验失败": "Check failed", "无法匹配": "No match", "无法报价": "Cannot quote", "待补充": "Needs more information",
+      "紧急：立即停止排查": "Emergency: stop troubleshooting now",
+      "通过": "Approve", "不通过": "Reject", "发布": "Publish", "正式报修": "Create repair ticket", "技术确认": "Technical confirmation", "商务确认": "Commercial confirmation",
+      "修改说明": "Change note", "修改后重提": "Resubmit", "返回列表": "Back to list",
+      "通过已经完成。客户仍只看到待发布。发布是另一步。": "Approval is done. The customer still only sees pending publish. Publishing is a separate step.",
+      "不能审核或发布自己代发起的这一条。": "You cannot review or publish a record you started for a customer.",
+      "不能审核自己重新提交的这一次。": "You cannot review a record you resubmitted.",
+      "无相应权限。": "You do not have permission.",
+      "当前进度": "Current progress", "下一步": "Next step", "安全指引": "Safety guidance", "型号与理由": "Model and reason", "依据": "Evidence",
+      "检查结果": "Check results", "未执行项": "Not run", "问题与下一步": "Issue and next step", "客户版": "Customer version", "给员工的说明": "For staff",
+      "待发布内容": "Pending content", "仅内部可见": "Internal only", "结论与事实": "Findings", "工单草稿": "Draft ticket", "相关状态": "Related status",
+      "响应": "Response", "差异与事项": "Differences and obligations",
+      "未通过。这条不能在原记录上修改，可以另发一条新请求。": "Not approved. This record cannot be edited. Send a new request.",
+      "已交接现场人员。不等普通审核，也没有正式工单号。": "Handed to people on site. This does not wait for ordinary review, and there is no formal ticket number.",
+      "没有推荐型号。": "No recommended model.", "没有可用依据。": "No usable evidence.", "没有检查结果。": "No check results.",
+      "可用于报价。这不等于业务已批准。": "Ready for quotation. This is not a business approval.",
+      "结果还不能展开。等待发布后才能看到费用和金额。": "The result stays closed. Fees and the amount appear only after publishing.",
+      "客户当前仅能看到进度，以下为授权员工可见内容。": "The customer currently sees only the progress. The following is visible to authorized staff.",
+      "客户当前只能看到处理状态、要补的资料和下一步。": "The customer currently sees only the status, what to add, and the next step.",
+      "请继续补充信息。": "Please add the missing information.",
+      "配置版本": "Configuration", "条件": "Terms", "有效期": "Valid until", "金额": "Amount", "设备费": "Equipment", "辅材费": "Auxiliary materials",
+      "含税，不含安装": "Tax included, installation excluded", "成本": "Cost", "利润": "Margin", "让利已在权限内": "The discount is within authority",
+      "户用并网": "Residential grid-tie", "园区招标": "Campus bid", "经销项目": "Distributor project", "未分项目": "No project",
+      "户用 8kW 并网选型": "Residential 8kW grid-tie selection", "旧汇流箱混接选型": "Legacy combiner mix selection",
+      "户用并网项目需要同时核对组件功率、电网电压和原有汇流箱品牌的报价": "Quote checking module power, grid voltage, and the existing combiner brand",
+      "园区招标响应": "Campus bid response", "逆变器告警后停机": "Inverter stopped after an alarm",
+      "配置 A": "Configuration A", "配置 B": "Configuration B", "报价 1": "Quote 1", "标书 1": "Bid 1", "诊断 1": "Diagnosis 1",
+      "覆盖约 8kW 户用并网": "Covers about 8kW residential grid-tie", "种子资料：户用并网 6–10kW": "Seed data: residential grid-tie 6–10kW",
+      "电网电压范围": "Grid voltage range", "已核对，符合": "Checked, meets the requirement", "并网保护配合": "Grid-protection coordination",
+      "功率接近现场需求": "Power is close to the site need", "兼容依据不足": "Compatibility evidence is insufficient",
+      "与旧汇流箱兼容": "Compatibility with the legacy combiner", "未执行": "Not run",
+      "响应矩阵与资质范围": "Response matrix and qualification scope", "业绩证明过期，退回补充。": "The performance proof has expired. Return it for a supplement.",
+      "建议先核对直流侧连接和告警代码。原因尚未确定。": "Check the DC connections and the alarm code first. The cause is not confirmed.",
+      "等待审核。通过前看不到报告正文。": "Waiting for review. The report stays hidden until it is approved.",
+      "先写下需求。": "Write the request first.",
+      "解析失败：文件无法读取。可以移除后重试，或继续用文字发送。已写的内容还在。": "Could not read the file. Remove it and try again, or send the text. What you wrote is still here.",
+      "已作为本次输入解析：": "Read as input for this request: ",
+      "立即停止普通排查。离开设备，切断可以安全断开的电源，不要继续触碰冒烟、焦糊或异常发热的部位，并通知现场人员。": "Stop ordinary troubleshooting now. Leave the equipment, disconnect power only if that can be done safely, do not touch the area that is smoking, smells burnt, or is abnormally hot, and notify people on site.",
+      "更多": "More", "删除": "Delete"
+    };
+    function t(s) {
+      const text = String(s == null ? "" : s);
+      if (!state || state.lang !== "en") return text;
+      return EN[text] || text;
+    }
+    function langSwitch() {
+      const zh = state.lang !== "en";
+      return '<div class="lang-switch" role="group" aria-label="' + esc(t("语言")) + '"><button type="button" data-act="lang" data-lang="zh" class="' + (zh ? "current" : "") + '" aria-pressed="' + zh + '">中文</button><button type="button" data-act="lang" data-lang="en" class="' + (zh ? "" : "current") + '" aria-pressed="' + !zh + '">EN</button></div>';
+    }
+
+    function initialState() {
+      return {
+        email: "", userId: null, seq: 5000, loginError: "", lang: "zh", navOpen: false, sideHidden: false, reviewDetail: false,
+        selectedRecordId: "Q-1002", selectedReviewId: "Q-1002", historyMenuId: "",
+        composer: { text: "", plugin: "", proxy: "", project: "", attributionSet: false, attributionSource: "", fileNote: "", voiceNote: "", listening: false, askRemember: false, busy: false, busyStep: "", error: "" },
+        remembered: {},
+        messages: { "cust-zhang": [], "cust-dealer": [], "staff-li": [], "staff-zhou": [] },
+        records: [
+          {
+            id: "S-2001", type: "selection", title: "户用 8kW 并网选型", ownerId: "cust-zhang", project: "户用并网", createdBy: "cust-zhang",
+            status: "可用于报价", quoteEligible: true, version: "配置 A",
+            models: [{ name: "HM-HMS-2000", reason: "覆盖约 8kW 户用并网", evidence: "种子资料：户用并网 6–10kW" }],
+            checks: [{ name: "电网电压范围", result: "已核对，符合" }, { name: "并网保护配合", result: "已核对，符合" }]
+          },
+          {
+            id: "S-2002", type: "selection", title: "旧汇流箱混接选型", ownerId: "cust-zhang", project: "户用并网", createdBy: "cust-zhang",
+            status: "待技术确认", quoteEligible: false, version: "配置 B",
+            models: [{ name: "HM-HMT-3000", reason: "功率接近现场需求", evidence: "兼容依据不足" }],
+            checks: [{ name: "与旧汇流箱兼容", result: "未执行" }]
+          },
+          {
+            id: "Q-1002", type: "quote", title: "户用并网项目需要同时核对组件功率、电网电压和原有汇流箱品牌的报价", ownerId: "cust-zhang", project: "户用并网", createdBy: "staff-li",
+            status: "待发布", version: "报价 1",
+            published: { version: "HM-HMS-2000 / 配置 A", lines: ["设备费 ¥6,800", "辅材费 ¥400"], conditions: "含税，不含安装", validity: "2026-12-31", amount: "¥7,200" },
+            internal: { cost: "¥4,200", margin: "18%", comment: "让利已在权限内" }
+          },
+          {
+            id: "B-4001", type: "bid", title: "园区招标响应", ownerId: "cust-zhang", project: "园区招标", createdBy: "cust-zhang",
+            status: "未通过", version: "标书 1", customerText: "响应矩阵与资质范围", internalComment: "业绩证明过期，退回补充。", resubmittedBy: ""
+          },
+          {
+            id: "D-3001", type: "diagnosis", title: "逆变器告警后停机", ownerId: "cust-zhang", project: "户用并网", createdBy: "cust-zhang",
+            status: "待审核", emergency: false, version: "诊断 1",
+            report: "建议先核对直流侧连接和告警代码。原因尚未确定。",
+            draftTicket: "草稿 DRAFT-3001", formalTicket: "", accepted: false,
+            safety: "", nextStep: "等待审核。通过前看不到报告正文。"
+          }
+        ]
+      };
+    }
+
+    let state = load();
+    calibrateHistoryTimes();
+    function ageStep(index) {
+      const steps = [20 * 60000, 2 * 3600000, 4 * 3600000, 8 * 3600000, 26 * 3600000, 2 * 86400000, 4 * 86400000, 8 * 86400000, 15 * 86400000, 32 * 86400000, 70 * 86400000, 140 * 86400000, 370 * 86400000];
+      if (index < steps.length) return steps[index];
+      return steps[steps.length - 1] * Math.pow(2, index - steps.length + 1);
+    }
+    function calibrateHistoryTimes() {
+      const records = state.records || [];
+      if (state.historyClock === 2) {
+        let changed = false;
+        records.forEach((record, index) => {
+          if (record.endedAt) return;
+          record.endedAt = Date.now() - ageStep(index);
+          changed = true;
+        });
+        if (changed) save();
+        return;
+      }
+      records.forEach((record, index) => { record.endedAt = Date.now() - ageStep(index); });
+      state.historyClock = 2;
+      save();
+    }
+    function ageLabel(endedAt) {
+      const diff = Math.max(0, Date.now() - (endedAt || Date.now()));
+      const hour = Math.floor(diff / 3600000);
+      const day = Math.floor(diff / 86400000);
+      const month = Math.floor(day / 30);
+      const year = Math.floor(month / 12);
+      if (year >= 1) return year + "yr";
+      if (month >= 1) return month + "m";
+      if (Math.floor(day / 7) >= 1) return Math.floor(day / 7) + "wk";
+      if (day >= 1) return day + "d";
+      if (hour >= 1) return hour + "h";
+      return "<1h";
+    }
+    function load() {
+      try {
+        const raw = sessionStorage.getItem("hm-proto-v2");
+        if (raw) {
+          const parsed = JSON.parse(raw);
+          if (!parsed.lang) parsed.lang = "zh";
+          if (!parsed.historyMenuId) parsed.historyMenuId = "";
+          if (!parsed.remembered) parsed.remembered = {};
+          if (!parsed.composer) parsed.composer = {};
+          if (!parsed.composer.attributionSet) {
+            parsed.composer.proxy = "";
+            parsed.composer.project = "";
+            parsed.composer.attributionSet = false;
+            parsed.composer.attributionSource = "";
+          }
+          parsed.composer.busy = false;
+          parsed.composer.askRemember = !!parsed.composer.askRemember;
+          return parsed;
+        }
+      } catch (e) {}
+      return initialState();
+    }
+    function save() { sessionStorage.setItem("hm-proto-v2", JSON.stringify(state)); }
+    function user() { return Object.values(USERS).find((u) => u.id === state.userId) || null; }
+    function esc(s) { return String(s == null ? "" : s).replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c])); }
+    function tone(status) {
+      if (["已发布", "已通过"].includes(status)) return "signal";
+      if (["未通过", "提交结果未知", "紧急交接"].includes(status)) return "danger";
+      if (PROGRESS.includes(status)) return "caution";
+      return "";
+    }
+    function isProgress(status) { return PROGRESS.includes(status); }
+    function unchecked(record) { return (record.checks || []).filter((c) => c.result === "未执行"); }
+    function quoteReady(record) {
+      return !!(record && record.type === "selection" && record.quoteEligible && record.status !== "待技术确认" && record.status !== "校验失败" && unchecked(record).length === 0);
+    }
+    function visibleRecords(u) {
+      if (!u) return [];
+      if (u.staff) return state.records;
+      return state.records.filter((r) => r.ownerId === u.id);
+    }
+    function pathOf() {
+      const raw = (location.hash || "#/login").replace("#", "");
+      return raw === "/" || raw === "" ? "/login" : raw;
+    }
+    function go(path) {
+      const next = "#" + path;
+      if (location.hash === next) render();
+      else location.hash = next;
+    }
+    function guard(path) {
+      const u = user();
+      if (!u && path !== "/login") return "/login";
+      if (u && path === "/login") return "/dashboard";
+      return path;
+    }
+    function addMessage(userId, who, html) {
+      if (!state.messages[userId]) state.messages[userId] = [];
+      state.messages[userId].push({ who, html });
+    }
+    function newId(prefix) { state.seq += 1; return prefix + "-" + state.seq; }
+    function ownerFor(u) {
+      if (u.proxy) return state.composer.proxy || "";
+      return u.id;
+    }
+    function attributionReady(u) {
+      return !!(state.composer.attributionSet && state.composer.project && (!u.proxy || state.composer.proxy));
+    }
+    function blockReason(u, record) {
+      if (!u || !record) return "无相应权限";
+      if (record.createdBy === u.id) return "自己代发起";
+      if (record.resubmittedBy === u.id) return "自己重新提交";
+      if (!u.staff) return "无相应权限";
+      return "";
+    }
+
+    function sections(record, staff) {
+      const blocks = [];
+      const progress = isProgress(record.status) ? record.status : "";
+      const dot = state.lang === "en" ? ". " : "。";
+      const colon = state.lang === "en" ? ": " : "：";
+      const pause = state.lang === "en" ? "; " : "；";
+      if (staff && record.demoSteps && record.demoSteps.length) {
+        blocks.push(["演示步骤", t("演示步骤，不表示真实模型或工具已经执行。") + "\n" + record.demoSteps.map((step, index) => (index + 1) + ". " + step).join("\n")]);
+      }
+      if (record.status === "未通过" && !staff) {
+        blocks.push(["当前进度", t("未通过。这条不能在原记录上修改，可以另发一条新请求。")]);
+        return blocks;
+      }
+      if (record.emergency) {
+        blocks.push(["安全指引", t(record.safety)]);
+        blocks.push(["下一步", t("请通知现场人员。还没有交接回执，不能写成已经交接完成。")]);
+        return blocks;
+      }
+      if (record.holdReview && record.type === "quote") {
+        blocks.push(["当前进度", t("处理中")]);
+        blocks.push(["说明", t("内容已生成，按你的要求尚未送审。")]);
+        if (staff && record.published) {
+          blocks.push(["给员工的说明", t("客户当前看不到这些报价内容。")]);
+          blocks.push(["尚未送审的报价内容", quoteLines(record.published)]);
+          if (record.internal) blocks.push(["仅内部可见", state.lang === "en" ? "Cost " + record.internal.cost + ", margin " + record.internal.margin + ". " + t(record.internal.comment) : "成本 " + record.internal.cost + "，利润 " + record.internal.margin + "。" + record.internal.comment]);
+        }
+        return blocks;
+      }
+      if (progress) blocks.push(["当前进度", t(progress)]);
+      if (record.holdReview) blocks.push(["说明", t("内容已生成，按你的要求尚未送审。")]);
+      if (!progress && record.status) blocks.push(["说明", t(record.status)]);
+      if (record.type === "selection") {
+        blocks.push(["型号与理由", record.models.map((m) => m.name + dot + t(m.reason)).join(" ") || t("没有推荐型号。")]);
+        blocks.push(["依据", record.models.map((m) => t(m.evidence)).filter(Boolean).join(" ") || t("没有可用依据。")]);
+        blocks.push(["检查结果", (record.checks || []).map((c) => t(c.name) + colon + t(c.result)).join(pause) || t("没有检查结果。")]);
+        const missed = unchecked(record);
+        if (missed.length) blocks.push(["未执行项", missed.map((c) => t(c.name)).join(state.lang === "en" ? ", " : "、") + (state.lang === "en" ? ". These checks were not run, so this cannot be treated as feasible or used for a formal quote." : "。这些检查没有执行，不能写成方案可行，也不能用于正式报价。")]);
+        if (record.quoteEligible && missed.length === 0 && record.status !== "待技术确认") blocks.push(["说明", t("可用于报价。这不等于业务已批准。")]);
+        if (record.status === "校验失败") blocks.push(["问题与下一步", t(record.customerText) || (state.lang === "en" ? "The check did not pass, so this cannot be used for a formal quote." : "校验没有通过，不能用于正式报价。")]);
+      }
+      if (record.type === "quote") {
+        if (record.status === "已发布" && record.published) blocks.push(["客户版", quoteLines(record.published)]);
+        else if (record.customerText && !["待审核", "待发布", "待商务确认"].includes(record.status)) blocks.push(["下一步", t(record.customerText)]);
+        else if (!staff) blocks.push(["下一步", t("结果还不能展开。等待发布后才能看到费用和金额。")]);
+        else if (record.published) {
+          blocks.push(["给员工的说明", t("客户当前仅能看到进度，以下为授权员工可见内容。")]);
+          blocks.push(["待发布内容", quoteLines(record.published)]);
+        } else if (record.customerText) blocks.push(["下一步", t(record.customerText)]);
+        if (staff && record.internal) blocks.push(["仅内部可见", state.lang === "en" ? "Cost " + record.internal.cost + ", margin " + record.internal.margin + ". " + t(record.internal.comment) : "成本 " + record.internal.cost + "，利润 " + record.internal.margin + "。" + record.internal.comment]);
+      }
+      if (record.type === "diagnosis") {
+        if (record.status === "已通过" || staff) {
+          if (staff && record.status === "待审核") blocks.push(["给员工的说明", t("客户当前只能看到处理状态、要补的资料和下一步。")]);
+          if (record.report) blocks.push(["结论与事实", t(record.report)]);
+          if (record.draftTicket && staff) blocks.push(["工单草稿", t(record.draftTicket) + (state.lang === "en" ? ". The customer cannot see the draft before approval." : "。客户在通过前看不到草稿正文。")]);
+        } else blocks.push(["下一步", t(record.nextStep) || t("等待审核。通过前看不到报告正文。")]);
+        const ticket = record.formalTicket ? (state.lang === "en" ? "Formal ticket " + record.formalTicket + ". This number is valid only inside this assistant. It does not mean anyone has been dispatched or has accepted the job." : "正式工单号 " + record.formalTicket + "。该工单号仅在本助手内有效，不表示已经派工或有人接单。") : (state.lang === "en" ? "No formal ticket has been submitted." : "尚未提交正式工单。");
+        const cause = record.report && record.status === "已通过" ? (state.lang === "en" ? "see the findings above" : "见上面的结论") : (state.lang === "en" ? "not yet confirmed to the customer" : "尚未向客户确认");
+        blocks.push(["相关状态", state.lang === "en" ? "A record exists. Cause: " + cause + ". The device has not been verified as recovered. Ticket: " + (record.formalTicket ? "created. " : "not submitted. ") + "People: " + (record.accepted ? "accepted. " : "no acceptance receipt, so this is not accepted. ") + ticket : "任务已形成记录。原因" + cause + "。设备未验证恢复。工单" + (record.formalTicket ? "已创建。" : "未提交。") + "人员" + (record.accepted ? "已接单。" : "没有接单回执，不能写成已接单。") + ticket]);
+      }
+      if ((record.type === "bid" || record.type === "contract") && (record.status === "已通过" || staff) && record.customerText && record.status !== "未通过") {
+        if (staff && record.status !== "已通过") blocks.push(["给员工的说明", t("客户当前仅能看到进度，以下为授权员工可见内容。")]);
+        blocks.push([record.type === "bid" ? "响应" : "差异与事项", t(record.customerText)]);
+      } else if ((record.type === "bid" || record.type === "contract") && record.customerText && ["待补充", "无法报价"].includes(record.status)) {
+        blocks.push(["下一步", t(record.customerText)]);
+      }
+      if (staff && record.internalComment) blocks.push(["仅内部可见", t(record.internalComment)]);
+      if (!blocks.length) blocks.push(["下一步", t("请继续补充信息。")]);
+      return blocks;
+    }
+    function quoteLines(p) {
+      const fee = (line) => { const parts = String(line).split(" "); return (parts.length > 1 ? t(parts[0]) + " " + parts.slice(1).join(" ") : t(line)); };
+      return [t("配置版本") + " " + t(p.version)].concat(p.lines.map(fee), [t("条件") + " " + t(p.conditions), t("有效期") + " " + p.validity, t("金额") + " " + p.amount]).join("\n");
+    }
+    function viewHtml(record, staff) {
+      return sections(record, staff).map((pair) => '<div class="block"><h2>' + esc(t(pair[0])) + '</h2><p>' + esc(pair[1]).replace(/\n/g, "<br>") + '</p></div>').join("");
+    }
+
+    function detectKind(text) {
+      if (/额定功率|参数是多少/.test(text)) return "资料查询";
+      if (/冒烟|焦糊|异常发热/.test(text)) return "故障诊断";
+      if (/不要送审|确认后再发布/.test(text)) return "限制动作";
+      if (/缺参数|还没给功率/.test(text)) return "缺参数";
+      if (/起草合同|帮我起草/.test(text)) return "合同起草";
+      if (/报价/.test(text)) return "方案报价";
+      if (/标书|招标/.test(text)) return "标书管理";
+      if (/合同|盖章|代签/.test(text)) return "合同管理";
+      if (/故障|诊断|告警|信息不足|不清楚型号/.test(text)) return "故障诊断";
+      if (/选型|并网|无法匹配|没有合适|缺兼容|海上平台|校验失败/.test(text)) return "产品选型";
+      return "";
+    }
+
+    function resolveKind(text, plugin) {
+      if (/冒烟|焦糊|异常发热/.test(text)) return "紧急风险";
+      if (/额定功率|参数是多少/.test(text)) return "资料查询";
+      if (/起草合同|帮我起草/.test(text)) return "合同起草";
+      if (/缺参数|还没给功率/.test(text)) return "缺参数";
+      const rest = text.replace(/不要送审|确认后再发布/g, "");
+      let kind = plugin || detectKind(rest) || detectKind(text);
+      if (kind === "限制动作") kind = plugin || detectKind(rest) || "";
+      return kind || "";
+    }
+    function demoNote(steps) {
+      return '<p class="muted">' + esc(t("演示步骤，不表示真实模型或工具已经执行。")) + '</p><ol>' + steps.map((step) => '<li>' + esc(step) + '</li>').join("") + '</ol>';
+    }
+    function onSend() {
+      const u = user();
+      const text = state.composer.text.trim();
+      const plugin = state.composer.plugin;
+      if (state.composer.busy) return;
+      if (!text && !state.composer.fileNote) {
+        state.composer.error = "先写下需求。";
+        save(); render(); return;
+      }
+      const kind = resolveKind(text, plugin);
+      const business = ["产品选型", "方案报价", "标书管理", "合同管理", "故障诊断", "紧急风险"].includes(kind);
+      if (business && kind !== "紧急风险" && !attributionReady(u)) {
+        addMessage(u.id, "助手", "<p>" + esc(t("执行前要先确定客户和项目。不能默认代选，也还没有建立记录。")) + "</p>");
+        state.composer.askRemember = false;
+        save(); render(); return;
+      }
+      state.composer.busy = true;
+      state.composer.busyStep = kind === "紧急风险" ? "正在确认是否有紧急风险。" : "正在识别当前请求。";
+      state.composer.error = "";
+      save(); render();
+      const shot = { text, plugin, kind, holdReview: /不要送审|确认后再发布/.test(text), userId: u.id };
+      setTimeout(() => finishSend(shot), 650);
+    }
+    function finishSend(shot) {
+      const u = user();
+      state.composer.busy = false;
+      state.composer.busyStep = "";
+      if (!u || u.id !== shot.userId) { save(); render(); return; }
+      const text = shot.text;
+      const kind = shot.kind;
+      const holdReview = shot.holdReview;
+      const ownerId = ownerFor(u);
+      const project = state.composer.project || "";
+      const say = (html, steps) => addMessage(u.id, "助手", "<p>" + html + "</p>" + (u.staff && steps ? demoNote(steps) : ""));
+      if (kind === "资料查询") {
+        say("这是资料查询，没有创建选型，也没有指定项目。种子资料中的 HM-HMS-2000 覆盖约 8kW 户用并网。没有写在种子里的型号，首版不能编造参数。", ["识别为资料查询。", "没有建立业务记录。"]);
+      } else if (kind === "缺参数") {
+        say("报价这个任务还在。还缺功率和并网条件，补上之后再继续。这不是听不懂。这次不送审，也没有建立缺少条件的正式记录。", ["识别为方案报价，但缺参数。", "没有建立正式报价。"]);
+        state.composer.text = text;
+      } else if (kind === "合同起草") {
+        say("首版只做合同检查和履约事项提取，没有起草合同。请提供已有合同正文。", ["识别为合同起草。", "首版不起草，没有建立合同记录。"]);
+      } else if (kind === "紧急风险") {
+        const safety = "立即停止普通排查。离开设备，切断可以安全断开的电源，不要继续触碰冒烟、焦糊或异常发热的部位，并通知现场人员。";
+        const steps = ["识别到冒烟、焦糊或异常发热。", "已选的普通意图停止。", "没有交接回执，不能写成已经交接完成。"];
+        if (attributionReady(u)) {
+          const record = { id: newId("D"), type: "diagnosis", title: text, ownerId, project, createdBy: u.id, status: "已停止普通排查", emergency: true, report: "", draftTicket: "", formalTicket: "", accepted: false, safety, demoSteps: steps, endedAt: Date.now() };
+          state.records.unshift(record);
+          state.selectedRecordId = record.id;
+          addMessage(ownerId, "助手", viewHtml(record, false));
+          if (u.id !== ownerId) addMessage(u.id, "助手", "<p>已代" + esc(NAMES[ownerId]) + "记下这次紧急停止。记录归该客户。没有交接回执。</p>");
+        } else {
+          say(safety + "归属还没确定，所以没有把这次停止记到任何客户名下。", steps);
+        }
+        state.composer.text = "";
+      } else if (!kind) {
+        say("还不能判断要做选型、报价、标书、合同还是故障诊断。请改写，或点下面的插件。这次没有建立记录。", ["意图还不明确。", "没有建立业务记录。"]);
+      } else {
+        const blocked = blockedReply(kind, text);
+        if (blocked) say(blocked.html, blocked.steps);
+        else {
+          const record = buildRecord(kind, text, ownerId, u.id, holdReview);
+          if (record) {
+            record.demoSteps = demoStepsFor(record, holdReview);
+            record.endedAt = Date.now();
+            state.records.unshift(record);
+            state.selectedRecordId = record.id;
+            state.selectedReviewId = record.id;
+            addMessage(ownerId, "助手", viewHtml(record, false));
+            if (u.id !== ownerId) addMessage(u.id, "助手", "<p>已代" + esc(NAMES[ownerId]) + "建立记录 " + esc(record.id) + "。记录归该客户。你不能审核或发布这一条。</p>");
+            state.composer.text = "";
+            state.composer.fileNote = "";
+            state.composer.askRemember = true;
+          }
+        }
+      }
+      if (kind !== "缺参数") state.composer.error = "";
+      save(); render();
+    }
+    function blockedReply(kind, text) {
+      if (kind === "标书管理") {
+        if (/过期/.test(text)) return { html: "必需材料已过期，没有有效替代。不能把过期材料标成可用，这次不送审。请补上有效材料。", steps: ["识别为标书。", "必需材料过期。", "阻止送审。"] };
+        if (/是否必需|无法判断/.test(text)) return { html: "还不能判断这项材料是不是必需。请先确认。确认前不送审。", steps: ["识别为标书。", "无法判断材料是否必需。", "不自动放行。"] };
+        if (/非必需|可以交给人工|偏离可以/.test(text)) return null;
+        return { html: "还没有关键招标要求的原文或文件版本。「按已给的招标要求」不能证明文件已经收到。这次不送审，也没有生成章节。请补上招标要求。", steps: ["识别为标书。", "缺少关键招标要求。", "阻止送审，没有生成章节。"] };
+      }
+      if (kind === "合同管理") {
+        if (/版本不明/.test(text)) return { html: "请确认对照的是哪一版已发布报价或已确认配置。确认前不检查，系统也不会签署或盖章。", steps: ["识别为合同检查。", "对照版本不明。", "没有建立检查记录。"] };
+        if (/盖章|代签/.test(text)) return { html: "系统不能签署、盖章或代替负责人批准。", steps: ["识别到签章请求。", "首版不签章。"] };
+        return { html: "还没有合同正文，不能核对型号、金额或抽取事项。请先提供正文。", steps: ["识别为合同检查。", "没有合同正文。", "没有建立检查记录。"] };
+      }
+      if (kind === "故障诊断" && /要补充什么|请先说明|信息不足|不清楚型号/.test(text)) {
+        state.composer.text = text;
+        return { html: "这次是在问要补充什么，还没有开始排查。请补充逆变器型号、告警代码和发生时间。还没有报告，也没有工单草稿。", steps: ["识别为询问缺口，不是授权排查。", "没有形成报告，没有工单草稿。"] };
+      }
+      return null;
+    }
+    function demoStepsFor(record, holdReview) {
+      const who = (NAMES[record.ownerId] || "") + " · " + (record.project || "未分项目");
+      const base = ["识别为" + (record.type === "selection" ? "产品选型" : record.type === "quote" ? "方案报价" : record.type === "bid" ? "标书管理" : record.type === "contract" ? "合同管理" : "故障诊断") + "。", "执行前确定的归属是" + who + "。"];
+      if (record.type === "selection") return base.concat(["演示预设：展示种子中的型号和检查结果。", "没有生成报价。"]);
+      if (record.type === "quote" && holdReview) return base.concat(["演示预设：生成报价内容，只给有查看权限的员工。", "进度为处理中。", "没有进入待审核，也没有发布。"]);
+      if (record.type === "quote" && record.status === "无法报价") return base.concat(["当前对象不能报价。", "没有借用其他项目或其他选型。"]);
+      if (record.type === "quote" && record.status === "待商务确认") return base.concat(["价表缺失或冲突，没有编造金额。", "没有送审。"]);
+      if (record.type === "quote") return base.concat(["演示预设：生成报价并进入待审核。", "客户还看不到金额。"]);
+      if (record.type === "bid") return base.concat(["非必需缺口或可人工判断的偏离已标明。", "过期材料没有标成可用。", holdReview ? "按要求没有送审。" : "带标注进入待审核。"]);
+      if (record.type === "diagnosis") return base.concat(["演示预设：形成报告和工单草稿。", "没有正式报修，也没有接单回执。"]);
+      return base.concat(["演示预设结果。", "没有签署或盖章。"]);
+    }
+
+    function sameScope(record, ownerId) {
+      return !!(record && record.ownerId === ownerId && record.project === state.composer.project);
+    }
+    function buildRecord(kind, text, ownerId, createdBy, holdReview) {
+      if (kind === "产品选型") {
+        if (/无法匹配|没有合适|海上平台/.test(text)) return { id: newId("S"), type: "selection", title: text, ownerId, project: state.composer.project, createdBy, status: "无法匹配", quoteEligible: false, version: "未生成", models: [], checks: [], customerText: "无法给出型号。请修改条件后再发送。" };
+        if (/校验失败/.test(text)) return { id: newId("S"), type: "selection", title: text, ownerId, project: state.composer.project, createdBy, status: "校验失败", quoteEligible: false, version: "配置未通过", models: [{ name: "HM-HMS-2000", reason: "功率接近，但并网电压不满足", evidence: "种子资料：电压范围不符合" }], checks: [{ name: "电网电压范围", result: "不满足" }], customerText: "电网电压不满足，不能用于正式报价。" };
+        if (/缺兼容/.test(text)) return { id: newId("S"), type: "selection", title: text, ownerId, project: state.composer.project, createdBy, status: "待技术确认", quoteEligible: false, version: "配置待确认", models: [{ name: "HM-HMT-3000", reason: "功率接近，兼容依据不足", evidence: "种子资料没有这条混接记录" }], checks: [{ name: "与旧设备兼容", result: "未执行" }], customerText: "" };
+        return { id: newId("S"), type: "selection", title: text, ownerId, project: state.composer.project, createdBy, status: "可用于报价", quoteEligible: true, version: "配置 " + state.seq, models: [{ name: "HM-HMS-2000", reason: "覆盖约 8kW 户用并网", evidence: "种子资料：户用并网 6–10kW" }], checks: [{ name: "电网电压范围", result: "已核对，符合" }, { name: "并网保护配合", result: "已核对，符合" }], customerText: "" };
+      }
+      if (kind === "方案报价") {
+        if (/缺少产品/.test(text)) return { id: newId("Q"), type: "quote", title: text, ownerId, project: state.composer.project, createdBy, status: "无法报价", customerText: "报价缺少产品。请先完成可用于报价的选型，或指定种子中的单一产品。这次不进入审核。" };
+        if (/组合|混接/.test(text)) {
+          const target = state.records.find((r) => r.id === state.selectedRecordId && sameScope(r, ownerId) && r.type === "selection");
+          if (!quoteReady(target)) return { id: newId("Q"), type: "quote", title: text, ownerId, project: state.composer.project, createdBy, status: "无法报价", customerText: "当前这套组合还不能报价。未执行、待技术确认或校验失败的配置不能用，也不能借同一客户名下另一条合格选型放行。" };
+          return quoteFrom(target.models[0].name + " / " + target.version, text, ownerId, createdBy, holdReview);
+        } else if (/HM-HMS-2000|指定产品/.test(text)) {
+          return quoteFrom("HM-HMS-2000 / 指定产品", text, ownerId, createdBy, holdReview);
+        } else {
+          const owned = state.records.filter((r) => sameScope(r, ownerId) && r.type === "selection" && quoteReady(r));
+          const selected = state.records.find((r) => r.id === state.selectedRecordId && sameScope(r, ownerId) && r.type === "selection");
+          if (/上一版|这套配置/.test(text) && owned.length > 1 && !quoteReady(selected)) {
+            addMessage(createdBy, "助手", "<p>有多个已授权版本。请先确认是哪一版，确认前不报价。未分项目不能借用其他项目的选型。</p>");
+            return null;
+          }
+          if (quoteReady(selected)) return quoteFrom(selected.models[0].name + " / " + selected.version, text, ownerId, createdBy, holdReview);
+          if (selected && !quoteReady(selected)) return { id: newId("Q"), type: "quote", title: text, ownerId, project: state.composer.project, createdBy, status: "无法报价", customerText: "当前选中的配置还不能报价。不能改用同一客户名下另一条合格选型。" };
+          if (owned.length !== 1) {
+            addMessage(createdBy, "助手", "<p>没有同一客户、同一项目下的唯一可报价版本。请先点开那一条选型，或指定种子中的单一产品。确认前不报价。</p>");
+            return null;
+          }
+          return quoteFrom(owned[0].models[0].name + " / " + owned[0].version, text, ownerId, createdBy, holdReview);
+        }
+      }
+      if (kind === "标书管理") {
+        return { id: newId("B"), type: "bid", title: text, ownerId, project: state.composer.project, createdBy, status: holdReview ? "处理中" : "待审核", holdReview: !!holdReview, version: "标书草稿", customerText: "非必需材料有缺口，或有一项偏离需要人工判断。这两项已标明。没有把过期材料写成可用，也没有在缺少招标要求时生成章节。", internalComment: "内部：只放行已标明的非必需缺口。", resubmittedBy: "" };
+      }
+      if (kind === "故障诊断") {
+        return { id: newId("D"), type: "diagnosis", title: text, ownerId, project: state.composer.project, createdBy, status: holdReview ? "处理中" : "待审核", holdReview: !!holdReview, emergency: false, version: "诊断", report: "演示预设：根据描述整理已有事实。原因尚未确定。", draftTicket: "草稿 " + newId("DRAFT"), formalTicket: "", accepted: false, safety: "", nextStep: "等待审核。通过前看不到报告正文。" };
+      }
+      return null;
+    }
+    function quoteFrom(version, text, ownerId, createdBy, holdReview) {
+      if (/价表冲突|价表缺失/.test(text)) return { id: newId("Q"), type: "quote", title: text, ownerId, project: state.composer.project, createdBy, status: "待商务确认", holdReview: false, version: "报价待确认", published: null, internal: { cost: "未定", margin: "未定", comment: "价表缺失或冲突，不能发布价格。" }, customerText: "" };
+      return { id: newId("Q"), type: "quote", title: text, ownerId, project: state.composer.project, createdBy, status: holdReview ? "处理中" : "待审核", holdReview: !!holdReview, version: version, published: { version: version, lines: ["设备费 ¥6,800", "辅材费 ¥400"], conditions: "含税，不含安装", validity: "2026-12-31", amount: "¥7,200" }, internal: { cost: "¥4,200", margin: "18%", comment: "让利已在权限内" }, customerText: "" };
+    }
+
+    function act(name, id) {
+      const u = user();
+      const record = state.records.find((r) => r.id === id);
+      if (!record || blockReason(u, record)) return;
+      if (name === "approve" && record.status === "待审核") record.status = record.type === "quote" ? "待发布" : "已通过";
+      else if (name === "publish" && record.type === "quote" && record.status === "待发布") record.status = "已发布";
+      else if (name === "ticket" && record.type === "diagnosis" && record.status === "已通过" && !record.formalTicket) record.formalTicket = "HM-T-" + record.id.slice(-4);
+      else if (name === "reject" && record.status === "待审核") { record.status = "未通过"; record.internalComment = (record.internalComment || "") + " 审核未通过。"; }
+      else if (name === "tech" && record.status === "待技术确认") {
+        record.checks = (record.checks || []).map((c) => ({ name: c.name, result: "已由技术确认" }));
+        record.status = "可用于报价"; record.quoteEligible = true;
+      }
+      else if (name === "commerce" && record.status === "待商务确认") { record.status = "待审核"; record.internal.comment = "商务已确认当前价表。"; }
+      else return;
+      addMessage(record.ownerId, "助手", viewHtml(record, false));
+      save(); render();
+    }
+    function resubmit(id) {
+      const u = user();
+      const record = state.records.find((r) => r.id === id);
+      if (!u || !u.staff || !record || record.status !== "未通过") return;
+      const note = document.getElementById("resubmit-note");
+      record.status = "待审核";
+      record.resubmittedBy = u.id;
+      record.internalComment = (note && note.value.trim()) || "已按意见修改后重提。";
+      save(); render();
+    }
+
+    function render() {
+      const raw = pathOf();
+      const path = guard(raw);
+      if (path !== raw) { location.hash = "#" + path; return; }
+      document.documentElement.lang = state.lang === "en" ? "en" : "zh-CN";
+      const u = user();
+      document.getElementById("app").innerHTML = u ? shell(u, path) : loginPage();
+      placeHistoryMenu();
+    }
+    function placeHistoryMenu() {
+      const menu = document.querySelector(".history-pop");
+      const button = document.querySelector(".history-more[aria-expanded='true']");
+      if (!menu || !button) return;
+      const box = button.getBoundingClientRect();
+      menu.style.top = (box.bottom + 4) + "px";
+      menu.style.left = Math.max(8, box.right - menu.offsetWidth) + "px";
+    }
+    function loginPage() {
+      const logo = '<div class="logo"><img src="hoymiles-logo.png" alt="Hoymiles"></div>';
+      const accounts = [["sales@hoymiles.demo", "李航", "美洲大区-销售工程师"], ["reviewer@hoymiles.demo", "周宁", "解决方案工程师"], ["customer@hoymiles.demo", "张敏", "终端客户"], ["dealer@hoymiles.demo", "华东经销", "普通企业客户"]];
+      const menu = '<div class="email-menu" role="listbox">' + accounts.map((row) => '<button type="button" class="email-option" role="option" data-act="pick-email" data-email="' + esc(row[0]) + '"><strong>' + esc(row[0]) + '</strong><span>' + esc(row[1]) + ' · ' + esc(t(row[2])) + '</span></button>').join('') + '</div>';
+      const person = '<svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><circle cx="12" cy="8" r="3.2" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="M5.5 19.2c1.4-3 3.6-4.4 6.5-4.4s5.1 1.4 6.5 4.4" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>';
+      const key = '<svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><circle cx="8.2" cy="14" r="3.2" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="M11.2 14H20M16.2 14v2.5M19 14v2.5" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>';
+      return '<div class="login-screen" data-page="login">' + langSwitch() + '<div class="login-panel">' + logo + '<form class="login-form" id="login-form"><div class="login-fields"><label class="login-field"><span class="email-pick">' + person + '<input id="email" type="email" autocomplete="off" aria-label="' + esc(t("邮箱")) + '" placeholder="' + esc(t("邮箱")) + '" value="' + esc(state.email) + '">' + menu + '</span></label><label class="login-field">' + key + '<input id="password" type="password" autocomplete="current-password" aria-label="' + esc(t("密码")) + '" placeholder="' + esc(t("密码")) + '"></label></div><button class="btn-primary" type="submit">' + esc(t("登录")) + '</button></form>' + (state.loginError ? '<p class="error">' + esc(t(state.loginError)) + '</p>' : '') + '</div></div>';
+    }
+    function shell(u, path) {
+      const items = [['/dashboard', '工作台', 'go'], ['/assistant', '新任务', 'new-task']];
+      if (u.staff) items.push(['/review', '审核与发布', 'go']);
+      const isCurrent = (href, act) => act === "new-task" ? path === "/assistant" && !state.selectedRecordId : path === href;
+      const nav = items.map(([href, label, act]) => '<button class="nav-btn' + (isCurrent(href, act) ? ' current' : '') + '" ' + (act === "new-task" ? 'data-act="new-task"' : 'data-go="' + href + '"') + '>' + esc(t(label)) + '</button>').join('');
+      let body = '';
+      if (path === '/dashboard') body = dashboard(u);
+      if (path === '/assistant') body = assistant(u);
+      if (path === '/review') body = u.staff ? review(u) : '<div class="wrap"><h1>' + esc(t("权限不足")) + '</h1><p>' + esc(t("审核与发布只对授权员工开放。")) + '</p></div>';
+      const headset = '<svg viewBox="0 0 24 24" aria-hidden="true" width="18" height="18"><path fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" d="M4 13a8 8 0 0 1 16 0"/><rect x="3" y="13" width="4" height="6" rx="1.4" fill="none" stroke="currentColor" stroke-width="1.8"/><rect x="17" y="13" width="4" height="6" rx="1.4" fill="none" stroke="currentColor" stroke-width="1.8"/><path fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" d="M21 16.5v.5a3 3 0 0 1-3 3h-2"/></svg>';
+      const panel = '<svg viewBox="0 0 24 24" aria-hidden="true" width="18" height="18"><rect x="4" y="4.5" width="16" height="15" rx="2" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="M9 4.5v15" stroke="currentColor" stroke-width="1.8"/></svg>';
+      const tools = '<div class="brand-tools"><button type="button" class="icon-btn" data-act="human" aria-label="' + esc(t("转人工")) + '">' + headset + '</button><button type="button" class="icon-btn" data-act="hide-side" aria-label="' + esc(t("隐藏侧边栏")) + '">' + panel + '</button></div>';
+      const railIcon = { "工作台": '<svg viewBox="0 0 24 24" aria-hidden="true" width="18" height="18"><rect x="4" y="4" width="7" height="7" rx="1.2" fill="none" stroke="currentColor" stroke-width="1.8"/><rect x="13" y="4" width="7" height="7" rx="1.2" fill="none" stroke="currentColor" stroke-width="1.8"/><rect x="4" y="13" width="7" height="7" rx="1.2" fill="none" stroke="currentColor" stroke-width="1.8"/><rect x="13" y="13" width="7" height="7" rx="1.2" fill="none" stroke="currentColor" stroke-width="1.8"/></svg>', "新任务": '<svg viewBox="0 0 24 24" aria-hidden="true" width="18" height="18"><path d="M12 5v14M5 12h14" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>', "审核与发布": '<svg viewBox="0 0 24 24" aria-hidden="true" width="18" height="18"><rect x="5" y="4" width="14" height="16" rx="2" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="M8 12l2.2 2.2L16 9" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>' };
+      const railNav = items.map(([href, label, act]) => '<button type="button" class="rail-btn' + (isCurrent(href, act) ? ' current' : '') + '" ' + (act === "new-task" ? 'data-act="new-task"' : 'data-go="' + href + '"') + ' aria-label="' + esc(t(label)) + '">' + railIcon[label] + '</button>').join('');
+      const shown = state.lang === "en" ? (u.firstName || u.name) : u.name;
+      const rail = '<aside class="rail"><button type="button" class="rail-mark" data-act="menu" aria-label="' + esc(t("显示侧边栏")) + '"><img src="hoymiles-mark.png" alt=""></button><nav class="rail-nav">' + railNav + '</nav><span class="avatar rail-user" aria-label="' + esc(shown) + '">' + esc(shown.slice(0, 1)) + '</span></aside>';
+      const historyRows = visibleRecords(u).slice().sort((a, b) => (b.endedAt || 0) - (a.endedAt || 0));
+      const plus = '<svg viewBox="0 0 24 24" aria-hidden="true" width="14" height="14"><path d="M5 12h14M12 5v14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>';
+      const dots = '<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="5" cy="12" r="1.7"></circle><circle cx="12" cy="12" r="1.7"></circle><circle cx="19" cy="12" r="1.7"></circle></svg>';
+      const history = historyRows.length ? historyRows.map((r) => {
+        const open = state.historyMenuId === r.id;
+        const menu = open ? '<div class="history-pop" role="menu"><button type="button" role="menuitem" data-act="delete-history" data-id="' + esc(r.id) + '">' + esc(t("删除")) + '</button></div>' : "";
+        return '<div class="history-row' + (state.selectedRecordId === r.id ? " current" : "") + (open ? " menu-open" : "") + '"><button type="button" class="history-item" data-act="open-record" data-id="' + esc(r.id) + '"><span class="history-title"><span class="history-title-text">' + esc(t(r.title)) + '</span></span></button><span class="history-age">' + esc(ageLabel(r.endedAt)) + '</span><button type="button" class="history-more" data-act="history-menu" data-id="' + esc(r.id) + '" aria-label="' + esc(t("更多")) + '" aria-expanded="' + open + '">' + dots + '</button>' + menu + '</div>';
+      }).join("") : '<button type="button" class="history-empty" data-act="new-task">' + plus + '<span>' + esc(t("开始你的第一个任务")) + '</span></button>';
+      const foot = '<div class="side-foot"><div class="user-row"><span class="avatar" aria-hidden="true">' + esc(shown.slice(0, 1)) + '</span><div><div class="user-name">' + esc(shown) + '</div><div class="muted">' + esc(t(u.role)) + '</div></div></div><button class="btn-text" data-act="logout">' + esc(t("退出")) + '</button></div>';
+      return '<div class="app' + (state.sideHidden ? ' side-hidden' : '') + '" data-page="' + path.slice(1) + '"><aside class="side' + (state.navOpen ? ' open' : '') + '"><div class="brand-row"><div class="brand"><img src="hoymiles-logo.png" alt="Hoymiles"></div>' + tools + '</div><nav class="nav">' + nav + '</nav><div class="history"><p class="history-label">' + esc(t("历史对话")) + '</p>' + history + '</div>' + foot + '</aside>' + rail + '<div class="main">' + langSwitch() + '<div class="page">' + body + '</div></div></div>';
+    }
+    function recordButton(r, selectedId, actName) {
+      const badge = r.emergency ? '<span class="badge danger">' + esc(t("紧急：立即停止排查")) + '</span>' : (isProgress(r.status) ? '<span class="badge ' + tone(r.status) + '">' + esc(t(r.status)) + '</span>' : '<span class="muted">' + esc(t("说明")) + (state.lang === "en" ? ": " : "：") + esc(t(r.status)) + '</span>');
+      return '<button class="record' + (r.id === selectedId ? ' selected' : '') + '" data-act="' + actName + '" data-id="' + esc(r.id) + '"><span class="rec-title">' + esc(t(r.title)) + '</span><span class="muted">' + esc(t(TYPE_NAME[r.type])) + ' · ' + esc(r.id) + ' · ' + esc(NAMES[r.ownerId] || '') + ' · ' + esc(t(r.project || '未分项目')) + ' · ' + esc(t(r.version || '')) + '</span>' + badge + '</button>';
+    }
+    function dashboard(u) {
+      const rows = visibleRecords(u);
+      const list = rows.length ? rows.map((r) => recordButton(r, '', 'open-record')).join('') : '<p>' + esc(t("还没有记录。")) + '</p><button class="btn-text" data-act="new-task">' + esc(t("去新任务")) + '</button>';
+      const extra = u.staff ? '<p><button class="btn-secondary" data-go="/review">' + esc(t("去审核与发布")) + '</button></p>' : (rows.length ? '<p><button class="btn-text" data-act="new-task">' + esc(t("去新任务")) + '</button></p>' : '');
+      const heading = state.lang === "en" ? esc(u.name) + "'s workspace" : esc(u.name) + "的工作台";
+      return '<div class="wrap"><h1>' + heading + '</h1><p class="muted">' + esc(t("这里只看你能查看的进度。发起业务请到助手。")) + '</p>' + list + extra + '</div>';
+    }
+    function assistant(u) {
+      const selected = state.records.find((r) => r.id === state.selectedRecordId && (u.staff || r.ownerId === u.id));
+      const mine = (state.messages[u.id] || []).map((m) => '<div class="block"><strong>' + esc(t(m.who)) + '</strong>' + m.html + '</div>').join('');
+      const centered = !selected && !mine && !state.composer.busy;
+      const busy = state.composer.busy ? '<div class="block"><h2>' + esc(t("处理中")) + '</h2><p>' + esc(t(state.composer.busyStep || "正在识别当前请求。")) + '</p><p class="muted">' + esc(t("演示步骤，不表示真实模型或工具已经执行。")) + '</p></div>' : '';
+      const current = busy + (selected ? '<div class="block"><h2>' + esc(t("当前记录")) + ' ' + esc(selected.id) + '</h2>' + viewHtml(selected, !!u.staff) + '</div>' : (centered ? '<p class="empty-hello">' + esc(t("今天需要处理什么业务？")) + '</p>' : ''));
+      const plugins = PLUGINS.map((name) => { const on = state.composer.plugin === name; return '<button type="button" class="plugin' + (on ? ' current' : '') + '" data-plugin="' + esc(name) + '" aria-pressed="' + (on ? 'true' : 'false') + '">' + esc(t(name)) + '</button>'; }).join('');
+      const ready = attributionReady(u);
+      const memory = (state.remembered || {})[u.id];
+      const whoNow = u.proxy ? (NAMES[state.composer.proxy] || "") : u.name;
+      const bind = ready
+        ? '<div class="bind-ask"><p>' + esc(t("本次归属")) + '：' + esc(whoNow) + ' · ' + esc(t(state.composer.project)) + '。' + esc(t(state.composer.attributionSource === "已记住" ? "来源：上次记住" : "来源：本次执行前确定")) + '</p><button type="button" class="btn-text" data-act="change-owner">' + esc(t("更改")) + '</button></div>'
+        : '<div class="bind-ask"><p>' + esc(t("执行前先确定客户和项目。不能默认代选。")) + '</p>' + (u.proxy ? '<label><span class="field">' + esc(t("客户")) + '</span><select id="bind-customer"><option value="">' + esc(t("请选择客户")) + '</option><option value="cust-zhang">' + esc(NAMES["cust-zhang"]) + '</option><option value="cust-dealer">' + esc(NAMES["cust-dealer"]) + '</option></select></label>' : '') + '<label><span class="field">' + esc(t("项目")) + '</span><select id="bind-project"><option value="">' + esc(t("请选择项目")) + '</option><option value="户用并网">' + esc(t("户用并网")) + '</option><option value="经销项目">' + esc(t("经销项目")) + '</option><option value="未分项目">' + esc(t("未分项目")) + '</option></select></label><div class="composer-actions"><button type="button" class="btn-primary" data-act="bind-owner">' + esc(t("确定本次归属")) + '</button>' + (memory ? '<button type="button" class="btn-secondary" data-act="use-remembered">' + esc(t("沿用已记住")) + '：' + esc(u.proxy ? (NAMES[memory.ownerId] || "") : u.name) + ' · ' + esc(t(memory.project)) + '</button>' : '') + '</div></div>';
+      const remember = state.composer.askRemember ? '<div class="remember-ask"><p>' + esc(t("要记住本次客户和项目，供下次引用吗？这不创建记录，也不修改已经生成的归属。")) + '</p><div class="composer-actions"><button type="button" class="btn-primary" data-act="remember-yes">' + esc(t("记住本次客户和项目")) + '</button><button type="button" class="btn-secondary" data-act="remember-no">' + esc(t("这次不记住")) + '</button></div></div>' : '';
+      const fileLine = state.composer.fileNote ? '<p class="muted">' + esc(t("已作为本次输入解析：")) + esc(state.composer.fileNote) + '</p>' : '';
+      const voiceLine = state.composer.voiceNote ? '<p class="muted">' + esc(t(state.composer.voiceNote)) + '</p>' : '';
+      const plus = '<svg viewBox="0 0 24 24" aria-hidden="true" width="14" height="14"><path d="M12 5v14M5 12h14" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/></svg>';
+      const mic = '<svg viewBox="0 0 24 24" aria-hidden="true" width="16" height="16"><path d="M12 19v3M19 10v2a7 7 0 0 1-14 0v-2" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/><rect x="9" y="2" width="6" height="13" rx="3" fill="none" stroke="currentColor" stroke-width="1.8"/></svg>';
+      const arrow = '<svg viewBox="0 0 24 24" aria-hidden="true" width="16" height="16"><path d="M12 19V6M6 11l6-6 6 6" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+      const corner = '<svg class="suggest-arrow" viewBox="0 0 24 24" aria-hidden="true" width="16" height="16"><path d="M7 17L17 7M9 7h8v8" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+      const chosen = EXAMPLES[state.composer.plugin] || [];
+      const suggest = centered && chosen.length ? '<div class="suggest">' + chosen.map((line) => '<button type="button" class="suggest-item" data-act="use-example" data-example="' + esc(t(line)) + '"><span class="suggest-text">' + esc(t(line)) + '</span><span class="suggest-chip">' + esc(t(state.composer.plugin)) + '</span>' + corner + '</button>').join('') + '</div>' : '';
+      return '<div class="assistant' + (centered ? ' is-center' : '') + '"><div class="thread"><div class="thread-inner">' + current + mine + '</div></div>' + bind + remember + '<form class="composer-wrap" id="send-form"><div class="composer-box"><textarea class="draft" id="draft" aria-label="' + esc(t("任务内容")) + '" placeholder="' + esc(t("今天需要处理什么业务？")) + '">' + esc(state.composer.text) + '</textarea><div class="composer-bar"><div class="composer-left"><label class="round-btn round-add" aria-label="' + esc(t("添加附件")) + '">' + plus + '<input id="file" type="file" hidden></label><div class="plugins">' + plugins + '</div></div><div class="composer-tools"><button type="button" class="round-btn round-add' + (state.composer.listening ? ' listening' : '') + '" data-act="voice" aria-pressed="' + (state.composer.listening ? 'true' : 'false') + '" aria-label="' + esc(t(state.composer.listening ? "停止语音输入" : "语音输入")) + '">' + mic + '</button><button class="round-btn round-send" type="submit" aria-label="' + esc(t("发送")) + '">' + arrow + '</button></div></div>' + fileLine + voiceLine + (state.composer.error ? '<p class="error">' + esc(t(state.composer.error)) + '</p>' : '') + '</div></form>' + suggest + '</div>';
+    }
+    function review(u) {
+      const rows = state.records.map((r) => recordButton(r, state.selectedReviewId, 'pick-review')).join('');
+      const record = state.records.find((r) => r.id === state.selectedReviewId) || state.records[0];
+      let top = '';
+      let later = '';
+      if (record) {
+        const reason = blockReason(u, record);
+        const disabled = reason ? ' disabled' : '';
+        const why = reason ? '<p class="error">' + esc(t(reason === '自己代发起' ? '不能审核或发布自己代发起的这一条。' : reason === '自己重新提交' ? '不能审核自己重新提交的这一次。' : '无相应权限。')) + '</p>' : '';
+        if (record.status === "待审核") top = why + '<div class="composer-actions"><button class="btn-primary" data-decision="approve" data-id="' + record.id + '"' + disabled + '>' + esc(t("通过")) + '</button><button class="btn-secondary danger" data-decision="reject" data-id="' + record.id + '"' + disabled + '>' + esc(t("不通过")) + '</button></div>';
+        else if (record.type === "quote" && record.status === "待发布") later = why + '<div class="later-action"><p>' + esc(t("通过已经完成。客户仍只看到待发布。发布是另一步。")) + '</p><button class="btn-primary" data-decision="publish" data-id="' + record.id + '"' + disabled + '>' + esc(t("发布")) + '</button></div>';
+        else if (record.type === "diagnosis" && record.status === "已通过" && !record.formalTicket) later = why + '<div class="later-action"><button class="btn-primary" data-decision="ticket" data-id="' + record.id + '"' + disabled + '>' + esc(t("正式报修")) + '</button></div>';
+        else if (record.status === "待技术确认") top = why + '<button class="btn-primary" data-decision="tech" data-id="' + record.id + '"' + disabled + '>' + esc(t("技术确认")) + '</button>';
+        else if (record.status === "待商务确认") top = why + '<button class="btn-primary" data-decision="commerce" data-id="' + record.id + '"' + disabled + '>' + esc(t("商务确认")) + '</button>';
+        else if (record.status === "未通过" && u.staff) later = '<div class="later-action"><label><span class="field">' + esc(t("修改说明")) + '</span><textarea id="resubmit-note"></textarea></label><button class="btn-primary" data-act="resubmit" data-id="' + record.id + '">' + esc(t("修改后重提")) + '</button></div>';
+      }
+      const detail = record ? '<button class="btn-text back-list" data-act="back-list">' + esc(t("返回列表")) + '</button><div class="sticky-status"><h1 class="detail-title">' + esc(t(record.title)) + '</h1><p class="muted">' + esc(record.id) + ' · ' + esc(NAMES[record.ownerId]) + ' · ' + esc(t(record.project)) + ' · ' + esc(t(record.version || '')) + '</p>' + top + '</div>' + viewHtml(record, true) + later : '';
+      return '<div class="review' + (state.reviewDetail ? ' show-detail' : '') + '"><div class="review-list">' + rows + '</div><div class="review-detail">' + detail + '</div></div>';
+    }
+
+    let micSession = null;
+    function downsampleToPcm(chunks, inputRate) {
+      const total = chunks.reduce((n, c) => n + c.length, 0);
+      const merged = new Float32Array(total);
+      let offset = 0;
+      chunks.forEach((chunk) => { merged.set(chunk, offset); offset += chunk.length; });
+      const ratio = inputRate / 16000;
+      const length = Math.floor(merged.length / ratio);
+      const pcm = new Int16Array(length);
+      for (let i = 0; i < length; i++) {
+        const start = Math.floor(i * ratio);
+        const end = Math.min(merged.length, Math.floor((i + 1) * ratio));
+        let sum = 0;
+        for (let j = start; j < end; j++) sum += merged[j];
+        const sample = Math.max(-1, Math.min(1, sum / Math.max(1, end - start)));
+        pcm[i] = sample < 0 ? sample * 0x8000 : sample * 0x7fff;
+      }
+      return pcm.buffer;
+    }
+    async function toggleVoice() {
+      const draft = document.getElementById("draft");
+      if (draft) state.composer.text = draft.value;
+      if (micSession) { await finishVoice(); return; }
+      if (location.protocol === "file:") {
+        state.composer.voiceNote = "请用本地语音服务打开页面后再试。";
+        save(); render(); return;
+      }
+      let stream;
+      try { stream = await navigator.mediaDevices.getUserMedia({ audio: true }); }
+      catch (e) {
+        state.composer.voiceNote = "没有拿到麦克风权限。请允许浏览器使用麦克风后再试。";
+        save(); render(); return;
+      }
+      const ctx = new AudioContext();
+      const source = ctx.createMediaStreamSource(stream);
+      const processor = ctx.createScriptProcessor(4096, 1, 1);
+      const gain = ctx.createGain();
+      gain.gain.value = 0;
+      const chunks = [];
+      processor.onaudioprocess = (event) => { chunks.push(new Float32Array(event.inputBuffer.getChannelData(0))); };
+      source.connect(processor);
+      processor.connect(gain);
+      gain.connect(ctx.destination);
+      micSession = { stream, ctx, source, processor, gain, chunks, rate: ctx.sampleRate };
+      state.composer.listening = true;
+      state.composer.voiceNote = "正在听。再点一次麦克风，结束并转成文字。";
+      save(); render();
+    }
+    async function finishVoice() {
+      const current = micSession;
+      micSession = null;
+      state.composer.listening = false;
+      if (!current) return;
+      current.processor.onaudioprocess = null;
+      current.processor.disconnect();
+      current.source.disconnect();
+      current.gain.disconnect();
+      current.stream.getTracks().forEach((track) => track.stop());
+      const rate = current.rate;
+      const chunks = current.chunks;
+      await current.ctx.close();
+      const draft = document.getElementById("draft");
+      if (draft) state.composer.text = draft.value;
+      state.composer.voiceNote = "正在识别。";
+      save(); render();
+      try {
+        const pcm = downsampleToPcm(chunks, rate);
+        const response = await fetch("/api/asr", { method: "POST", headers: { "Content-Type": "application/octet-stream" }, body: pcm });
+        const data = await response.json();
+        if (!response.ok) throw new Error(data.error || "语音识别没有完成");
+        if (!data.text) throw new Error("没有识别到文字。");
+        const existing = state.composer.text || "";
+        const gap = existing && /[A-Za-z0-9]$/.test(existing) && /^[A-Za-z0-9]/.test(data.text) ? " " : "";
+        state.composer.text = existing + gap + data.text;
+        state.composer.voiceNote = "";
+      } catch (e) {
+        state.composer.voiceNote = "语音识别没有完成：" + (e && e.message ? e.message : "请再试一次");
+      }
+      save(); render();
+    }
+    document.getElementById("app").addEventListener("focusin", (event) => {
+      if (event.target.id !== "email") return;
+      const field = event.target.closest(".login-field");
+      if (field) field.classList.add("open");
+    });
+    document.getElementById("app").addEventListener("mousedown", (event) => {
+      const option = event.target.closest("[data-act='pick-email']");
+      if (!option) return;
+      event.preventDefault();
+      state.email = option.dataset.email;
+      const input = document.getElementById("email");
+      if (input) input.value = state.email;
+      const field = option.closest(".login-field");
+      if (field) field.classList.remove("open");
+      save();
+    });
+    document.getElementById("app").addEventListener("focusout", (event) => {
+      const field = event.target.closest && event.target.closest(".login-field");
+      if (!field || !field.classList.contains("open")) return;
+      if (event.relatedTarget && field.contains(event.relatedTarget)) return;
+      field.classList.remove("open");
+    });
+    document.getElementById("app").addEventListener("click", (event) => {
+      if (!event.target.closest(".history-more, .history-pop") && state.historyMenuId) {
+        state.historyMenuId = "";
+        if (!event.target.closest("[data-act], [data-plugin], [data-go], [data-decision]")) { save(); render(); return; }
+      }
+      if (event.target.id === "email") {
+        const field = event.target.closest(".login-field");
+        if (field) field.classList.add("open");
+      }
+      const plugin = event.target.closest("[data-plugin]");
+      if (plugin) { state.composer.plugin = state.composer.plugin === plugin.dataset.plugin ? "" : plugin.dataset.plugin; save(); render(); return; }
+      const goBtn = event.target.closest("[data-go]");
+      if (goBtn) { state.navOpen = false; go(goBtn.dataset.go); return; }
+      const decision = event.target.closest("[data-decision]");
+      if (decision) { act(decision.dataset.decision, decision.dataset.id); return; }
+      const button = event.target.closest("[data-act]");
+      if (!button) return;
+      if (button.dataset.act === "lang") { state.lang = button.dataset.lang === "en" ? "en" : "zh"; save(); render(); return; }
+      if (button.dataset.act === "logout") { state.userId = null; state.loginError = ""; save(); go("/login"); return; }
+      if (button.dataset.act === "menu") {
+        if (window.matchMedia("(max-width: 768px)").matches) state.navOpen = !state.navOpen;
+        else { state.sideHidden = false; state.navOpen = false; }
+        save(); render(); return;
+      }
+      if (button.dataset.act === "hide-side") { state.sideHidden = true; state.navOpen = false; save(); render(); return; }
+      if (button.dataset.act === "human") {
+        const current = user();
+        if (current) addMessage(current.id, "助手", "<p>" + (state.lang === "en" ? "Handed to a person. A colleague will continue in this assistant. This does not approve, dispatch, or stamp anything." : "已转人工。同事会在本助手里继续处理。这次不会自动批准、派工或签章。") + "</p>");
+        save();
+        go("/assistant");
+        return;
+      }
+      if (button.dataset.act === "voice") { toggleVoice(); return; }
+      if (button.dataset.act === "use-example") { state.composer.text = button.dataset.example || ""; state.composer.error = ""; save(); render(); return; }
+      if (button.dataset.act === "new-task") {
+        if (micSession) {
+          const currentMic = micSession;
+          micSession = null;
+          currentMic.processor.onaudioprocess = null;
+          currentMic.processor.disconnect();
+          currentMic.source.disconnect();
+          currentMic.gain.disconnect();
+          currentMic.stream.getTracks().forEach((track) => track.stop());
+          currentMic.ctx.close();
+        }
+        const current = user();
+        if (current) state.messages[current.id] = [];
+        state.selectedRecordId = "";
+        state.navOpen = false;
+        state.composer.text = "";
+        state.composer.plugin = "";
+        state.composer.fileNote = "";
+        state.composer.voiceNote = "";
+        state.composer.listening = false;
+        state.composer.error = "";
+        state.composer.askRemember = false;
+        state.composer.busy = false;
+        const memory = current ? (state.remembered || {})[current.id] : null;
+        if (memory) {
+          state.composer.proxy = current.proxy ? memory.ownerId : "";
+          state.composer.project = memory.project;
+          state.composer.attributionSet = true;
+          state.composer.attributionSource = "已记住";
+        } else {
+          state.composer.proxy = "";
+          state.composer.project = "";
+          state.composer.attributionSet = false;
+          state.composer.attributionSource = "";
+        }
+        save(); go("/assistant"); return;
+      }
+      if (button.dataset.act === "history-menu") {
+        state.historyMenuId = state.historyMenuId === button.dataset.id ? "" : button.dataset.id;
+        save(); render(); return;
+      }
+      if (button.dataset.act === "delete-history") {
+        const id = button.dataset.id;
+        state.records = state.records.filter((record) => record.id !== id);
+        if (state.selectedRecordId === id) state.selectedRecordId = "";
+        if (state.selectedReviewId === id) state.selectedReviewId = "";
+        state.historyMenuId = "";
+        save(); render(); return;
+      }
+      if (button.dataset.act === "open-record") { state.historyMenuId = ""; state.selectedRecordId = button.dataset.id; state.navOpen = false; save(); go("/assistant"); return; }
+      if (button.dataset.act === "bind-owner") {
+        const current = user();
+        const customer = document.getElementById("bind-customer");
+        const project = document.getElementById("bind-project");
+        if (current && current.proxy && (!customer || !customer.value)) { state.composer.error = "请先选择客户。不能默认代选。"; save(); render(); return; }
+        if (!project || !project.value) { state.composer.error = "请选择项目，或明确选择未分项目。"; save(); render(); return; }
+        if (current && current.proxy) state.composer.proxy = customer.value;
+        state.composer.project = project.value;
+        state.composer.attributionSet = true;
+        state.composer.attributionSource = "本次确定";
+        state.composer.error = "";
+        save(); render(); return;
+      }
+      if (button.dataset.act === "use-remembered") {
+        const current = user();
+        const memory = current && (state.remembered || {})[current.id];
+        if (!current || !memory) return;
+        state.composer.proxy = current.proxy ? memory.ownerId : "";
+        state.composer.project = memory.project;
+        state.composer.attributionSet = true;
+        state.composer.attributionSource = "已记住";
+        state.composer.error = "";
+        save(); render(); return;
+      }
+      if (button.dataset.act === "change-owner") {
+        const current = user();
+        state.composer.attributionSet = false;
+        state.composer.project = "";
+        state.composer.attributionSource = "";
+        if (current && current.proxy) state.composer.proxy = "";
+        state.composer.error = "";
+        save(); render(); return;
+      }
+      if (button.dataset.act === "remember-yes" || button.dataset.act === "remember-no") {
+        const current = user();
+        const kept = button.dataset.act === "remember-yes";
+        if (current && kept && state.composer.attributionSet) {
+          if (!state.remembered) state.remembered = {};
+          state.remembered[current.id] = { ownerId: current.proxy ? state.composer.proxy : current.id, project: state.composer.project };
+        }
+        if (current) addMessage(current.id, "助手", "<p>" + esc(t(kept ? "已记住。下次可以沿用这一对客户和项目。已经生成的记录归属不变。" : "这次不记住。已经生成的记录归属不变。")) + "</p>");
+        state.composer.askRemember = false;
+        save(); render(); return;
+      }
+      if (button.dataset.act === "pick-review") { state.selectedReviewId = button.dataset.id; state.reviewDetail = true; save(); render(); return; }
+      if (button.dataset.act === "back-list") { state.reviewDetail = false; save(); render(); return; }
+      if (button.dataset.act === "resubmit") resubmit(button.dataset.id);
+    });
+    document.getElementById("app").addEventListener("mouseover", (event) => {
+      const row = event.target.closest(".history-row");
+      if (!row || row.dataset.marquee) return;
+      if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+      const title = row.querySelector(".history-title");
+      const text = row.querySelector(".history-title-text");
+      if (!title || !text) return;
+      const distance = text.scrollWidth - title.clientWidth;
+      if (distance <= 2) return;
+      text.style.setProperty("--shift", "-" + distance + "px");
+      title.style.textOverflow = "clip";
+      text.style.animation = "history-marquee " + Math.max(3, distance / 36) + "s linear infinite";
+      row.dataset.marquee = "1";
+    });
+    document.getElementById("app").addEventListener("mouseout", (event) => {
+      const row = event.target.closest(".history-row");
+      if (!row || (event.relatedTarget && row.contains(event.relatedTarget))) return;
+      const text = row.querySelector(".history-title-text");
+      if (text) text.style.animation = "";
+      const title = row.querySelector(".history-title");
+      if (title) title.style.textOverflow = "";
+      delete row.dataset.marquee;
+    });
+    document.addEventListener("keydown", (event) => {
+      if (event.key === "Escape" && state.historyMenuId) { state.historyMenuId = ""; save(); render(); }
+    });
+    document.getElementById("app").addEventListener("input", (event) => {
+      if (event.target.id === "draft") state.composer.text = event.target.value;
+      if (event.target.id === "email") state.email = event.target.value;
+    });
+    document.getElementById("app").addEventListener("change", (event) => {
+      if (event.target.id === "file") {
+        const file = event.target.files && event.target.files[0];
+        if (!file) return;
+        if (/fail/i.test(file.name)) { state.composer.fileNote = ""; state.composer.error = "解析失败：文件无法读取。可以移除后重试，或继续用文字发送。已写的内容还在。"; }
+        else { state.composer.fileNote = file.name; state.composer.error = ""; }
+        save(); render();
+      }
+    });
+    document.getElementById("app").addEventListener("submit", (event) => {
+      event.preventDefault();
+      if (event.target.id === "login-form") {
+        const email = document.getElementById("email").value.trim();
+        const password = document.getElementById("password").value;
+        const found = USERS[email];
+        if (!found || password !== PASSWORD) { state.email = email; state.userId = null; state.loginError = "邮箱或口令不正确"; save(); render(); return; }
+        state.email = email; state.userId = found.id; state.loginError = ""; save(); go("/dashboard"); return;
+      }
+      if (event.target.id === "send-form") {
+        const draft = document.getElementById("draft");
+        if (draft) state.composer.text = draft.value;
+        onSend();
+      }
+    });
+    window.addEventListener("hashchange", render);
+    if (!location.hash) location.hash = "#/login";
+    else render();
+  </script>
+</body>
+</html>

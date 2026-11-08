@@ -1,0 +1,11 @@
+{
+  "id": "Hoymiles_SalesAssistant",
+  "name": "禾迈电力电子销售助手",
+  "project_type": "web",
+  "source": "onboarded",
+  "repo_url": "git@github.com:Carlvic0101/Hoymiles_Assistant.git",
+  "specification": "default",
+  "created_at": "2026-11-04 13:55:58",
+  "last_active": "2026-11-08 22:51:00",
+  "harness_version": "V7_2"
+}
