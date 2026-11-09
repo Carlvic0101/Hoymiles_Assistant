@@ -161,7 +161,11 @@
     .plugin:hover { color: #1F2933; background: #fff; border-color: #D5D9DE; }
     .plugin.current { color: #0B6E5A; background: #E7F3EF; border-color: #B7D9CF; }
     .archive-ask, .bind-ask, .remember-ask { width: min(860px, 100%); margin: 0 auto; padding: 0 24px 12px; }
-    .bind-ask select { height: 36px; margin: 0 8px 8px 0; }
+    .archive-card { padding: 16px; border: 1px solid #E5E7EB; border-radius: 12px; background: #fff; }
+    .archive-fields { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; margin: 12px 0; }
+    .archive-fields input, .archive-fields select { width: 100%; height: 40px; }
+    .metric-note { margin: 12px 0 0; color: #5C6770; font-size: 12px; line-height: 18px; }
+    @media (max-width: 768px) { .archive-fields { grid-template-columns: 1fr; } }
     .suggest { width: min(860px, 100%); margin: 4px auto 0; padding: 8px 24px 0; }
     .suggest-item { position: relative; display: flex; align-items: center; gap: 12px; width: 100%; min-height: 56px; padding: 0 4px; border: 0; background: transparent; text-align: left; color: #5C6770; font-size: 14px; font-weight: 400; line-height: 22px; }
     .suggest-item::after { content: ""; position: absolute; left: 0; right: 0; bottom: 0; height: 1px; background: #E5E7EB; }
@@ -230,9 +234,22 @@
       "没有拿到麦克风权限。请允许浏览器使用麦克风后再试。": "Microphone permission was not granted. Allow the microphone and try again.",
       "请用本地语音服务打开页面后再试。": "Open this page through the local speech server and try again.",
       "没有识别到文字。": "No speech was recognized.",
-      "客户": "Customer", "项目": "Project", "请选择客户": "Choose a customer", "请选择项目": "Choose a project",
+      "客户": "Customer", "项目": "Project", "客户名称": "Customer", "地区": "Region", "项目名称": "Project", "请选择项目": "Choose a project", "未归档": "Not filed", "操作者": "Operator",
       "张敏": "Zhang Min", "华东经销": "East China Distributor",
       "执行前先确定客户和项目。不能默认代选。": "Choose the customer and project before this runs. Do not assume a customer.",
+      "本次结果已生成。是否采纳并归档，方便后续跟进？": "This result is ready. Adopt and file it for follow-up?",
+      "采纳并归档": "Adopt and file", "暂不归档": "Not now", "已归档": "Filed", "尚未归档": "Not filed",
+      "已保留在当前会话，尚未归档。可以继续补充或调整。": "Kept in this conversation and not filed. You can add to it or change it.",
+      "请补上客户名称、地区和项目。项目可以明确选择未分项目。": "Add the customer, region, and project. The project can explicitly be left unassigned.",
+      "没有找到这个客户。请核对名称后重试。已填内容还在，这次不计入采纳。": "That customer was not found. Check the name and try again. What you entered is still here, and this attempt is not counted as adopted.",
+      "已归档。这只表示结果已保存，不代替当前进度，也不是审核通过、发布、签署或正式报修。": "Filed. This only means the result was saved. It does not replace the current progress, and it is not approval, publication, signing, or a formal repair ticket.",
+      "尚未归档。结果只留在当前会话，没有向客户开放。": "Not filed. The result stays in this conversation and is not open to the customer.",
+      "这条结果已经归档。归属不能在这里再改，也不会再计一次采纳。": "This result is already filed. Filing it again cannot change the owner or count another adoption.",
+      "报价需要地区才能确定价表。请补充地区，例如华东。这次还没有生成报价，也还没有归档。": "A quote needs a region before the price list can be chosen. Add a region, for example East China. No quote has been generated or filed yet.",
+      "当前会话没有唯一可报价配置。其他客户或项目下的选型不能直接拿来报价。请先在本次会话完成选型，或明确指出你有查看权限的那一条。": "This conversation does not have one quote-ready configuration. A selection from another customer or project cannot be reused. Finish a selection here, or name the one you are allowed to view.",
+      "演示口径，不是真实经营统计。": "Demo definitions, not live business statistics.",
+      "结果生成完成率": "Result completion", "端到端完成率": "End-to-end completion", "采纳率": "Adoption", "用户满意度": "Satisfaction",
+      "满意来自明确评价，本次演示还没有评价，不能用归档代替。": "Satisfaction comes from an explicit rating. This demo has no rating, so filing does not count as satisfaction.",
       "确定本次归属": "Use this attribution", "沿用已记住": "Use remembered", "本次归属": "This task",
       "来源：上次记住": "Source: remembered last time", "来源：本次执行前确定": "Source: chosen before this run",
       "更改": "Change",
@@ -329,7 +346,8 @@
       return {
         email: "", userId: null, seq: 5000, loginError: "", lang: "zh", navOpen: false, sideHidden: false, reviewDetail: false,
         selectedRecordId: "Q-1002", selectedReviewId: "Q-1002", historyMenuId: "",
-        composer: { text: "", plugin: "", proxy: "", project: "", attributionSet: false, attributionSource: "", fileNote: "", voiceNote: "", listening: false, askRemember: false, busy: false, busyStep: "", error: "" },
+        composer: { text: "", plugin: "", proxy: "", project: "", attributionSet: false, attributionSource: "", fileNote: "", voiceNote: "", listening: false, askRemember: false, busy: false, busyStep: "", error: "", archiveId: "", archiveOpen: false, archiveDraft: null, archiveError: "", pending: null, taskOpen: false, known: { customer: "", region: "", project: "" } },
+        demoStats: { started: 0, deliverable: 0, archived: 0, adopted: 0 },
         remembered: {},
         messages: { "cust-zhang": [], "cust-dealer": [], "staff-li": [], "staff-zhou": [] },
         records: [
@@ -367,6 +385,18 @@
     }
 
     let state = load();
+    normalizeRecords();
+    function normalizeRecords() {
+      ["S-2001", "S-2002", "Q-1002", "B-4001", "D-3001"].forEach((id) => {
+        const record = (state.records || []).find((item) => item.id === id);
+        if (record) { record.seed = true; record.archived = true; }
+      });
+      (state.records || []).forEach((record) => {
+        if (record.archived == null) record.archived = !!record.ownerId;
+      });
+      if (!state.demoStats) state.demoStats = { started: 0, deliverable: 0, archived: 0, adopted: 0 };
+      if (!state.composer.known) state.composer.known = { customer: "", region: "", project: "" };
+    }
     calibrateHistoryTimes();
     function ageStep(index) {
       const steps = [20 * 60000, 2 * 3600000, 4 * 3600000, 8 * 3600000, 26 * 3600000, 2 * 86400000, 4 * 86400000, 8 * 86400000, 15 * 86400000, 32 * 86400000, 70 * 86400000, 140 * 86400000, 370 * 86400000];
@@ -418,7 +448,15 @@
             parsed.composer.attributionSource = "";
           }
           parsed.composer.busy = false;
-          parsed.composer.askRemember = !!parsed.composer.askRemember;
+          if (!parsed.composer.known) parsed.composer.known = { customer: "", region: "", project: "" };
+          if (!parsed.demoStats) parsed.demoStats = { started: 0, deliverable: 0, archived: 0, adopted: 0 };
+          ["S-2001", "S-2002", "Q-1002", "B-4001", "D-3001"].forEach((id) => {
+            const record = (parsed.records || []).find((item) => item.id === id);
+            if (record) { record.seed = true; record.archived = true; }
+          });
+          (parsed.records || []).forEach((record) => {
+            if (record.archived == null) record.archived = !!record.ownerId;
+          });
           return parsed;
         }
       } catch (e) {}
@@ -440,8 +478,7 @@
     }
     function visibleRecords(u) {
       if (!u) return [];
-      if (u.staff) return state.records;
-      return state.records.filter((r) => r.ownerId === u.id);
+      return state.records.filter((record) => canSee(u, record));
     }
     function pathOf() {
       const raw = (location.hash || "#/login").replace("#", "");
@@ -467,11 +504,66 @@
       if (u.proxy) return state.composer.proxy || "";
       return u.id;
     }
-    function attributionReady(u) {
-      return !!(state.composer.attributionSet && state.composer.project && (!u.proxy || state.composer.proxy));
+    function canSee(u, record) {
+      if (!u || !record) return false;
+      if (!record.archived) return record.createdBy === u.id;
+      if (u.staff) return true;
+      return record.ownerId === u.id;
+    }
+    function mentionedRegion(text) {
+      return ["华东", "华南", "华北", "华中", "西南", "西北", "东北", "美洲", "欧洲"].find((name) => String(text || "").includes(name)) || "";
+    }
+    function mentionedCustomer(text) {
+      const source = String(text || "");
+      if (source.includes("张敏")) return "张敏";
+      if (source.includes("华东经销")) return "华东经销";
+      return "";
+    }
+    function mentionedProject(text) {
+      const source = String(text || "");
+      if (source.includes("未分项目")) return "未分项目";
+      if (source.includes("户用并网")) return "户用并网";
+      if (source.includes("经销项目")) return "经销项目";
+      if (source.includes("园区招标")) return "园区招标";
+      return "";
+    }
+    function customerIdByName(name, current) {
+      const value = String(name || "").trim();
+      if (value === "张敏") return "cust-zhang";
+      if (value === "华东经销") return "cust-dealer";
+      if (current && !current.proxy && value === current.name) return current.id;
+      return "";
+    }
+    function noteTask(kind) {
+      const business = ["产品选型", "方案报价", "标书管理", "合同管理", "故障诊断", "紧急风险"].includes(kind);
+      if (!business) return;
+      if (state.composer.pending && state.composer.pending.kind === kind) return;
+      if (!state.demoStats) state.demoStats = { started: 0, deliverable: 0, archived: 0, adopted: 0 };
+      state.demoStats.started += 1;
+    }
+    function keepResult(record) {
+      record.ownerId = "";
+      record.project = "";
+      record.archived = false;
+      record.adopted = false;
+      record.seed = false;
+      record.deliverable = !["无法报价", "无法匹配"].includes(record.status);
+      record.region = record.region || state.composer.known.region || "";
+      record.endedAt = Date.now();
+      if (!state.demoStats) state.demoStats = { started: 0, deliverable: 0, archived: 0, adopted: 0 };
+      if (record.deliverable) state.demoStats.deliverable += 1;
+      state.records.unshift(record);
+      state.selectedRecordId = record.id;
+      if (record.deliverable) {
+        state.composer.archiveId = record.id;
+        state.composer.archiveOpen = true;
+        state.composer.archiveError = "";
+        state.composer.archiveDraft = null;
+      }
     }
     function blockReason(u, record) {
       if (!u || !record) return "无相应权限";
+      if (!record.archived) return "无相应权限";
       if (record.createdBy === u.id) return "自己代发起";
       if (record.resubmittedBy === u.id) return "自己重新提交";
       if (!u.staff) return "无相应权限";
@@ -486,6 +578,9 @@
       const pause = state.lang === "en" ? "; " : "；";
       if (staff && record.demoSteps && record.demoSteps.length) {
         blocks.push(["演示步骤", t("演示步骤，不表示真实模型或工具已经执行。") + "\n" + record.demoSteps.map((step, index) => (index + 1) + ". " + step).join("\n")]);
+      }
+      if (record.deliverable || record.archived) {
+        blocks.push(["保存标记", t(record.archived ? "已归档。这只表示结果已保存，不代替当前进度，也不是审核通过、发布、签署或正式报修。" : "尚未归档。结果只留在当前会话，没有向客户开放。")]);
       }
       if (record.status === "未通过" && !staff) {
         blocks.push(["当前进度", t("未通过。这条不能在原记录上修改，可以另发一条新请求。")]);
@@ -594,11 +689,7 @@
       }
       const kind = resolveKind(text, plugin);
       const business = ["产品选型", "方案报价", "标书管理", "合同管理", "故障诊断", "紧急风险"].includes(kind);
-      if (business && kind !== "紧急风险" && !attributionReady(u)) {
-        addMessage(u.id, "助手", "<p>" + esc(t("执行前要先确定客户和项目。不能默认代选，也还没有建立记录。")) + "</p>");
-        state.composer.askRemember = false;
-        save(); render(); return;
-      }
+      if (business) noteTask(kind);
       state.composer.busy = true;
       state.composer.busyStep = kind === "紧急风险" ? "正在确认是否有紧急风险。" : "正在识别当前请求。";
       state.composer.error = "";
@@ -611,12 +702,35 @@
       state.composer.busy = false;
       state.composer.busyStep = "";
       if (!u || u.id !== shot.userId) { save(); render(); return; }
-      const text = shot.text;
-      const kind = shot.kind;
-      const holdReview = shot.holdReview;
-      const ownerId = ownerFor(u);
-      const project = state.composer.project || "";
+      const textIn = shot.text;
+      let kind = shot.kind;
+      let holdReview = shot.holdReview;
+      let text = textIn;
+      if (state.composer.pending && state.composer.pending.kind === "方案报价") {
+        const region = mentionedRegion(textIn);
+        if (region) {
+          text = state.composer.pending.text + " 地区" + region;
+          kind = "方案报价";
+          holdReview = state.composer.pending.holdReview;
+          state.composer.known.region = region;
+          state.composer.pending = null;
+        }
+      }
+      const foundRegion = mentionedRegion(text);
+      if (foundRegion) state.composer.known.region = foundRegion;
+      const foundCustomer = mentionedCustomer(text);
+      if (foundCustomer) state.composer.known.customer = foundCustomer;
+      const foundProject = mentionedProject(text);
+      if (foundProject) state.composer.known.project = foundProject;
+      const ownerId = "";
+      const project = "";
       const say = (html, steps) => addMessage(u.id, "助手", "<p>" + html + "</p>" + (u.staff && steps ? demoNote(steps) : ""));
+      if (kind === "方案报价" && !state.composer.known.region) {
+        state.composer.pending = { kind, text, holdReview };
+        say("报价需要地区才能确定价表。请补充地区，例如华东。这次还没有生成报价，也还没有归档。", ["识别为方案报价。", "还缺地区，不能确定价表。", "没有生成报价，也没有归档。"]);
+        state.composer.text = "";
+        save(); render(); return;
+      }
       if (kind === "资料查询") {
         say("这是资料查询，没有创建选型，也没有指定项目。种子资料中的 HM-HMS-2000 覆盖约 8kW 户用并网。没有写在种子里的型号，首版不能编造参数。", ["识别为资料查询。", "没有建立业务记录。"]);
       } else if (kind === "缺参数") {
@@ -626,16 +740,9 @@
         say("首版只做合同检查和履约事项提取，没有起草合同。请提供已有合同正文。", ["识别为合同起草。", "首版不起草，没有建立合同记录。"]);
       } else if (kind === "紧急风险") {
         const safety = "立即停止普通排查。离开设备，切断可以安全断开的电源，不要继续触碰冒烟、焦糊或异常发热的部位，并通知现场人员。";
-        const steps = ["识别到冒烟、焦糊或异常发热。", "已选的普通意图停止。", "没有交接回执，不能写成已经交接完成。"];
-        if (attributionReady(u)) {
-          const record = { id: newId("D"), type: "diagnosis", title: text, ownerId, project, createdBy: u.id, status: "已停止普通排查", emergency: true, report: "", draftTicket: "", formalTicket: "", accepted: false, safety, demoSteps: steps, endedAt: Date.now() };
-          state.records.unshift(record);
-          state.selectedRecordId = record.id;
-          addMessage(ownerId, "助手", viewHtml(record, false));
-          if (u.id !== ownerId) addMessage(u.id, "助手", "<p>已代" + esc(NAMES[ownerId]) + "记下这次紧急停止。记录归该客户。没有交接回执。</p>");
-        } else {
-          say(safety + "归属还没确定，所以没有把这次停止记到任何客户名下。", steps);
-        }
+        const steps = ["识别到冒烟、焦糊或异常发热。", "已选的普通意图停止。", "结果先留在当前会话，没有默认客户。", "没有交接回执，不能写成已经交接完成。"];
+        const record = { id: newId("D"), type: "diagnosis", title: text, ownerId, project, createdBy: u.id, status: "已停止普通排查", emergency: true, report: "", draftTicket: "", formalTicket: "", accepted: false, safety, demoSteps: steps, endedAt: Date.now() };
+        keepResult(record);
         state.composer.text = "";
       } else if (!kind) {
         say("还不能判断要做选型、报价、标书、合同还是故障诊断。请改写，或点下面的插件。这次没有建立记录。", ["意图还不明确。", "没有建立业务记录。"]);
@@ -646,15 +753,10 @@
           const record = buildRecord(kind, text, ownerId, u.id, holdReview);
           if (record) {
             record.demoSteps = demoStepsFor(record, holdReview);
-            record.endedAt = Date.now();
-            state.records.unshift(record);
-            state.selectedRecordId = record.id;
-            state.selectedReviewId = record.id;
-            addMessage(ownerId, "助手", viewHtml(record, false));
-            if (u.id !== ownerId) addMessage(u.id, "助手", "<p>已代" + esc(NAMES[ownerId]) + "建立记录 " + esc(record.id) + "。记录归该客户。你不能审核或发布这一条。</p>");
+            record.region = state.composer.known.region || "";
+            keepResult(record);
             state.composer.text = "";
             state.composer.fileNote = "";
-            state.composer.askRemember = true;
           }
         }
       }
@@ -680,8 +782,7 @@
       return null;
     }
     function demoStepsFor(record, holdReview) {
-      const who = (NAMES[record.ownerId] || "") + " · " + (record.project || "未分项目");
-      const base = ["识别为" + (record.type === "selection" ? "产品选型" : record.type === "quote" ? "方案报价" : record.type === "bid" ? "标书管理" : record.type === "contract" ? "合同管理" : "故障诊断") + "。", "执行前确定的归属是" + who + "。"];
+      const base = ["识别为" + (record.type === "selection" ? "产品选型" : record.type === "quote" ? "方案报价" : record.type === "bid" ? "标书管理" : record.type === "contract" ? "合同管理" : "故障诊断") + "。", "生成时没有默认客户或项目。结果先留在当前会话。"];
       if (record.type === "selection") return base.concat(["演示预设：展示种子中的型号和检查结果。", "没有生成报价。"]);
       if (record.type === "quote" && holdReview) return base.concat(["演示预设：生成报价内容，只给有查看权限的员工。", "进度为处理中。", "没有进入待审核，也没有发布。"]);
       if (record.type === "quote" && record.status === "无法报价") return base.concat(["当前对象不能报价。", "没有借用其他项目或其他选型。"]);
@@ -692,8 +793,8 @@
       return base.concat(["演示预设结果。", "没有签署或盖章。"]);
     }
 
-    function sameScope(record, ownerId) {
-      return !!(record && record.ownerId === ownerId && record.project === state.composer.project);
+    function sameScope(record, userId) {
+      return !!(record && !record.archived && record.createdBy === userId);
     }
     function buildRecord(kind, text, ownerId, createdBy, holdReview) {
       if (kind === "产品选型") {
@@ -705,22 +806,22 @@
       if (kind === "方案报价") {
         if (/缺少产品/.test(text)) return { id: newId("Q"), type: "quote", title: text, ownerId, project: state.composer.project, createdBy, status: "无法报价", customerText: "报价缺少产品。请先完成可用于报价的选型，或指定种子中的单一产品。这次不进入审核。" };
         if (/组合|混接/.test(text)) {
-          const target = state.records.find((r) => r.id === state.selectedRecordId && sameScope(r, ownerId) && r.type === "selection");
-          if (!quoteReady(target)) return { id: newId("Q"), type: "quote", title: text, ownerId, project: state.composer.project, createdBy, status: "无法报价", customerText: "当前这套组合还不能报价。未执行、待技术确认或校验失败的配置不能用，也不能借同一客户名下另一条合格选型放行。" };
+          const target = state.records.find((r) => r.id === state.selectedRecordId && sameScope(r, createdBy) && r.type === "selection");
+          if (!quoteReady(target)) return { id: newId("Q"), type: "quote", title: text, ownerId, project: "", createdBy, status: "无法报价", customerText: "当前这套组合还不能报价。未执行、待技术确认或校验失败的配置不能用，也不能借用其他客户或其他项目的选型。" };
           return quoteFrom(target.models[0].name + " / " + target.version, text, ownerId, createdBy, holdReview);
         } else if (/HM-HMS-2000|指定产品/.test(text)) {
           return quoteFrom("HM-HMS-2000 / 指定产品", text, ownerId, createdBy, holdReview);
         } else {
-          const owned = state.records.filter((r) => sameScope(r, ownerId) && r.type === "selection" && quoteReady(r));
-          const selected = state.records.find((r) => r.id === state.selectedRecordId && sameScope(r, ownerId) && r.type === "selection");
-          if (/上一版|这套配置/.test(text) && owned.length > 1 && !quoteReady(selected)) {
-            addMessage(createdBy, "助手", "<p>有多个已授权版本。请先确认是哪一版，确认前不报价。未分项目不能借用其他项目的选型。</p>");
+          const owned = state.records.filter((r) => sameScope(r, createdBy) && r.type === "selection" && quoteReady(r));
+          const selected = state.records.find((r) => r.id === state.selectedRecordId && sameScope(r, createdBy) && r.type === "selection");
+          if (owned.length > 1 && !quoteReady(selected)) {
+            addMessage(createdBy, "助手", "<p>本次会话有多个可报价配置。请先确认是哪一版，确认前不报价。不能跨客户、跨项目混用。</p>");
             return null;
           }
           if (quoteReady(selected)) return quoteFrom(selected.models[0].name + " / " + selected.version, text, ownerId, createdBy, holdReview);
-          if (selected && !quoteReady(selected)) return { id: newId("Q"), type: "quote", title: text, ownerId, project: state.composer.project, createdBy, status: "无法报价", customerText: "当前选中的配置还不能报价。不能改用同一客户名下另一条合格选型。" };
+          if (selected && !quoteReady(selected)) return { id: newId("Q"), type: "quote", title: text, ownerId, project: "", createdBy, status: "无法报价", customerText: "当前选中的配置还不能报价。不能改用其他客户或其他项目下的合格选型。" };
           if (owned.length !== 1) {
-            addMessage(createdBy, "助手", "<p>没有同一客户、同一项目下的唯一可报价版本。请先点开那一条选型，或指定种子中的单一产品。确认前不报价。</p>");
+            addMessage(createdBy, "助手", "<p>" + esc(t("当前会话没有唯一可报价配置。其他客户或项目下的选型不能直接拿来报价。请先在本次会话完成选型，或明确指出你有查看权限的那一条。")) + "</p>");
             return null;
           }
           return quoteFrom(owned[0].models[0].name + " / " + owned[0].version, text, ownerId, createdBy, holdReview);
@@ -821,7 +922,8 @@
     }
     function recordButton(r, selectedId, actName) {
       const badge = r.emergency ? '<span class="badge danger">' + esc(t("紧急：立即停止排查")) + '</span>' : (isProgress(r.status) ? '<span class="badge ' + tone(r.status) + '">' + esc(t(r.status)) + '</span>' : '<span class="muted">' + esc(t("说明")) + (state.lang === "en" ? ": " : "：") + esc(t(r.status)) + '</span>');
-      return '<button class="record' + (r.id === selectedId ? ' selected' : '') + '" data-act="' + actName + '" data-id="' + esc(r.id) + '"><span class="rec-title">' + esc(t(r.title)) + '</span><span class="muted">' + esc(t(TYPE_NAME[r.type])) + ' · ' + esc(r.id) + ' · ' + esc(NAMES[r.ownerId] || '') + ' · ' + esc(t(r.project || '未分项目')) + ' · ' + esc(t(r.version || '')) + '</span>' + badge + '</button>';
+      const saveMark = r.archived ? '<span class="muted">' + esc(t("已归档")) + '</span>' : (r.deliverable ? '<span class="muted">' + esc(t("尚未归档")) + '</span>' : '');
+      return '<button class="record' + (r.id === selectedId ? ' selected' : '') + '" data-act="' + actName + '" data-id="' + esc(r.id) + '"><span class="rec-title">' + esc(t(r.title)) + '</span><span class="muted">' + esc(t(TYPE_NAME[r.type])) + ' · ' + esc(r.id) + ' · ' + esc(NAMES[r.ownerId] || t("未归档")) + ' · ' + esc(t(r.project || "未分项目")) + ' · ' + esc(t(r.version || '')) + '</span>' + badge + saveMark + '</button>';
     }
     function dashboard(u) {
       const rows = visibleRecords(u);
@@ -830,20 +932,33 @@
       const heading = state.lang === "en" ? esc(u.name) + "'s workspace" : esc(u.name) + "的工作台";
       return '<div class="wrap"><h1>' + heading + '</h1><p class="muted">' + esc(t("这里只看你能查看的进度。发起业务请到助手。")) + '</p>' + list + extra + '</div>';
     }
+    function metricLines() {
+      const stats = state.demoStats || { started: 0, deliverable: 0, archived: 0, adopted: 0 };
+      const rate = (part, whole) => whole ? Math.round(part / whole * 100) + "%（" + part + "/" + whole + "）" : "尚无";
+      return '<p class="metric-note">' + esc(t("演示口径，不是真实经营统计。")) + "<br>" + esc(t("结果生成完成率")) + " " + rate(stats.deliverable, stats.started) + "<br>" + esc(t("端到端完成率")) + " " + rate(stats.archived, stats.started) + "<br>" + esc(t("采纳率")) + " " + rate(stats.adopted, stats.deliverable) + "<br>" + esc(t("用户满意度")) + "：" + esc(t("满意来自明确评价，本次演示还没有评价，不能用归档代替。")) + "</p>";
+    }
+    function archivePanel(u) {
+      const record = state.records.find((item) => item.id === state.composer.archiveId && item.createdBy === u.id && item.deliverable);
+      if (!record) return "";
+      const metrics = u.staff ? metricLines() : "";
+      if (record.archived) {
+        return '<div class="archive-ask"><div class="archive-card"><p>' + esc(t("已归档")) + "。" + esc(NAMES[record.ownerId] || "") + " · " + esc(record.region || "") + " · " + esc(t(record.project || "未分项目")) + "。" + esc(t("操作者")) + " " + esc(NAMES[record.archivedBy] || "") + "。" + esc(record.id) + " · " + esc(record.version || "") + "</p><p>" + esc(t("这条结果已经归档。归属不能在这里再改，也不会再计一次采纳。")) + "</p>" + metrics + "</div></div>";
+      }
+      if (!state.composer.archiveOpen) {
+        return '<div class="archive-ask"><div class="archive-card"><p>' + esc(t("已保留在当前会话，尚未归档。可以继续补充或调整。")) + '</p><button type="button" class="btn-text" data-act="reopen-archive">' + esc(t("采纳并归档")) + "</button>" + metrics + "</div></div>";
+      }
+      const draft = state.composer.archiveDraft || { customer: state.composer.known.customer || (u.proxy ? "" : u.name), region: record.region || state.composer.known.region || "", project: state.composer.known.project || "" };
+      const options = ["", "户用并网", "经销项目", "园区招标", "未分项目"].map((name) => '<option value="' + esc(name) + '"' + (draft.project === name ? " selected" : "") + ">" + esc(name ? t(name) : t("请选择项目")) + "</option>").join("");
+      return '<div class="archive-ask"><div class="archive-card"><p>' + esc(t("本次结果已生成。是否采纳并归档，方便后续跟进？")) + '</p><div class="archive-fields"><label><span class="field">' + esc(t("客户名称")) + '</span><input id="archive-customer" value="' + esc(draft.customer || "") + '"></label><label><span class="field">' + esc(t("地区")) + '</span><input id="archive-region" value="' + esc(draft.region || "") + '"></label><label><span class="field">' + esc(t("项目名称")) + '</span><select id="archive-project">' + options + "</select></label></div>" + (state.composer.archiveError ? '<p class="error">' + esc(t(state.composer.archiveError)) + "</p>" : "") + '<div class="composer-actions"><button type="button" class="btn-primary" data-act="archive-yes">' + esc(t("采纳并归档")) + '</button><button type="button" class="btn-secondary" data-act="archive-no">' + esc(t("暂不归档")) + "</button></div>" + metrics + "</div></div>";
+    }
     function assistant(u) {
-      const selected = state.records.find((r) => r.id === state.selectedRecordId && (u.staff || r.ownerId === u.id));
+      const selected = state.records.find((r) => r.id === state.selectedRecordId && canSee(u, r));
       const mine = (state.messages[u.id] || []).map((m) => '<div class="block"><strong>' + esc(t(m.who)) + '</strong>' + m.html + '</div>').join('');
       const centered = !selected && !mine && !state.composer.busy;
       const busy = state.composer.busy ? '<div class="block"><h2>' + esc(t("处理中")) + '</h2><p>' + esc(t(state.composer.busyStep || "正在识别当前请求。")) + '</p><p class="muted">' + esc(t("演示步骤，不表示真实模型或工具已经执行。")) + '</p></div>' : '';
       const current = busy + (selected ? '<div class="block"><h2>' + esc(t("当前记录")) + ' ' + esc(selected.id) + '</h2>' + viewHtml(selected, !!u.staff) + '</div>' : (centered ? '<p class="empty-hello">' + esc(t("今天需要处理什么业务？")) + '</p>' : ''));
       const plugins = PLUGINS.map((name) => { const on = state.composer.plugin === name; return '<button type="button" class="plugin' + (on ? ' current' : '') + '" data-plugin="' + esc(name) + '" aria-pressed="' + (on ? 'true' : 'false') + '">' + esc(t(name)) + '</button>'; }).join('');
-      const ready = attributionReady(u);
-      const memory = (state.remembered || {})[u.id];
-      const whoNow = u.proxy ? (NAMES[state.composer.proxy] || "") : u.name;
-      const bind = ready
-        ? '<div class="bind-ask"><p>' + esc(t("本次归属")) + '：' + esc(whoNow) + ' · ' + esc(t(state.composer.project)) + '。' + esc(t(state.composer.attributionSource === "已记住" ? "来源：上次记住" : "来源：本次执行前确定")) + '</p><button type="button" class="btn-text" data-act="change-owner">' + esc(t("更改")) + '</button></div>'
-        : '<div class="bind-ask"><p>' + esc(t("执行前先确定客户和项目。不能默认代选。")) + '</p>' + (u.proxy ? '<label><span class="field">' + esc(t("客户")) + '</span><select id="bind-customer"><option value="">' + esc(t("请选择客户")) + '</option><option value="cust-zhang">' + esc(NAMES["cust-zhang"]) + '</option><option value="cust-dealer">' + esc(NAMES["cust-dealer"]) + '</option></select></label>' : '') + '<label><span class="field">' + esc(t("项目")) + '</span><select id="bind-project"><option value="">' + esc(t("请选择项目")) + '</option><option value="户用并网">' + esc(t("户用并网")) + '</option><option value="经销项目">' + esc(t("经销项目")) + '</option><option value="未分项目">' + esc(t("未分项目")) + '</option></select></label><div class="composer-actions"><button type="button" class="btn-primary" data-act="bind-owner">' + esc(t("确定本次归属")) + '</button>' + (memory ? '<button type="button" class="btn-secondary" data-act="use-remembered">' + esc(t("沿用已记住")) + '：' + esc(u.proxy ? (NAMES[memory.ownerId] || "") : u.name) + ' · ' + esc(t(memory.project)) + '</button>' : '') + '</div></div>';
-      const remember = state.composer.askRemember ? '<div class="remember-ask"><p>' + esc(t("要记住本次客户和项目，供下次引用吗？这不创建记录，也不修改已经生成的归属。")) + '</p><div class="composer-actions"><button type="button" class="btn-primary" data-act="remember-yes">' + esc(t("记住本次客户和项目")) + '</button><button type="button" class="btn-secondary" data-act="remember-no">' + esc(t("这次不记住")) + '</button></div></div>' : '';
+      const filed = archivePanel(u);
       const fileLine = state.composer.fileNote ? '<p class="muted">' + esc(t("已作为本次输入解析：")) + esc(state.composer.fileNote) + '</p>' : '';
       const voiceLine = state.composer.voiceNote ? '<p class="muted">' + esc(t(state.composer.voiceNote)) + '</p>' : '';
       const plus = '<svg viewBox="0 0 24 24" aria-hidden="true" width="14" height="14"><path d="M12 5v14M5 12h14" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/></svg>';
@@ -852,11 +967,11 @@
       const corner = '<svg class="suggest-arrow" viewBox="0 0 24 24" aria-hidden="true" width="16" height="16"><path d="M7 17L17 7M9 7h8v8" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>';
       const chosen = EXAMPLES[state.composer.plugin] || [];
       const suggest = centered && chosen.length ? '<div class="suggest">' + chosen.map((line) => '<button type="button" class="suggest-item" data-act="use-example" data-example="' + esc(t(line)) + '"><span class="suggest-text">' + esc(t(line)) + '</span><span class="suggest-chip">' + esc(t(state.composer.plugin)) + '</span>' + corner + '</button>').join('') + '</div>' : '';
-      return '<div class="assistant' + (centered ? ' is-center' : '') + '"><div class="thread"><div class="thread-inner">' + current + mine + '</div></div>' + bind + remember + '<form class="composer-wrap" id="send-form"><div class="composer-box"><textarea class="draft" id="draft" aria-label="' + esc(t("任务内容")) + '" placeholder="' + esc(t("今天需要处理什么业务？")) + '">' + esc(state.composer.text) + '</textarea><div class="composer-bar"><div class="composer-left"><label class="round-btn round-add" aria-label="' + esc(t("添加附件")) + '">' + plus + '<input id="file" type="file" hidden></label><div class="plugins">' + plugins + '</div></div><div class="composer-tools"><button type="button" class="round-btn round-add' + (state.composer.listening ? ' listening' : '') + '" data-act="voice" aria-pressed="' + (state.composer.listening ? 'true' : 'false') + '" aria-label="' + esc(t(state.composer.listening ? "停止语音输入" : "语音输入")) + '">' + mic + '</button><button class="round-btn round-send" type="submit" aria-label="' + esc(t("发送")) + '">' + arrow + '</button></div></div>' + fileLine + voiceLine + (state.composer.error ? '<p class="error">' + esc(t(state.composer.error)) + '</p>' : '') + '</div></form>' + suggest + '</div>';
+      return '<div class="assistant' + (centered ? ' is-center' : '') + '"><div class="thread"><div class="thread-inner">' + current + mine + filed + '</div></div><form class="composer-wrap" id="send-form"><div class="composer-box"><textarea class="draft" id="draft" aria-label="' + esc(t("任务内容")) + '" placeholder="' + esc(t("今天需要处理什么业务？")) + '">' + esc(state.composer.text) + '</textarea><div class="composer-bar"><div class="composer-left"><label class="round-btn round-add" aria-label="' + esc(t("添加附件")) + '">' + plus + '<input id="file" type="file" hidden></label><div class="plugins">' + plugins + '</div></div><div class="composer-tools"><button type="button" class="round-btn round-add' + (state.composer.listening ? ' listening' : '') + '" data-act="voice" aria-pressed="' + (state.composer.listening ? 'true' : 'false') + '" aria-label="' + esc(t(state.composer.listening ? "停止语音输入" : "语音输入")) + '">' + mic + '</button><button class="round-btn round-send" type="submit" aria-label="' + esc(t("发送")) + '">' + arrow + '</button></div></div>' + fileLine + voiceLine + (state.composer.error ? '<p class="error">' + esc(t(state.composer.error)) + '</p>' : '') + '</div></form>' + suggest + '</div>';
     }
     function review(u) {
-      const rows = state.records.map((r) => recordButton(r, state.selectedReviewId, 'pick-review')).join('');
-      const record = state.records.find((r) => r.id === state.selectedReviewId) || state.records[0];
+      const rows = state.records.filter((r) => r.archived).map((r) => recordButton(r, state.selectedReviewId, 'pick-review')).join('');
+      const record = state.records.find((r) => r.id === state.selectedReviewId && r.archived);
       let top = '';
       let later = '';
       if (record) {
@@ -1033,18 +1148,17 @@
         state.composer.error = "";
         state.composer.askRemember = false;
         state.composer.busy = false;
-        const memory = current ? (state.remembered || {})[current.id] : null;
-        if (memory) {
-          state.composer.proxy = current.proxy ? memory.ownerId : "";
-          state.composer.project = memory.project;
-          state.composer.attributionSet = true;
-          state.composer.attributionSource = "已记住";
-        } else {
-          state.composer.proxy = "";
-          state.composer.project = "";
-          state.composer.attributionSet = false;
-          state.composer.attributionSource = "";
-        }
+        state.composer.archiveId = "";
+        state.composer.archiveOpen = false;
+        state.composer.archiveDraft = null;
+        state.composer.archiveError = "";
+        state.composer.pending = null;
+        state.composer.taskOpen = false;
+        state.composer.proxy = "";
+        state.composer.project = "";
+        state.composer.attributionSet = false;
+        state.composer.attributionSource = "";
+        if (!state.composer.known) state.composer.known = { customer: "", region: "", project: "" };
         save(); go("/assistant"); return;
       }
       if (button.dataset.act === "history-menu") {
@@ -1060,6 +1174,50 @@
         save(); render(); return;
       }
       if (button.dataset.act === "open-record") { state.historyMenuId = ""; state.selectedRecordId = button.dataset.id; state.navOpen = false; save(); go("/assistant"); return; }
+      if (button.dataset.act === "archive-no") {
+        const customer = document.getElementById("archive-customer");
+        const region = document.getElementById("archive-region");
+        const project = document.getElementById("archive-project");
+        if (customer) state.composer.archiveDraft = { customer: customer.value, region: region.value, project: project.value };
+        state.composer.archiveOpen = false;
+        state.composer.archiveError = "";
+        save(); render(); return;
+      }
+      if (button.dataset.act === "reopen-archive") { state.composer.archiveOpen = true; save(); render(); return; }
+      if (button.dataset.act === "archive-yes") {
+        const current = user();
+        const customer = document.getElementById("archive-customer");
+        const region = document.getElementById("archive-region");
+        const project = document.getElementById("archive-project");
+        const draft = { customer: customer ? customer.value.trim() : "", region: region ? region.value.trim() : "", project: project ? project.value : "" };
+        state.composer.archiveDraft = draft;
+        const record = state.records.find((item) => item.id === state.composer.archiveId);
+        if (!current || !record || record.archived || record.adopted) { save(); render(); return; }
+        if (!draft.customer || !draft.region || !draft.project) {
+          state.composer.archiveError = "请补上客户名称、地区和项目。项目可以明确选择未分项目。";
+          save(); render(); return;
+        }
+        const ownerId = customerIdByName(draft.customer, current);
+        if (!ownerId) {
+          state.composer.archiveError = "没有找到这个客户。请核对名称后重试。已填内容还在，这次不计入采纳。";
+          save(); render(); return;
+        }
+        record.ownerId = ownerId;
+        record.project = draft.project;
+        record.region = draft.region;
+        record.archived = true;
+        record.adopted = true;
+        record.archivedBy = current.id;
+        record.archivedAt = Date.now();
+        if (!state.demoStats) state.demoStats = { started: 0, deliverable: 0, archived: 0, adopted: 0 };
+        state.demoStats.archived += 1;
+        state.demoStats.adopted += 1;
+        state.composer.archiveError = "";
+        state.composer.archiveOpen = false;
+        addMessage(current.id, "助手", "<p>" + esc(t("已归档。这只表示结果已保存，不代替当前进度，也不是审核通过、发布、签署或正式报修。")) + "</p>");
+        if (current.id !== ownerId) addMessage(ownerId, "助手", viewHtml(record, false));
+        save(); render(); return;
+      }
       if (button.dataset.act === "bind-owner") {
         const current = user();
         const customer = document.getElementById("bind-customer");
