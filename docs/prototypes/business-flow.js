@@ -50,22 +50,29 @@
       const gap = /旧汇流箱|混接|缺兼容/.test(input);
       const capacity = /10\s*kWh/i.test(input) ? 10 : /5\s*kWh|电池/i.test(input) ? 5 : 0;
       r.quoteEligible = !voltageFail && !gap && !compare;
-      r.status = gap || compare ? '待技术确认' : '处理中';
+      r.status = gap && !compare ? '待技术确认' : '处理中';
+      r.comparisonOnly = compare;
       r.models = [{ name: model, quantity: 1, reason: '按指定功率和电网条件核对', evidence: 'PD-2026-018 V2.1；RULE-ESS-026 V1.4' }];
       r.checks = [{ name: '电网适用性', result: voltageFail ? '不满足' : '通过' }, { name: '设备配套', result: gap ? '未执行' : '通过' }, { name: '保护与数量', result: voltageFail || gap ? '未执行' : '通过' }];
+      if (compare) {
+        r.models = [{ name: 'HM-ESS-8K', quantity: 1, reason: '方案 A，配 5 kWh 电池', evidence: 'PD-2026-018 V2.1' }, { name: 'HM-ESS-12K', quantity: 1, reason: '方案 B，配 10 kWh 电池', evidence: 'PD-2026-018 V2.1' }];
+        r.checks = [{ name: '方案 A · 电网适用性', result: '通过', reason: '220 V 单相符合本次现场条件' }, { name: '方案 B · 电网适用性', result: '不满足', reason: '要求 380 V 三相，与本次现场条件不符' }, { name: '两套方案的配套与保护', result: '未执行', reason: '本次仅做对比，选定方案后另行完整校验' }];
+      }
       p.summary = voltageFail ? '配置检查不通过：电网条件与设备要求不符。' : gap ? '候选已保留；旧设备混接依据不足，需技术确认。' : compare ? '对比已完成：方案 B 的三相要求与当前单相条件不符。' : '配置检查通过，可进入后续报价准备。';
-      p.notices = [r.quoteEligible ? '技术检查通过不等于业务批准。尚未生成报价。' : '当前结果不可直接用于正式报价。'];
-      p.sections.push(table('配置清单', ['设备角色', '型号', '数量', '关键参数'], [['逆变器', model, '1 台', model === 'HM-ESS-8K' ? '8 kW' : '12 kW'], ...(capacity ? [['储能电池', 'HM-BAT-5', capacity / 5 + ' 组', capacity + ' kWh']] : [])]));
-      p.sections.push(textSection('采用理由与依据', '依据 PD-2026-018 的功率及电网范围核对 ' + model + '；数量按本次负荷与储能容量计算，电气适用性以以下分项检查为准。' + (voltageFail ? '当前电网条件不满足，不能将候选当作可执行方案。' : '') ));
-      p.sections.push(table('分项检查', ['检查项', '结果', '依据 / 原因'], r.checks.map(c => [c.name, c.result, c.result === '未执行' ? '前置条件或兼容依据不足' : 'RULE-ESS-026 V1.4'])));
+      p.notices = [compare ? '对比不等于配置校验通过。请先选定方案，再完成配套与保护检查；当前不能正式报价。' : r.quoteEligible ? '技术检查通过不等于业务批准。尚未生成报价。' : '当前结果不可直接用于正式报价。'];
+      if (!compare) {
+        p.sections.push(table('配置清单', ['设备角色', '型号', '数量', '关键参数'], [['逆变器', model, '1 台', model === 'HM-ESS-8K' ? '8 kW' : '12 kW'], ...(capacity ? [['储能电池', 'HM-BAT-5', capacity / 5 + ' 组', capacity + ' kWh']] : [])]));
+        p.sections.push(textSection('采用理由与依据', '依据 PD-2026-018 的功率及电网范围核对 ' + model + '；数量按本次负荷与储能容量计算，电气适用性以以下分项检查为准。' + (voltageFail ? '当前电网条件不满足，不能将候选当作可执行方案。' : '') ));
+      }
+      p.sections.push(table('分项检查', ['检查项', '结果', '依据 / 原因'], r.checks.map(c => [c.name, c.result, c.reason || (c.result === '未执行' ? '前置条件或兼容依据不足' : 'RULE-ESS-026 V1.4')])));
       p.sections.push(textSection('未执行项', (r.checks.filter(c => c.result === '未执行').map(c => c.name).join('、') || '本次列明的技术检查均已执行。') + '\n未执行业务批准、正式报价和自动替换配置。'));
       if (compare) p.sections.push(table('方案对比', ['维度', '方案 A', '方案 B'], [['逆变器', 'HM-ESS-8K', 'HM-ESS-12K'], ['功率 / 容量', '8 kW / 5 kWh', '12 kW / 10 kWh'], ['电网条件', '220 V 单相', '380 V 三相'], ['适用判断', '符合本次电网条件', '不符合本次电网条件']]));
       if (change) { r.version = 'S-001 / V2'; p.sections.push(table('变更影响', ['项目', '原版本 V1', '本版本 V2', '处理'], [['电池容量', '5 kWh', '10 kWh', '重新核对数量与配套'], ['电池数量', '1 组', '2 组', '按 5 kWh / 组计算'], ['历史方案', 'S-001 / V1', '保留原版本', '不覆盖旧版']])); }
-      trace.push(step('读取产品与规则', model, '取得额定参数、数量和配套条件。', 'PD-2026-018 V2.1；RULE-ESS-026 V1.4'));
-      trace.push(step('形成配置清单', '需求及产品参数', '逆变器 1 台' + (capacity ? '；电池 ' + capacity / 5 + ' 组，共 ' + capacity + ' kWh。' : '。'), '本次配置'));
+      trace.push(step('读取产品与规则', compare ? 'HM-ESS-8K / HM-ESS-12K' : model, '取得额定参数、数量和配套条件。', 'PD-2026-018 V2.1；RULE-ESS-026 V1.4'));
+      trace.push(compare ? step('分别整理两套方案', '用户给出的方案 A 与方案 B', '方案 A：HM-ESS-8K / 5 kWh；方案 B：HM-ESS-12K / 10 kWh。保持两套方案独立，不合并配置。', '本次输入') : step('形成配置清单', '需求及产品参数', '逆变器 1 台' + (capacity ? '；电池 ' + capacity / 5 + ' 组，共 ' + capacity + ' kWh。' : '。'), '本次配置'));
       trace.push(step('执行分项校验', model, r.checks.map(c => c.name + '：' + c.result).join('；'), 'RULE-ESS-026 V1.4', r.quoteEligible ? '成功' : '待确认'));
-      if (compare || change) trace.push(step('整理版本差异', '明确方案与版本', compare ? '对比功率、容量与电网适用性；不自动选择方案。' : '保留 V1，输出 V2 和变更影响。', 'S-001'));
-      p.next = r.quoteEligible ? ['基于当前配置，在华东测算费用，不送审'] : ['补充当前配置的兼容资料，继续校验'];
+      if (compare || change) trace.push(step('整理版本差异', '明确方案与版本', compare ? '对比功率、容量与电网适用性；不自动选择方案。' : '保留 V1，输出 V2 和变更影响。', compare ? '本次方案 A / B' : 'S-001'));
+      p.next = compare ? [] : r.quoteEligible ? ['基于当前配置，在华东测算费用，不送审'] : ['补充当前配置的兼容资料，继续校验'];
       return done(r);
     }
 
@@ -75,7 +82,7 @@
       const selected = context.selected;
       const distinctModels = [...new Set(input.match(/HM-[A-Z0-9-]+/g) || [])];
       const referenced = /当前配置|这套|组合|搭配|配套电池/.test(input) || distinctModels.length > 1;
-      if (referenced && (!selected || selected.type !== 'selection' || !selected.quoteEligible)) return wait('当前没有唯一且通过检查的配置，请先确认配置版本。');
+      if (referenced && (!selected || selected.type !== 'selection' || selected.comparisonOnly || !selected.quoteEligible)) return wait('当前没有唯一且通过检查的配置，请先确认配置版本。');
       if (referenced && selected.adopted && !selected.businessApproved) return wait('该配置已采纳，正式用于报价前还需其他有权限的人员完成业务批准。');
       const code = input.match(/HM-[A-Z0-9-]+/)?.[0] || (referenced ? selected.models[0].name : /Q-001/.test(input) ? 'HM-ESS-8K' : '');
       if (!code) return wait('报价目标已明确，请指定产品及数量，或引用当前已检查配置。', ['产品为 HM-ESS-8K，数量 1 台']);
@@ -143,7 +150,7 @@
       if (!ref && !/合同正文.*(?:载明|约定|金额|付款|质保)/.test(input)) return wait('合同检查需要正文或唯一合同编号，尚未开始条款核对。', ['请检查合同 CT-2026-018']);
       const body = ref ? docs().contract.text : input;
       const extraction = /提取|整理.*事项/.test(input);
-      const r = base('contract', extraction ? '合同履约事项清单' : /付款/.test(input) ? '合同付款条款检查' : '合同一致性与条款检查', ref ? ['contract', 'price'] : []);
+      const r = base('contract', extraction ? '合同履约事项清单' : /付款/.test(input) ? '合同付款条款检查' : /质保/.test(input) ? '合同验收与质保检查' : '合同一致性与条款检查', ref ? ['contract', 'price'] : []);
       const p = r.presentation;
       r.version = ref ? 'CT-2026-018 / V1.0' : '本次合同正文 / V1';
       if (!ref) r.localSources = [{ id: 'INPUT', title: '本次提供的合同正文', version: '当前输入', section: '用户提供内容', collection: '会话资料', date: '', text: body }];

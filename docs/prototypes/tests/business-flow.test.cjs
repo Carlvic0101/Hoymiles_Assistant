@@ -100,3 +100,24 @@ test('explicit model and region corrections take precedence over previous input'
   assert.ok(flow('方案报价', '华东 HM-UNKNOWN 1 台\n补充：型号为 HM-ESS-8K').record.published);
   assert.ok(flow('方案报价', '欧洲 HM-ESS-8K 1 台\n补充：地区更正为华东').record.published);
 });
+test('comparison keeps the two candidate configurations separate and cannot be quoted', () => {
+  const request = examples['产品选型'].find(row => row.intent === '方案比较').text;
+  const r = flow('产品选型', request).record;
+  assert.equal(r.quoteEligible, false);
+  assert.ok(r.checks.some(c => c.name.includes('方案 B') && c.result === '不满足'));
+  const compared = r.presentation.sections.find(s => s.title === '方案对比');
+  assert.ok(compared.rows.some(row => row[1] === '8 kW / 5 kWh' && row[2] === '12 kW / 10 kWh'));
+  assert.ok(!r.presentation.sections.some(s => s.title === '配置清单'));
+  assert.doesNotMatch(r.trace.map(s=>s.output).join('\n'), /逆变器 1 台；电池 2 组/);
+  r.quoteEligible = true;
+  assert.equal(flow('方案报价', '华东，当前配置报价', r).record, null);
+});
+test('quantity-change question produces a new quotation amount and preserves the review hold', () => {
+  const request = examples['方案报价'].find(row => row.intent === '报价变更').text;
+  const r = flow('方案报价', request).record;
+  assert.equal(r.published.amount, '¥14,400');
+  assert.equal(r.version, 'Q-001 / V2');
+  assert.equal(r.status, '处理中');
+  const delta = r.presentation.sections.find(s => s.title === '新旧版本差异');
+  assert.ok(delta.rows.some(row => row[0] === '采购数量' && row[1] === '1 台' && row[2] === '2 台'));
+});

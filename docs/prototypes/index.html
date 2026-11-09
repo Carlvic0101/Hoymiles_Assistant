@@ -266,34 +266,34 @@
     const PLUGINS = ["产品选型", "方案报价", "标书管理", "合同管理", "故障诊断"];
     const EXAMPLES = {
       "产品选型": [
-        { intent: "选型推荐", text: "选型推荐：客户张敏，项目户用并网，地区华东。负荷约 8kW，交流 220V 单相 50Hz，屋顶安装。请给出适用型号、数量和依据。" },
-        { intent: "配置校验", text: "配置校验：逆变器 HM-ESS-8K 1 台，储能电池 5kWh 1 台，交流耦合，电网 220V 单相 50Hz，地区华东，屋顶安装。请检查兼容、数量和并网保护，并写明依据。" },
-        { intent: "方案比较", text: "方案比较：地区华东，项目户用并网，负荷 8kW，交流 220V 单相 50Hz。方案 A 为 HM-ESS-8K 配 5kWh 电池；方案 B 为 HM-ESS-12K 配 10kWh 电池。请对比功率、容量和扩容条件。" },
-        { intent: "配置变更", text: "配置变更：配置编号 S-001，项目户用并网，现为 HM-ESS-8K 配 5kWh 电池，地区华东，电网 220V 单相 50Hz。请把容量改为 10kWh，重新校验兼容和数量。" }
+        { intent: "选型推荐", label: "客户想做 8kW 户用光储，怎么配更合适？", text: "客户在华东做户用光储项目，峰值负荷约 8kW，现场电网 220V 单相 50Hz，屋顶安装。请做选型推荐，列出适用型号、数量、采用理由和需要完成的检查。" },
+        { intent: "配置校验", label: "安装前，逆变器和电池能否配套使用？", text: "安装前请做配置校验：华东户用项目计划使用 HM-ESS-8K 1 台、HM-BAT-5 1 组（5kWh），现场电网 220V 单相 50Hz，屋顶安装。请核对设备兼容、数量和并网保护；不能确认或未执行的检查单独列出。" },
+        { intent: "方案比较", label: "两套光储方案，哪套适合客户的单相电网？", text: "客户在两套配置之间犹豫，请做方案比较：华东户用项目，负荷约 8kW，现场电网 220V 单相 50Hz。方案 A 为 HM-ESS-8K 配 5kWh 电池；方案 B 为 HM-ESS-12K 配 10kWh 电池。请对比功率、容量及电网适用性，标明不满足的条件和仍需检查的项目。" },
+        { intent: "配置变更", label: "电池从 5kWh 扩到 10kWh，要改哪些配置？", text: "客户希望增加储能容量，请做配置变更：原配置 S-001 为 HM-ESS-8K 配 5kWh 电池，华东户用项目，现场电网 220V 单相 50Hz。现将电池容量改为 10kWh，其他条件不变。请保留旧版，列出数量变化并重新校验配套。" }
       ],
       "方案报价": [
-        { intent: "报价测算", text: "报价测算：地区华东，型号 HM-ESS-8K 2 台。请按适用价表核算设备与辅材费用，列出不包含的费用，不生成正式报价文件。" },
-        { intent: "报价生成", text: "报价生成：地区华东，采购 HM-ESS-8K 1 台。请按当前适用价表生成报价草稿，列出费用、商务条件和有效期。" },
-        { intent: "报价检查", text: "报价检查：报价 Q-001，地区华东，型号 HM-ESS-8K 1 台，设备费 ¥6,800，辅材费 ¥400，金额 ¥7,200，含税不含安装，有效期至 2026-12-31。请核对是否漏掉运输或调试。" },
-        { intent: "报价变更", text: "报价变更：报价 Q-001，地区华东，型号 HM-ESS-8K 1 台，金额 ¥7,200，含税不含安装。请把有效期由 2026-11-30 改为 2026-12-31，数量仍为 1 台，不对外发送。" }
+        { intent: "报价测算", label: "客户先要预算，2 台设备加辅材大概多少钱？", text: "华东客户想先了解预算，计划采购 HM-ESS-8K 2 台。请做报价测算，按适用价表列出设备和标准辅材的含税单价、小计、合计，以及尚未包含的费用。先不送审。" },
+        { intent: "报价生成", label: "客户已确认型号，帮我准备一版报价草稿。", text: "华东客户已确定采购 HM-ESS-8K 1 台。请生成报价草稿，列明设备和辅材费用、商务条件、有效期及需要另行确认的服务费用，并按流程送审；发布仍需单独确认。" },
+        { intent: "报价检查", label: "报价没写运输和调试，发给客户前怎么核对？", text: "请做报价检查：Q-001 面向华东客户，HM-ESS-8K 1 台，设备费 ¥6,800、辅材费 ¥400、金额 ¥7,200，含税不含安装，有效期至 2026-12-31。客户询问运输和调试是否包含，请核对金额、费用边界和待补事项，不对外发布。" },
+        { intent: "报价变更", label: "客户把数量从 1 台改成 2 台，报价怎么调整？", text: "华东客户调整了采购数量，请做报价变更：原报价 Q-001 为 HM-ESS-8K 1 台，含税金额 ¥7,200，不含运输、安装和调试，有效期至 2026-11-30。现在数量改为 2 台，有效期更新到 2026-12-31。请保留旧版并列出数量、金额和有效期差异，先不送审、不对外发布。" }
       ],
       "标书管理": [
-        { intent: "招标分析", text: "招标分析：读取 TB-2026-032 V1.0，项目园区招标、地区华东。请拆分资格、技术和商务要求，列出满足情况和缺口。" },
-        { intent: "投标材料匹配", text: "投标材料匹配：依据 TB-2026-032 V1.0，匹配逆变器认证、厂家授权和同类业绩，逐项核对有效期及适用范围。" },
-        { intent: "响应编写", text: "响应编写：依据 TB-2026-032 V1.0，生成条款响应矩阵及技术、商务章节草稿，注明依据、偏离和费用边界。" },
-        { intent: "标书检查", text: "标书检查：依据 TB-2026-032 V1.0，当前厂家授权已过期。请核对材料及响应缺口，说明哪些问题需要补齐后才能送审。" }
+        { intent: "招标分析", label: "刚收到招标文件，哪些要求必须先核清？", text: "招标分析：刚收到园区光储项目招标文件 TB-2026-032 V1.0。请按原文整理资格、技术和商务要求，标出截止时间、满足情况和缺口，先不编写响应正文。" },
+        { intent: "投标材料匹配", label: "投标要准备哪些资质？现有材料够不够用？", text: "投标材料匹配：我们准备参与 TB-2026-032 V1.0 对应的园区光储项目，现有材料见 MAT-2026-041。请逐项匹配产品认证、厂家授权和同类业绩，核对有效期、产品及地区适用范围，列出可用材料和仍需补齐的内容。" },
+        { intent: "响应编写", label: "技术和商务响应，怎样逐条对应招标要求？", text: "响应编写：请依据 TB-2026-032 V1.0 和现有产品、资质及价格资料，为园区光储项目整理条款响应矩阵及技术、商务章节草稿。每条写明依据、满足状态和偏离；没有费用依据的服务不要承诺包含。" },
+        { intent: "标书检查", label: "厂家授权已过期，这份标书还能送审吗？", text: "标书检查：TB-2026-032 V1.0 对应的响应准备送审，但当前提供的厂家授权 MAT-A02 已过期。请检查受影响的条款、材料缺口和补齐事项，明确当前是否具备送审条件。" }
       ],
       "合同管理": [
-        { intent: "合同审核", text: "请检查合同 CT-2026-018，核对设备、金额和付款条件，标出需要确认的事项。" },
-        { intent: "履约事项提取", text: "履约事项提取：合同正文约定交付为生效后 15 日发货，验收为到货后 7 日内，付款为预付 30%、验收后 70%，质保 5 年。请提取事项、触发条件和凭证。" },
-        { intent: "付款条款检查", text: "请检查合同 CT-2026-018 的付款条款，列出付款比例、触发条件和待确认项。" },
-        { intent: "交付验收提取", text: "履约事项提取：请读取合同 CT-2026-018，整理交付、验收和质保事项，不更新履约状态。" }
+        { intent: "合同审核", label: "客户准备签约，合同里的型号和金额对得上吗？", text: "请检查合同 CT-2026-018：客户准备签约，重点核对设备型号、含税金额和费用边界。对照合同注明的价格依据，列出不一致及无法核实的内容。" },
+        { intent: "付款条款检查", label: "预付 30%、验收后付尾款，付款条件还有哪些缺口？", text: "请检查合同 CT-2026-018 的付款条款：预付款 30%、验收后 70%。请列明每笔款项的触发条件、所需凭证，以及仍需与客户确认的验收和付款事项。" },
+        { intent: "质保条款检查", label: "合同写了 5 年质保，起算时间和责任范围清楚吗？", text: "请检查合同 CT-2026-018 的质保和验收条款。正文写了质保 5 年、到货后 7 日内验收，请标出质保起算条件、验收标准和责任范围中尚未明确的内容，列出需要补充确认的事项。" },
+        { intent: "履约事项提取", label: "交付、验收和收款，分别要跟进什么？", text: "请提取合同 CT-2026-018 的履约事项。把生效后 15 日发货、到货后 7 日内验收、预付 30%、验收后 70%和 5 年质保整理成跟进清单，列明触发条件、责任和凭证；合同未写明的日期或条件保留为待确认。" }
       ],
       "故障诊断": [
-        { intent: "设备离线", text: "故障诊断：型号 HM-ESS-8K，告警代码 E01，2026-11-09 09:40 起设备离线。现场交流 220V 单相，人员已离开设备。请按已有事实自主排查。" },
-        { intent: "功率受限", text: "故障诊断：型号 HM-ESS-8K，告警代码 P12，2026-11-09 10:15 起功率受限，输出约 3kW，低于约 8kW 负荷。交流 220V 单相，固件未知。请自主排查。" },
-        { intent: "通信告警", text: "故障诊断：型号 HM-ESS-8K，告警代码 C07，2026-11-09 11:05 起通信告警，DTU 与逆变器中断。现场网络为有线。请自主排查。" },
-        { intent: "告警停机", text: "故障诊断：型号 HM-ESS-8K，告警代码 S21，2026-11-09 14:20 告警后停机。交流 220V 单相 50Hz，并网保护曾动作一次。请自主排查。" }
+        { intent: "设备离线", label: "客户说设备突然离线，先查哪里？", text: "请做故障诊断：客户反馈 HM-ESS-8K 从 2026-11-09 09:40 起设备离线，出现告警 E01，现场电网 220V 单相，联网状态尚未核实。请整理已知事实、取证顺序和需要补充的资料，形成阶段报告和工单草稿，不正式报修。" },
+        { intent: "功率受限", label: "白天输出明显偏低，是设备故障还是运行限制？", text: "请做故障诊断：HM-ESS-8K 从 2026-11-09 10:15 起功率受限，告警 P12，输出约 3kW，现场负荷约 8kW，电网 220V 单相。固件版本和完整日志暂缺。请列出可能原因及需要验证的证据，不能把疑似原因写成确诊；先形成阶段报告和工单草稿。" },
+        { intent: "通信告警", label: "现场网络正常，DTU 为什么仍连不上逆变器？", text: "请做故障诊断：HM-ESS-8K 在 2026-11-09 11:05 出现通信告警 C07，DTU 与逆变器通信中断。现场人员反馈有线网络可用，但尚未提供设备端通信报文。请核对可能故障环节和链路证据缺口，不把网络可用等同于设备通信正常；形成阶段报告和工单草稿。" },
+        { intent: "告警停机", label: "设备告警后停机，报修前还要补哪些信息？", text: "请做故障诊断：HM-ESS-8K 在 2026-11-09 14:20 告警后停机，代码 S21，保护曾动作一次，现场电网 220V 单相 50Hz。尚未提供完整运行日志，也没有设备恢复证据。请列出待补资料和后续动作，形成阶段报告和工单草稿，先不要正式报修。" }
       ]
     };
     const PROGRESS = ["处理中", "待审核", "待技术确认", "待商务确认", "待发布", "已发布", "已通过", "未通过", "提交结果未知"];
@@ -589,7 +589,7 @@
     function isProgress(status) { return PROGRESS.includes(status); }
     function unchecked(record) { return (record.checks || []).filter((c) => c.result === "未执行"); }
     function quoteReady(record) {
-      return !!(record && record.type === "selection" && record.quoteEligible && record.status !== "待技术确认" && record.status !== "校验失败" && unchecked(record).length === 0);
+      return !!(record && record.type === "selection" && !record.comparisonOnly && record.quoteEligible && record.status !== "待技术确认" && record.status !== "校验失败" && unchecked(record).length === 0);
     }
     function visibleRecords(u) {
       if (!u) return [];
@@ -1605,7 +1605,7 @@
       const arrow = '<svg viewBox="0 0 24 24" aria-hidden="true" width="16" height="16"><path d="M12 19V6M6 11l6-6 6 6" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>';
       const corner = '<svg class="suggest-arrow" viewBox="0 0 24 24" aria-hidden="true" width="16" height="16"><path d="M7 17L17 7M9 7h8v8" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>';
       const chosen = EXAMPLES[state.composer.plugin] || [];
-      const suggest = centered && chosen.length ? '<div class="suggest">' + chosen.map((item) => { const line = item.text || item; const chip = item.intent || state.composer.plugin; return '<button type="button" class="suggest-item" data-act="use-example" data-example="' + esc(t(line)) + '"><span class="suggest-text">' + esc(t(line)) + '</span><span class="suggest-chip">' + esc(t(chip)) + '</span>' + corner + '</button>'; }).join('') + '</div>' : '';
+      const suggest = centered && chosen.length ? '<div class="suggest"><p class="suggest-hint" id="suggest-hint">' + (state.lang === 'en' ? 'Choose a question to fill in the request. Edit before sending.' : '选择问题填入完整需求，可修改后发送') + '</p>' + chosen.map((item) => { const line = item.text || item; const label = item.label || line; const chip = item.intent || state.composer.plugin; return '<button type="button" class="suggest-item" data-act="use-example" data-example="' + esc(t(line)) + '" aria-describedby="suggest-hint"><span class="suggest-text">' + esc(t(label)) + '</span><span class="suggest-chip">' + esc(t(chip)) + '</span>' + corner + '</button>'; }).join('') + '</div>' : '';
       return '<div class="assistant' + (centered ? ' is-center' : '') + '"><div class="thread"><div class="thread-inner">' + current + '</div></div><form class="composer-wrap" id="send-form"><div class="composer-box"><textarea class="draft" id="draft" aria-label="' + esc(t("任务内容")) + '" placeholder="' + esc(t("今天需要处理什么业务？")) + '">' + esc(state.composer.text) + '</textarea><div class="composer-bar"><div class="composer-left"><label class="round-btn round-add" role="button" tabindex="0" aria-label="' + esc(t("添加附件")) + '">' + plus + '<input id="file" type="file" hidden></label><div class="plugins">' + plugins + '</div></div><div class="composer-tools"><button type="button" class="round-btn round-add' + (state.composer.listening ? ' listening' : '') + '" data-act="voice" aria-pressed="' + (state.composer.listening ? 'true' : 'false') + '" aria-label="' + esc(t(state.composer.listening ? "停止语音输入" : "语音输入")) + '">' + mic + '</button><button class="round-btn round-send" type="submit" ' + (state.composer.busy ? 'disabled ' : '') + 'aria-label="' + esc(t("发送")) + '">' + arrow + '</button></div></div>' + fileLine + voiceLine + (state.composer.error ? '<p class="error">' + esc(t(state.composer.error)) + '</p>' : '') + '</div><div class="composer-hint"><span>' + (state.lang === 'en' ? 'Review business results before use' : '业务结果请核对后使用') + '</span><span>' + (state.lang === 'en' ? 'Ctrl / ⌘ + Enter to send' : 'Ctrl / ⌘ + Enter 发送') + '</span></div></form>' + suggest + '</div>';
     }
     function review(u) {

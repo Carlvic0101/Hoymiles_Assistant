@@ -79,6 +79,7 @@ textarea.draft::placeholder { color: #68747e; }
 .plugins { align-self: center; gap: 6px; }
 .composer-hint { display: flex; justify-content: space-between; flex-wrap: wrap; gap: 4px 12px; font-size: 11px; color: var(--muted); line-height: 18px; margin: 8px 2px 0; }
 .suggest { padding-top: 12px; padding-bottom: 8px; }
+.suggest-hint { margin: 0 10px 6px; color: #617168; font-size: 12px; line-height: 20px; }
 .suggest-item { padding: 14px 10px; gap: 12px; border-radius: 8px; align-items: center; }
 .suggest-chip { height: auto; min-height: 24px; max-width: 130px; padding: 3px 8px; line-height: 18px; white-space: normal; overflow-wrap: anywhere; }
 .suggest-arrow { color: var(--signal); }
