@@ -1,9 +1,9 @@
 {
   "stage": "initialized",
   "mode": "onboarded",
-  "design_ready": false,
+  "design_ready": true,
   "development_ready": false,
   "current_task": null,
   "blocked": false,
-  "notes": "2026-11-08 暂停。明天从静态原型继续：历史对话的时长、悬停三个点与删除、由新到旧排序已写入 docs/prototypes/index.html 和 docs/ui-style.md。PRD、技术方案、风格文档仍为 Draft。远程仓库为 git@github.com:Carlvic0101/Hoymiles_Assistant.git 的 main。"
+  "notes": "2026-11-09 用户选择自动推进，原话「自动推进，我想快点让codex接管」。mode_confirmed=true。任务清单已核对。本窗口不开始写 React 或 FastAPI，交给 Codex 从 T-001 与 T-002 按依赖继续。前端任务仍须用户对照原型认可后才算通过。"
 }

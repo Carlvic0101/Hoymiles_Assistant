@@ -1,0 +1,3030 @@
+{
+  "project": "禾迈电力电子销售助手",
+  "project_type": "web",
+  "specification": "default",
+  "created": "2026-11-09",
+  "max_retries": 2,
+  "execution_mode": "automatic",
+  "mode_confirmed": true,
+  "step_gate": {
+    "kind": "task_review",
+    "task_id": null,
+    "status": "pending",
+    "user_confirmation": null
+  },
+  "source_files": {
+    "prd": "docs/PRD.md",
+    "tech_spec": "docs/tech-spec.md",
+    "ui_style": "docs/ui-style.md",
+    "prototype": "docs/prototypes/index.html"
+  },
+  "external_services": [
+    {
+      "name": "DeepSeek Chat",
+      "config_keys": [
+        "llm_provider",
+        "llm_base_url",
+        "llm_api_key",
+        "llm_model",
+        "llm_temperature",
+        "llm_timeout_seconds",
+        "llm_max_retries",
+        "llm_retry_interval_seconds",
+        "llm_use_mock",
+        "llm_max_tool_rounds"
+      ],
+      "tester_access_required": true,
+      "required": false,
+      "fallback_allowed": true,
+      "status": "missing"
+    },
+    {
+      "name": "种子知识文件",
+      "config_keys": [],
+      "tester_access_required": false,
+      "required": true,
+      "fallback_allowed": false,
+      "status": "confirmed"
+    },
+    {
+      "name": "本系统工单表",
+      "config_keys": [
+        "ticket_provider",
+        "ticket_create_timeout_seconds"
+      ],
+      "tester_access_required": false,
+      "required": true,
+      "fallback_allowed": false,
+      "status": "confirmed"
+    }
+  ],
+  "features": [
+    {
+      "id": "F-001",
+      "title": "产品选型",
+      "source_requirements": [
+        "REQ-001"
+      ]
+    },
+    {
+      "id": "F-002",
+      "title": "方案报价",
+      "source_requirements": [
+        "REQ-002"
+      ]
+    },
+    {
+      "id": "F-003",
+      "title": "故障诊断",
+      "source_requirements": [
+        "REQ-003"
+      ]
+    },
+    {
+      "id": "F-004",
+      "title": "标书管理",
+      "source_requirements": [
+        "REQ-004"
+      ]
+    },
+    {
+      "id": "F-005",
+      "title": "合同管理",
+      "source_requirements": [
+        "REQ-005"
+      ]
+    },
+    {
+      "id": "F-006",
+      "title": "搜索、评价、取消与内部业务收口",
+      "source_requirements": [
+        "REQ-006"
+      ]
+    },
+    {
+      "id": "F-007",
+      "title": "内部人员工作台、登录与跨业务入口",
+      "source_requirements": [
+        "REQ-001",
+        "REQ-002",
+        "REQ-003",
+        "REQ-004",
+        "REQ-005",
+        "REQ-006"
+      ]
+    }
+  ],
+  "tasks": [
+    {
+      "id": "T-001",
+      "title": "内部人员四页：登录、工作台、助手、审核与发布（契约 Mock）",
+      "type": "frontend",
+      "description": "前端初始化并入本任务。按已确认原型一次做完内部人员四页：/login、/ Dashboard、/assistant、/review。使用技术方案 §二契约的 Mock，数据集中在 frontend/src/mocks/，界面带可见 Mock 标识。本版不实现终端客户和经销商使用界面；原型里的客户/经销商演示账号不作为本版交付页面。需要真实后端才能完成的 PRD AC 不在本任务验收，原文留在后续接口任务和 T-047 联调。本任务不派 Tester，交回后由用户对照原型和 docs/ui-style.md 认可。",
+      "source_feature": "F-007",
+      "acceptanceCriteria": [],
+      "technicalChecks": [
+        "路由仅为 /login、/、/assistant、/review；未登录不能进入业务页；登录失败留在登录页并显示「邮箱或口令不正确」",
+        "对照原型锚点 #/login、#/dashboard、#/assistant、#/review 与 ui-style P-001～P-004：侧栏 224px、主按钮高 40px、信号色 #0B6E5A、插件五个且不收进更多",
+        "助手输入框下为产品选型、方案报价、标书管理、合同管理、故障诊断；可交付结果下方询问采纳并归档，不用弹窗；思考过程仅内部人员可见且演示步骤带演示标记",
+        "审核页通过与发布分开，待发布的发布按钮不在通过同一位置；自审、自己重提、无权限分别写明原因",
+        "Mock 对齐 tech-spec §二信封与字段；不在浏览器保留成本、利润、内部意见；VITE_USE_MOCK 可切换；npm 的 type-check、lint、build 通过；dev 可在 5199 启动",
+        "窄屏 768/390：插件换行、侧栏收为图标栏、审核列表与详情同路由切换"
+      ],
+      "externalServices": [],
+      "dependencies": [],
+      "priority": 10,
+      "context_files": [
+        {
+          "path": "docs/PRD.md",
+          "section": "这一版界面只做内部人员"
+        },
+        {
+          "path": "docs/PRD.md",
+          "section": "界面约定"
+        },
+        {
+          "path": "docs/PRD.md",
+          "section": "思考过程给谁看"
+        },
+        {
+          "path": "docs/PRD.md",
+          "section": "结果生成后再归档，归档不等于审批"
+        },
+        {
+          "path": "docs/tech-spec.md",
+          "section": "一、用户要完成什么"
+        },
+        {
+          "path": "docs/tech-spec.md",
+          "section": "二、前后端怎么分工，接口怎么拆"
+        },
+        {
+          "path": "docs/ui-style.md",
+          "section": "一、设计目标与风格判断"
+        },
+        {
+          "path": "docs/ui-style.md",
+          "section": "二、全局视觉系统"
+        },
+        {
+          "path": "docs/ui-style.md",
+          "section": "三、全局组件与状态"
+        },
+        {
+          "path": "docs/ui-style.md",
+          "section": "四、界面清单与页面设计 > P-001 登录"
+        },
+        {
+          "path": "docs/ui-style.md",
+          "section": "四、界面清单与页面设计 > P-002 工作台"
+        },
+        {
+          "path": "docs/ui-style.md",
+          "section": "四、界面清单与页面设计 > P-003 助手"
+        },
+        {
+          "path": "docs/ui-style.md",
+          "section": "四、界面清单与页面设计 > P-004 审核与发布"
+        },
+        {
+          "path": "docs/prototypes/index.html",
+          "section": "/login"
+        },
+        {
+          "path": "docs/prototypes/index.html",
+          "section": "/dashboard"
+        },
+        {
+          "path": "docs/prototypes/index.html",
+          "section": "/assistant"
+        },
+        {
+          "path": "docs/prototypes/index.html",
+          "section": "/review"
+        },
+        {
+          "path": "docs/decisions.md",
+          "section": "D-006 思考过程当前给谁看"
+        },
+        {
+          "path": "docs/decisions.md",
+          "section": "D-008 结果生成后再归档"
+        },
+        {
+          "path": "docs/decisions.md",
+          "section": "D-009 本版只做内部人员界面，并收紧搜索、评价和取消"
+        }
+      ],
+      "rules_files": [
+        "specification/default/frontend/tech-stack.md",
+        "specification/default/frontend/style.md",
+        "specification/default/frontend/mock.md",
+        "specification/default/frontend/api-client.md",
+        "specification/default/frontend/acceptance.md",
+        "specification/default/shared/naming.md",
+        "specification/default/shared/env-policy.md",
+        "specification/default/shared/security.md"
+      ],
+      "write_scope": [
+        "frontend/"
+      ],
+      "status": "pending",
+      "retry_count": 0,
+      "notes": ""
+    },
+    {
+      "id": "T-002",
+      "title": "API-001 POST /api/sessions 登录（含后端初始化）",
+      "type": "backend",
+      "description": "API-001 POST /api/sessions。后端初始化并入本任务：FastAPI、PyCore PYTHONPATH、SQLite、db/models.py 写入技术方案第三节全部核心实体（本文件本轮唯一写入者）、deps、bcrypt、种子账号与角色码、.env.example 字段名。.env 只写字段名到任务产物，不写真实密钥。只实现登录这一个接口。后续接口任务依赖本任务提供的共享模型和鉴权，不修改 frontend/。",
+      "source_feature": "F-007",
+      "acceptanceCriteria": [
+        "[AC-033] 给定错误口令，或未登录 → 不能进入业务入口，也不能读到任何选型、报价、标书、合同、诊断或工单内容。"
+      ],
+      "technicalChecks": [
+        "成功：正确邮箱口令 200，data.access_token、token_type=bearer、UserPublic，不含 hashed_password",
+        "失败：错误口令 401 UNAUTHORIZED 文案「邮箱或口令不正确」，不区分哪一项；缺字段 400 VALIDATION_ERROR",
+        "处理步骤：校验字段 → 查用户 → bcrypt 核口令 → 签发 JWT；pytest backend/tests --timeout=120 覆盖本接口",
+        "共享：models.py 含 users/customers/conversations 及五类业务与 tickets/audit_logs；种子知识目录就位；无 passlib；配置由 PyCore 读 backend/.env"
+      ],
+      "externalServices": [],
+      "dependencies": [],
+      "priority": 10,
+      "context_files": [
+        {
+          "path": "docs/PRD.md",
+          "section": "跨条目验收"
+        },
+        {
+          "path": "docs/PRD.md",
+          "section": "权限矩阵"
+        },
+        {
+          "path": "docs/tech-spec.md",
+          "section": "二、前后端怎么分工，接口怎么拆 > API-001 登录"
+        },
+        {
+          "path": "docs/tech-spec.md",
+          "section": "三、接口请求数据的类型选型"
+        },
+        {
+          "path": "docs/tech-spec.md",
+          "section": "七、项目本地层级设计"
+        },
+        {
+          "path": "docs/tech-spec.md",
+          "section": "七、项目本地层级设计 > 配置表（仅字段名）"
+        },
+        {
+          "path": "docs/tech-spec.md",
+          "section": "六、接口失败异常设计"
+        },
+        {
+          "path": "docs/decisions.md",
+          "section": "D-003 账号从哪里来"
+        }
+      ],
+      "rules_files": [
+        "specification/default/backend/api-design.md",
+        "specification/default/backend/tech-stack.md",
+        "specification/default/backend/layers.md",
+        "specification/default/backend/error-handling.md",
+        "specification/default/backend/workflow.md",
+        "specification/default/shared/security.md",
+        "specification/default/shared/naming.md",
+        "specification/default/shared/env-policy.md"
+      ],
+      "write_scope": [
+        "backend/",
+        "backend/src/main.py",
+        "backend/src/api/deps.py",
+        "backend/src/api/routes/sessions.py",
+        "backend/src/db/models.py",
+        "backend/src/db/session.py",
+        "backend/src/models/",
+        "backend/src/core/security.py",
+        "backend/src/repositories/",
+        "backend/requirements.txt",
+        "backend/.env.example",
+        "backend/data/knowledge/",
+        "backend/tests/conftest.py",
+        "backend/tests/test_sessions_login.py",
+        "pyproject.toml"
+      ],
+      "status": "pending",
+      "retry_count": 0,
+      "notes": ""
+    },
+    {
+      "id": "T-003",
+      "title": "API-002 DELETE /api/sessions/current 退出",
+      "type": "backend",
+      "description": "API-002 DELETE /api/sessions/current。依赖 T-002 已写入的 sessions 路由文件，在同一文件追加退出。 只实现这一个自有接口：按技术方案核对成功响应、失败响应和处理步骤。不把整条用户链路放进本任务，不修改 frontend/ 下的页面、样式、组件或前端接口调用代码。",
+      "source_feature": "F-007",
+      "acceptanceCriteria": [],
+      "technicalChecks": [
+        "成功 200 data.logged_out=true",
+        "无/坏 token 401",
+        "不实现服务端 JWT 黑名单，与契约一致",
+        "用与契约一致的请求核对 HTTP 状态、success 信封、data 字段和类型",
+        "核对失败码、中文 error、不泄露无权字段或 hashed_password",
+        "处理步骤与技术方案该节一致，含鉴权 Bearer（除登录外）和角色投影"
+      ],
+      "externalServices": [],
+      "dependencies": [
+        "T-002"
+      ],
+      "priority": 20,
+      "context_files": [
+        {
+          "path": "docs/PRD.md",
+          "section": "跨条目验收"
+        },
+        {
+          "path": "docs/decisions.md",
+          "section": "D-003 账号从哪里来"
+        },
+        {
+          "path": "docs/tech-spec.md",
+          "section": "二、前后端怎么分工，接口怎么拆 > API-002 退出"
+        },
+        {
+          "path": "docs/tech-spec.md",
+          "section": "六、接口失败异常设计"
+        }
+      ],
+      "rules_files": [
+        "specification/default/backend/api-design.md",
+        "specification/default/backend/tech-stack.md",
+        "specification/default/backend/layers.md",
+        "specification/default/backend/error-handling.md",
+        "specification/default/backend/workflow.md",
+        "specification/default/shared/security.md",
+        "specification/default/shared/naming.md",
+        "specification/default/shared/env-policy.md"
+      ],
+      "write_scope": [
+        "backend/src/api/routes/sessions.py",
+        "backend/tests/test_sessions.py"
+      ],
+      "status": "pending",
+      "retry_count": 0,
+      "notes": ""
+    },
+    {
+      "id": "T-004",
+      "title": "API-003 GET /api/users/me 当前用户与权限",
+      "type": "backend",
+      "description": "API-003 GET /api/users/me。新建 users 路由。本版界面只做内部人员，但账号种子仍含客户/经销商以便接口投影验收。 只实现这一个自有接口：按技术方案核对成功响应、失败响应和处理步骤。不把整条用户链路放进本任务，不修改 frontend/ 下的页面、样式、组件或前端接口调用代码。",
+      "source_feature": "F-007",
+      "acceptanceCriteria": [
+        "[AC-031] 给定一名经销商账号 → 打开标准版 → 看到与终端客户相同的 5 个插件，没有经销商专属功能入口。该账号发起的记录按客户隔离，其他客户看不到。"
+      ],
+      "technicalChecks": [
+        "staff 返回 account_kind=staff 与角色权限码",
+        "dealer 的 permissions 与终端客户相同，无经销商专属码",
+        "未登录 401",
+        "本版页面不交付经销商界面，本接口仍保留三种 account_kind 供后续与投影测试"
+      ],
+      "externalServices": [],
+      "dependencies": [
+        "T-002"
+      ],
+      "priority": 20,
+      "context_files": [
+        {
+          "path": "docs/PRD.md",
+          "section": "跨条目验收"
+        },
+        {
+          "path": "docs/PRD.md",
+          "section": "这一版界面只做内部人员"
+        },
+        {
+          "path": "docs/decisions.md",
+          "section": "D-003 账号从哪里来"
+        },
+        {
+          "path": "docs/decisions.md",
+          "section": "D-009 本版只做内部人员界面，并收紧搜索、评价和取消"
+        },
+        {
+          "path": "docs/tech-spec.md",
+          "section": "二、前后端怎么分工，接口怎么拆 > API-003 当前用户"
+        },
+        {
+          "path": "docs/tech-spec.md",
+          "section": "六、接口失败异常设计"
+        }
+      ],
+      "rules_files": [
+        "specification/default/backend/api-design.md",
+        "specification/default/backend/tech-stack.md",
+        "specification/default/backend/layers.md",
+        "specification/default/backend/error-handling.md",
+        "specification/default/backend/workflow.md",
+        "specification/default/shared/security.md",
+        "specification/default/shared/naming.md",
+        "specification/default/shared/env-policy.md"
+      ],
+      "write_scope": [
+        "backend/src/api/routes/users.py",
+        "backend/tests/test_users.py"
+      ],
+      "status": "pending",
+      "retry_count": 0,
+      "notes": ""
+    },
+    {
+      "id": "T-005",
+      "title": "API-004 POST /api/conversations 创建会话",
+      "type": "backend",
+      "description": "API-004 POST /api/conversations。conversations.py 的唯一首次写入者。五类业务发起可不先选客户，但代发起创建会话时仍指定归属客户。 只实现这一个自有接口：按技术方案核对成功响应、失败响应和处理步骤。不把整条用户链路放进本任务，不修改 frontend/ 下的页面、样式、组件或前端接口调用代码。",
+      "source_feature": "F-007",
+      "acceptanceCriteria": [
+        "[AC-030] 给定内部销售或售前、一名指定客户 → 内部人员代该客户发起选型、报价、标书、合同或诊断 → 记录归该客户，不归代发起人。代发起人不能对自己发起的这一条执行通过或发布；他是否能查看，按他的项目和业务查看权限，不因禁止自审而自动隐藏。指定客户按对应 AC 看到进度或已发布内容。"
+      ],
+      "technicalChecks": [
+        "员工代发起必须带 owner_customer_id，归属永远是该客户，initiator_user_id 为当前用户",
+        "员工未带指定客户或客户冒充他人 403；客户不存在 404",
+        "代发起人不因创建会话获得审核或发布权"
+      ],
+      "externalServices": [],
+      "dependencies": [
+        "T-002"
+      ],
+      "priority": 20,
+      "context_files": [
+        {
+          "path": "docs/PRD.md",
+          "section": "跨条目验收"
+        },
+        {
+          "path": "docs/PRD.md",
+          "section": "结果生成后再归档，归档不等于审批"
+        },
+        {
+          "path": "docs/tech-spec.md",
+          "section": "二、前后端怎么分工，接口怎么拆 > API-004 创建会话"
+        },
+        {
+          "path": "docs/tech-spec.md",
+          "section": "六、接口失败异常设计"
+        }
+      ],
+      "rules_files": [
+        "specification/default/backend/api-design.md",
+        "specification/default/backend/tech-stack.md",
+        "specification/default/backend/layers.md",
+        "specification/default/backend/error-handling.md",
+        "specification/default/backend/workflow.md",
+        "specification/default/shared/security.md",
+        "specification/default/shared/naming.md",
+        "specification/default/shared/env-policy.md"
+      ],
+      "write_scope": [
+        "backend/src/api/routes/conversations.py",
+        "backend/tests/test_conversations.py"
+      ],
+      "status": "pending",
+      "retry_count": 0,
+      "notes": ""
+    },
+    {
+      "id": "T-006",
+      "title": "API-005 GET /api/conversations 会话列表",
+      "type": "backend",
+      "description": "API-005 GET /api/conversations。依赖 T-005 的 conversations 路由文件追加列表。 只实现这一个自有接口：按技术方案核对成功响应、失败响应和处理步骤。不把整条用户链路放进本任务，不修改 frontend/ 下的页面、样式、组件或前端接口调用代码。",
+      "source_feature": "F-007",
+      "acceptanceCriteria": [],
+      "technicalChecks": [
+        "分页信封；当前用户自己的未归档会话仍出现在本列表",
+        "员工只看到有项目权限的会话；客户只看到本客户会话",
+        "这不是搜索，不代替 API-038",
+        "401 未登录"
+      ],
+      "externalServices": [],
+      "dependencies": [
+        "T-005"
+      ],
+      "priority": 30,
+      "context_files": [
+        {
+          "path": "docs/PRD.md",
+          "section": "跨条目验收"
+        },
+        {
+          "path": "docs/PRD.md",
+          "section": "REQ-006 搜索、评价与取消"
+        },
+        {
+          "path": "docs/tech-spec.md",
+          "section": "二、前后端怎么分工，接口怎么拆 > API-005 会话列表"
+        },
+        {
+          "path": "docs/tech-spec.md",
+          "section": "六、接口失败异常设计"
+        }
+      ],
+      "rules_files": [
+        "specification/default/backend/api-design.md",
+        "specification/default/backend/tech-stack.md",
+        "specification/default/backend/layers.md",
+        "specification/default/backend/error-handling.md",
+        "specification/default/backend/workflow.md",
+        "specification/default/shared/security.md",
+        "specification/default/shared/naming.md",
+        "specification/default/shared/env-policy.md"
+      ],
+      "write_scope": [
+        "backend/src/api/routes/conversations.py",
+        "backend/tests/test_conversations.py"
+      ],
+      "status": "pending",
+      "retry_count": 0,
+      "notes": ""
+    },
+    {
+      "id": "T-007",
+      "title": "API-006 GET /api/conversations/{conversation_id} 会话详情",
+      "type": "backend",
+      "description": "API-006 GET /api/conversations/{conversation_id}。同一 conversations 路由追加详情。 只实现这一个自有接口：按技术方案核对成功响应、失败响应和处理步骤。不把整条用户链路放进本任务，不修改 frontend/ 下的页面、样式、组件或前端接口调用代码。",
+      "source_feature": "F-007",
+      "acceptanceCriteria": [],
+      "technicalChecks": [
+        "消息按角色投影：未发布报价无金额",
+        "对当前用户不可见一律 404，不暴露存在性",
+        "已定位但动作越权才 403",
+        "用与契约一致的请求核对 HTTP 状态、success 信封、data 字段和类型"
+      ],
+      "externalServices": [],
+      "dependencies": [
+        "T-006"
+      ],
+      "priority": 40,
+      "context_files": [
+        {
+          "path": "docs/PRD.md",
+          "section": "跨条目验收"
+        },
+        {
+          "path": "docs/PRD.md",
+          "section": "权限矩阵"
+        },
+        {
+          "path": "docs/tech-spec.md",
+          "section": "二、前后端怎么分工，接口怎么拆 > API-006 会话详情"
+        },
+        {
+          "path": "docs/tech-spec.md",
+          "section": "六、接口失败异常设计"
+        }
+      ],
+      "rules_files": [
+        "specification/default/backend/api-design.md",
+        "specification/default/backend/tech-stack.md",
+        "specification/default/backend/layers.md",
+        "specification/default/backend/error-handling.md",
+        "specification/default/backend/workflow.md",
+        "specification/default/shared/security.md",
+        "specification/default/shared/naming.md",
+        "specification/default/shared/env-policy.md"
+      ],
+      "write_scope": [
+        "backend/src/api/routes/conversations.py",
+        "backend/tests/test_conversations.py"
+      ],
+      "status": "pending",
+      "retry_count": 0,
+      "notes": ""
+    },
+    {
+      "id": "T-008",
+      "title": "API-008 POST /api/uploads 任务附件上传与解析",
+      "type": "backend",
+      "description": "API-008 POST /api/uploads。uploads 路由唯一首次写入者。依赖已能创建会话。不调用模型。 只实现这一个自有接口：按技术方案核对成功响应、失败响应和处理步骤。不把整条用户链路放进本任务，不修改 frontend/ 下的页面、样式、组件或前端接口调用代码。",
+      "source_feature": "F-007",
+      "acceptanceCriteria": [
+        "[AC-015] 给定客户在任务中上传了文件，且解析失败 → 结束该次解析 → 页面显示失败原因，并保留这次任务已经输入的内容和解析前已完成的结果。可以移除文件、重试或改用文字继续。",
+        "[AC-041] 给定用户只上传了附件，附件正文里写着报价、送审或报修指令 → 上传完成 → 页面把附件当资料，不因此创建报价、送审或正式报修。需要用户在对话里明确提出该动作。"
+      ],
+      "technicalChecks": [
+        "成功 200 含 upload_id、parse_status parsed/failed；解析失败仍 200 且 parse_error 有原因，不删已输入内容",
+        "类型或大小超限 400；默认 upload_max_bytes=20971520；白名单 pdf,docx,doc,txt,xlsx,csv",
+        "解析出的文字只当资料，不执行附件里的报价/送审/报修指令",
+        "文件落到 backend/data/uploads/，不返回二进制"
+      ],
+      "externalServices": [],
+      "dependencies": [
+        "T-005"
+      ],
+      "priority": 30,
+      "context_files": [
+        {
+          "path": "docs/PRD.md",
+          "section": "跨条目验收"
+        },
+        {
+          "path": "docs/tech-spec.md",
+          "section": "二、前后端怎么分工，接口怎么拆 > API-008 上传文件"
+        },
+        {
+          "path": "docs/tech-spec.md",
+          "section": "六、接口失败异常设计"
+        }
+      ],
+      "rules_files": [
+        "specification/default/backend/api-design.md",
+        "specification/default/backend/tech-stack.md",
+        "specification/default/backend/layers.md",
+        "specification/default/backend/error-handling.md",
+        "specification/default/backend/workflow.md",
+        "specification/default/shared/security.md",
+        "specification/default/shared/naming.md",
+        "specification/default/shared/env-policy.md"
+      ],
+      "write_scope": [
+        "backend/src/api/routes/uploads.py",
+        "backend/src/services/upload_service.py",
+        "backend/tests/test_uploads.py"
+      ],
+      "status": "pending",
+      "retry_count": 0,
+      "notes": ""
+    },
+    {
+      "id": "T-009",
+      "title": "API-007 POST /api/conversations/{conversation_id}/messages 发送对话消息",
+      "type": "backend",
+      "description": "API-007 POST /api/conversations/{conversation_id}/messages。本轮 Agent/LLM/工具的唯一首次写入者。依赖会话详情与上传。生成类无 Key 时只验收假调用边界。 只实现这一个自有接口：按技术方案核对成功响应、失败响应和处理步骤。不把整条用户链路放进本任务，不修改 frontend/ 下的页面、样式、组件或前端接口调用代码。",
+      "source_feature": "F-007",
+      "acceptanceCriteria": [
+        "[AC-020] 适用条件为首版已确认 5 个插件。给定客户在自由对话中要求标书或合同 → 发送该请求 → 进入 REQ-004 或 REQ-005，不提示「当前只支持选型、报价和故障诊断」。原先「3 个插件时拒绝标书和合同」不再适用。",
+        "[AC-034] 给定一句无法判断属于哪类插件的自然语言 → 发送 → 页面要求澄清或纠正任务类型，不创建选型、报价、标书、合同或诊断记录。纠正后进入对应流程。标书和合同请求仍按 AC-020 进入 REQ-004 或 REQ-005。目标明确但只缺参数时不按本条处理，按 AC-036。",
+        "[AC-035] 给定用户问「这款产品额定功率是多少」或同类资料查询 → 发送 → 页面返回授权范围内的资料结果，或说明首版暂不支持该查询并列出五个插件能做的事。不创建选型任务。",
+        "[AC-036] 给定目标已经明确属于选型、报价、标书、合同或诊断，但缺少必要字段 → 发送 → 页面保留这个任务类型，追问缺的字段，不说成意图不明，也不创建缺少阻塞条件的正式记录。",
+        "[AC-037] 给定用户说「上一版」或「这套配置」，而授权范围内有多个客户、项目或版本候选 → 发送 → 页面先请用户确认唯一对象，确认前不引用。只有一个已授权对象时直接使用该版本。",
+        "[AC-038] 给定用户纠正任务或明确否定，例如不要重新选型、只比较方案 → 发送 → 页面按当前这句话执行，不继续被否定的动作。",
+        "[AC-039] 给定用户说先校验、通过后再报价 → 发送 → 先做校验。校验未通过或未执行完时不发起正式报价，并说明报价还在等这一步。首版分步执行时告诉用户下一步，不丢掉后半句报价请求。",
+        "[AC-040] 给定用户说不要送审，或确认后再发布 → 发送或停留在当前记录 → 页面不提交审核，也不发布。报价内容已经生成时，有查看权限的员工能看到该内容，客户看不到；进度使用「处理中」，说明写「内容已生成，按你的要求尚未送审」。生成结束后停止加载，不自动进入「待审核」。用户随后明确要求送审或发布，并且操作者有权限时，才执行对应动作。",
+        "[AC-042] 给定用户从某个插件进入后，实际诉求变成另一类业务 → 发送纠正 → 页面允许切换业务类型，并按新的类型继续，不把新诉求硬留在原来的插件。",
+        "[AC-063] 给定标书任务 → 发送 → 缺少关键招标要求，或必需材料缺失、过期、不适用且没有有效替代时，阻止送审并提示补齐，不把过期材料标成可用。非必需材料的缺口，或可以交给人工判断的偏离，可以带明确标注进入「待审核」。无法判断一项材料是否必需时，先请用户确认，不自动放行。",
+        "[AC-064] 给定五类业务之一 → 直接选择意图并发送，不先选客户和项目 → 可以执行。未归档结果只留在当前会话，不默认绑定客户或项目，也不向客户开放。报价缺地区时先追问地区，不生成报价。引用已有资料时仍核实唯一对象和查看权限，不能跨客户、跨项目混用。"
+      ],
+      "technicalChecks": [
+        "无 Key 或未授权付费时 llm_use_mock=true 走假调用，不得把生成质量写成真实模型通过",
+        "httpx AsyncClient trust_env=False POST {llm_base_url}/chat/completions，禁止官方 SDK，不开启 thinking 扩展",
+        "PluginRegistry 为本轮工具唯一首次写入；intent.txt 只输出约定 JSON，标书/合同不得判不支持",
+        "同一会话 processing 时 409；空内容且无插件 400；意图不明不建业务记录；缺参保留类型；不要送审保持 processing",
+        "采纳并归档写在本接口处理步骤中实现（索引无单独归档接口），保存成功才计一次采纳且不改业务进度",
+        "员工投影含思考步骤，客户投影不含；演示步骤必须带演示标记"
+      ],
+      "externalServices": [
+        "DeepSeek Chat"
+      ],
+      "dependencies": [
+        "T-007",
+        "T-008"
+      ],
+      "priority": 50,
+      "context_files": [
+        {
+          "path": "docs/PRD.md",
+          "section": "跨条目验收"
+        },
+        {
+          "path": "docs/PRD.md",
+          "section": "思考过程给谁看"
+        },
+        {
+          "path": "docs/PRD.md",
+          "section": "结果生成后再归档，归档不等于审批"
+        },
+        {
+          "path": "docs/tech-spec.md",
+          "section": "四、提示词与输出约束"
+        },
+        {
+          "path": "docs/tech-spec.md",
+          "section": "七、项目本地层级设计 > 配置表（仅字段名）"
+        },
+        {
+          "path": "docs/tech-spec.md",
+          "section": "七、项目本地层级设计 > 外部服务清单"
+        },
+        {
+          "path": "docs/decisions.md",
+          "section": "D-005 所有模型调用改用 DeepSeek"
+        },
+        {
+          "path": "docs/decisions.md",
+          "section": "D-007 归属、记住、不送审、步骤时机和标书缺口"
+        },
+        {
+          "path": "docs/decisions.md",
+          "section": "D-008 结果生成后再归档"
+        },
+        {
+          "path": "docs/tech-spec.md",
+          "section": "二、前后端怎么分工，接口怎么拆 > API-007 发送对话消息"
+        },
+        {
+          "path": "docs/tech-spec.md",
+          "section": "六、接口失败异常设计"
+        }
+      ],
+      "rules_files": [
+        "specification/default/backend/api-design.md",
+        "specification/default/backend/tech-stack.md",
+        "specification/default/backend/layers.md",
+        "specification/default/backend/error-handling.md",
+        "specification/default/backend/workflow.md",
+        "specification/default/shared/security.md",
+        "specification/default/shared/naming.md",
+        "specification/default/shared/env-policy.md",
+        "specification/default/backend/plugin.md"
+      ],
+      "write_scope": [
+        "backend/src/api/routes/conversations.py",
+        "backend/src/plugins/registry.py",
+        "backend/src/prompts/intent.txt",
+        "backend/src/services/llm_client.py",
+        "backend/src/services/message_service.py",
+        "backend/tests/test_messages.py"
+      ],
+      "status": "pending",
+      "retry_count": 0,
+      "notes": ""
+    },
+    {
+      "id": "T-010",
+      "title": "API-009 POST /api/selections 提交选型",
+      "type": "backend",
+      "description": "API-009 POST /api/selections。selections.py 唯一首次写入。依赖 T-009 的 PluginRegistry 与 LLM 客户端。 只实现这一个自有接口：按技术方案核对成功响应、失败响应和处理步骤。不把整条用户链路放进本任务，不修改 frontend/ 下的页面、样式、组件或前端接口调用代码。",
+      "source_feature": "F-001",
+      "acceptanceCriteria": [
+        "[AC-001] 适用条件为存在能对应产品资料的候选，关键配套校验通过，必需检查没有未执行、失败或依据缺失。给定客户和一组可用的使用条件 → 提交选型 → 页面显示推荐型号、推荐理由、依据和检查结果，没有价格，状态为校验通过并标记可用于报价。这不等于业务批准，也不等于已经采纳。该结果被采纳并要正式用于报价时，按 AC-069 先做业务批准。校验失败、待技术确认或必需检查未执行时，不放行报价。",
+        "[AC-002] 适用条件为产品资料中没有满足全部条件的候选。给定客户和一组无法匹配的条件 → 提交选型 → 页面说明无法给出型号，没有推荐型号；可以修改条件后再次提交。",
+        "[AC-011] 给定客户和一组已经匹配到候选型号、但没有有效兼容依据的条件 → 提交选型 → 页面保留候选型号，状态为待技术确认，并写明缺少哪项依据；该版本不能用于正式报价。可以补充资料后再次校验。",
+        "[AC-021] 给定一次已展示的选型结果，其中有检查未执行 → 打开结果 → 页面单独列出未执行的检查，不能只显示「方案可行」。该版本不能用于正式报价。可以据此补充条件或提交技术确认。",
+        "[AC-043] 给定选型或报价请求，关键硬约束缺失，例如并网条件或阻塞用的功率没有给出 → 提交 → 页面列出缺的字段并保留已输入内容，不使用假设填上这些条件，也不创建可用于报价的版本。用户补齐后可以继续。",
+        "[AC-044] 给定候选已经生成，但关键校验明确失败 → 展示结果 → 页面列出不满足的条件，状态为校验失败，不能当作可用于报价的版本。用户可以改条件后再提交。",
+        "[AC-045] 给定必需检查未执行、校验工具失败，或依据冲突、过期 → 结束本次自动处理 → 页面保留已经得到的型号或计算，并写明限制，不把该版本标成可用于报价。可以补充资料或转技术确认。",
+        "[AC-046] 给定一条已经技术确认的选型，用户随后修改了型号、数量或关键条件 → 保存修改 → 受影响的检查重新执行；旧确认不自动沿用到新版本。未重新通过前不能用于正式报价。",
+        "[AC-048] 给定一次已保存的选型或报价 → 打开记录 → 页面能看到它绑定的版本。再次修改配置后，旧版仍可查看，并看到与新版的差异，新内容不直接覆盖旧版。",
+        "[AC-049] 给定一次初次生成的选型需要自动调整 → 系统最多再自动调整两轮，暂停后恢复不把计数清零 → 达到上限后停止自动调整，页面显示当前问题、已知结果，以及交给技术人员处理的路径。不继续自动替换产品。",
+        "[AC-061] 给定种子资料没有覆盖所问的产品、地区或价表 → 提交对应任务 → 页面说明资料中没有这项，走无法匹配、无法报价或待确认，不生成看起来完整的型号、价格或依据。"
+      ],
+      "technicalChecks": [
+        "客户投影无价格；quote_eligible=true 不等于业务批准",
+        "状态 candidate/check_passed/check_failed/unmatched/pending_tech_confirm 与未执行检查分列",
+        "硬约束缺失 need_fields 不假设；自动调整最多 2 轮且暂停不清零",
+        "种子未覆盖走无法匹配或待确认，不编造型号；假调用不得报真实模型通过",
+        "工具 search_product_catalog、check_compatibility；修改产生新 version_id，旧版可查差异"
+      ],
+      "externalServices": [
+        "DeepSeek Chat",
+        "种子知识文件"
+      ],
+      "dependencies": [
+        "T-009"
+      ],
+      "priority": 60,
+      "context_files": [
+        {
+          "path": "docs/PRD.md",
+          "section": "REQ-001 产品选型"
+        },
+        {
+          "path": "docs/PRD.md",
+          "section": "选型状态，避免把校验通过写成业务批准"
+        },
+        {
+          "path": "docs/tech-spec.md",
+          "section": "四、提示词与输出约束"
+        },
+        {
+          "path": "docs/decisions.md",
+          "section": "D-001 产品、价表与资质资料从哪里来"
+        },
+        {
+          "path": "docs/decisions.md",
+          "section": "D-005 所有模型调用改用 DeepSeek"
+        },
+        {
+          "path": "docs/tech-spec.md",
+          "section": "二、前后端怎么分工，接口怎么拆 > API-009 提交选型"
+        },
+        {
+          "path": "docs/tech-spec.md",
+          "section": "六、接口失败异常设计"
+        }
+      ],
+      "rules_files": [
+        "specification/default/backend/api-design.md",
+        "specification/default/backend/tech-stack.md",
+        "specification/default/backend/layers.md",
+        "specification/default/backend/error-handling.md",
+        "specification/default/backend/workflow.md",
+        "specification/default/shared/security.md",
+        "specification/default/shared/naming.md",
+        "specification/default/shared/env-policy.md",
+        "specification/default/backend/plugin.md"
+      ],
+      "write_scope": [
+        "backend/src/api/routes/selections.py",
+        "backend/src/services/selection_service.py",
+        "backend/src/plugins/search_product_catalog.py",
+        "backend/src/plugins/check_compatibility.py",
+        "backend/src/prompts/selection.txt",
+        "backend/tests/test_selections.py"
+      ],
+      "status": "pending",
+      "retry_count": 0,
+      "notes": ""
+    },
+    {
+      "id": "T-011",
+      "title": "API-010 GET /api/selections 选型列表",
+      "type": "backend",
+      "description": "API-010 GET /api/selections。同一 selections 路由追加列表。 只实现这一个自有接口：按技术方案核对成功响应、失败响应和处理步骤。不把整条用户链路放进本任务，不修改 frontend/ 下的页面、样式、组件或前端接口调用代码。",
+      "source_feature": "F-001",
+      "acceptanceCriteria": [],
+      "technicalChecks": [
+        "分页同 API-005",
+        "不可见记录不出现",
+        "401 未登录",
+        "用与契约一致的请求核对 HTTP 状态、success 信封、data 字段和类型"
+      ],
+      "externalServices": [],
+      "dependencies": [
+        "T-010"
+      ],
+      "priority": 70,
+      "context_files": [
+        {
+          "path": "docs/PRD.md",
+          "section": "REQ-001 产品选型"
+        },
+        {
+          "path": "docs/PRD.md",
+          "section": "权限矩阵"
+        },
+        {
+          "path": "docs/tech-spec.md",
+          "section": "二、前后端怎么分工，接口怎么拆 > API-010 / API-011 选型列表与详情"
+        },
+        {
+          "path": "docs/tech-spec.md",
+          "section": "六、接口失败异常设计"
+        }
+      ],
+      "rules_files": [
+        "specification/default/backend/api-design.md",
+        "specification/default/backend/tech-stack.md",
+        "specification/default/backend/layers.md",
+        "specification/default/backend/error-handling.md",
+        "specification/default/backend/workflow.md",
+        "specification/default/shared/security.md",
+        "specification/default/shared/naming.md",
+        "specification/default/shared/env-policy.md"
+      ],
+      "write_scope": [
+        "backend/src/api/routes/selections.py",
+        "backend/tests/test_selections.py"
+      ],
+      "status": "pending",
+      "retry_count": 0,
+      "notes": ""
+    },
+    {
+      "id": "T-012",
+      "title": "API-011 GET /api/selections/{selection_id} 选型详情",
+      "type": "backend",
+      "description": "API-011 GET /api/selections/{selection_id}。同一 selections 路由追加详情投影。 只实现这一个自有接口：按技术方案核对成功响应、失败响应和处理步骤。不把整条用户链路放进本任务，不修改 frontend/ 下的页面、样式、组件或前端接口调用代码。",
+      "source_feature": "F-001",
+      "acceptanceCriteria": [],
+      "technicalChecks": [
+        "StaffView 仍无价格；思考步骤仅员工投影",
+        "无权或其他客户 404",
+        "未执行检查不得只返回「方案可行」",
+        "用与契约一致的请求核对 HTTP 状态、success 信封、data 字段和类型"
+      ],
+      "externalServices": [],
+      "dependencies": [
+        "T-011"
+      ],
+      "priority": 80,
+      "context_files": [
+        {
+          "path": "docs/PRD.md",
+          "section": "REQ-001 产品选型"
+        },
+        {
+          "path": "docs/PRD.md",
+          "section": "权限矩阵"
+        },
+        {
+          "path": "docs/PRD.md",
+          "section": "思考过程给谁看"
+        },
+        {
+          "path": "docs/tech-spec.md",
+          "section": "二、前后端怎么分工，接口怎么拆 > API-010 / API-011 选型列表与详情"
+        },
+        {
+          "path": "docs/tech-spec.md",
+          "section": "六、接口失败异常设计"
+        }
+      ],
+      "rules_files": [
+        "specification/default/backend/api-design.md",
+        "specification/default/backend/tech-stack.md",
+        "specification/default/backend/layers.md",
+        "specification/default/backend/error-handling.md",
+        "specification/default/backend/workflow.md",
+        "specification/default/shared/security.md",
+        "specification/default/shared/naming.md",
+        "specification/default/shared/env-policy.md"
+      ],
+      "write_scope": [
+        "backend/src/api/routes/selections.py",
+        "backend/tests/test_selections.py"
+      ],
+      "status": "pending",
+      "retry_count": 0,
+      "notes": ""
+    },
+    {
+      "id": "T-013",
+      "title": "API-012 POST /api/selections/{selection_id}/tech-confirmations 技术确认",
+      "type": "backend",
+      "description": "API-012 POST /api/selections/{selection_id}/tech-confirmations。同一 selections 路由追加技术确认。无模型。 只实现这一个自有接口：按技术方案核对成功响应、失败响应和处理步骤。不把整条用户链路放进本任务，不修改 frontend/ 下的页面、样式、组件或前端接口调用代码。",
+      "source_feature": "F-001",
+      "acceptanceCriteria": [],
+      "technicalChecks": [
+        "confirm_eligible 后 quote_eligible=true 且状态 given；reject 不放行报价",
+        "initiator_user_id==当前用户 403 SELF_REVIEW_FORBIDDEN",
+        "无技术确认权限 403；状态不是 pending_tech_confirm 409",
+        "写审计日志"
+      ],
+      "externalServices": [],
+      "dependencies": [
+        "T-012"
+      ],
+      "priority": 90,
+      "context_files": [
+        {
+          "path": "docs/PRD.md",
+          "section": "REQ-001 产品选型"
+        },
+        {
+          "path": "docs/PRD.md",
+          "section": "权限矩阵"
+        },
+        {
+          "path": "docs/tech-spec.md",
+          "section": "二、前后端怎么分工，接口怎么拆 > API-012 技术确认"
+        },
+        {
+          "path": "docs/tech-spec.md",
+          "section": "六、接口失败异常设计"
+        }
+      ],
+      "rules_files": [
+        "specification/default/backend/api-design.md",
+        "specification/default/backend/tech-stack.md",
+        "specification/default/backend/layers.md",
+        "specification/default/backend/error-handling.md",
+        "specification/default/backend/workflow.md",
+        "specification/default/shared/security.md",
+        "specification/default/shared/naming.md",
+        "specification/default/shared/env-policy.md"
+      ],
+      "write_scope": [
+        "backend/src/api/routes/selections.py",
+        "backend/tests/test_selections.py"
+      ],
+      "status": "pending",
+      "retry_count": 0,
+      "notes": ""
+    },
+    {
+      "id": "T-014",
+      "title": "API-013 POST /api/quotes 提交报价",
+      "type": "backend",
+      "description": "API-013 POST /api/quotes。quotes.py 唯一首次写入。依赖选型接口以校验 quote_eligible。 只实现这一个自有接口：按技术方案核对成功响应、失败响应和处理步骤。不把整条用户链路放进本任务，不修改 frontend/ 下的页面、样式、组件或前端接口调用代码。",
+      "source_feature": "F-002",
+      "acceptanceCriteria": [
+        "[AC-006] 给定尚未指定产品、也没有可用于报价的配置版本 → 提交报价 → 页面说明无法报价，并提示先完成选型或指定产品；不进入待审核，看不到价格。可以补齐后再发起。",
+        "[AC-012] 给定已指定产品、但价表不存在或同一条件对应多版价格的报价 → 提交报价 → 页面进入待商务确认，不显示客户版价格；有商务确认权限的人能看到冲突或缺失说明。客户不能自行选定价格版本。",
+        "[AC-013] 给定折扣超出当前授权范围的报价 → 系统识别超限 → 报价进入相应审批，页面不出现已批准价格；AI 不能把该折扣标成已批准。客户只看到进度。",
+        "[AC-047] 给定用户直接指定一个种子中存在的单一产品并要求报价，且不涉及组合配套，也没有引用已采纳结果 → 提交报价 → 按该产品进入报价规则，不套用 AC-069。若请求包含组合配置，仍须先完成相应配套检查；未通过或未执行时不进入正式报价。引用已采纳结果做正式报价时改按 AC-069。",
+        "[AC-050] 给定一条已发布报价，配置、数量、价格或商务条件随后发生变化 → 保存变更 → 系统留下新版本、修改原因和依据，原已发布内容仍可追溯。新版本回到需要重新判断校验、审批和发布的状态，不直接覆盖客户已经看到的已发布内容。"
+      ],
+      "technicalChecks": [
+        "客户投影只有 id/status/progress_label，无金额成本利润",
+        "无产品且无可用配置 cannot_quote 不进待审核；quote_eligible=false 同样 cannot_quote",
+        "价表缺失或多版 pending_commerce；折扣超限 pending_discount_approval，AI 不得写 approved",
+        "引用已采纳结果缺业务批准时 cannot_quote；单一种子产品且无组合、未引用已采纳结果走 AC-047",
+        "已发布内容变更新建版本，不覆盖原 published 快照；假调用不得报真实模型通过"
+      ],
+      "externalServices": [
+        "DeepSeek Chat",
+        "种子知识文件"
+      ],
+      "dependencies": [
+        "T-010"
+      ],
+      "priority": 70,
+      "context_files": [
+        {
+          "path": "docs/PRD.md",
+          "section": "REQ-002 方案报价"
+        },
+        {
+          "path": "docs/tech-spec.md",
+          "section": "四、提示词与输出约束"
+        },
+        {
+          "path": "docs/decisions.md",
+          "section": "D-001 产品、价表与资质资料从哪里来"
+        },
+        {
+          "path": "docs/decisions.md",
+          "section": "D-005 所有模型调用改用 DeepSeek"
+        },
+        {
+          "path": "docs/decisions.md",
+          "section": "D-010 报价批准、已发布查看、标书归档和合同签署"
+        },
+        {
+          "path": "docs/tech-spec.md",
+          "section": "二、前后端怎么分工，接口怎么拆 > API-013 提交报价"
+        },
+        {
+          "path": "docs/tech-spec.md",
+          "section": "六、接口失败异常设计"
+        }
+      ],
+      "rules_files": [
+        "specification/default/backend/api-design.md",
+        "specification/default/backend/tech-stack.md",
+        "specification/default/backend/layers.md",
+        "specification/default/backend/error-handling.md",
+        "specification/default/backend/workflow.md",
+        "specification/default/shared/security.md",
+        "specification/default/shared/naming.md",
+        "specification/default/shared/env-policy.md",
+        "specification/default/backend/plugin.md"
+      ],
+      "write_scope": [
+        "backend/src/api/routes/quotes.py",
+        "backend/src/services/quote_service.py",
+        "backend/src/plugins/search_price_table.py",
+        "backend/src/plugins/calculate_quote.py",
+        "backend/src/prompts/quote.txt",
+        "backend/tests/test_quotes.py"
+      ],
+      "status": "pending",
+      "retry_count": 0,
+      "notes": ""
+    },
+    {
+      "id": "T-015",
+      "title": "API-014 GET /api/quotes 报价列表",
+      "type": "backend",
+      "description": "API-014 GET /api/quotes。同一 quotes 路由追加列表。 只实现这一个自有接口：按技术方案核对成功响应、失败响应和处理步骤。不把整条用户链路放进本任务，不修改 frontend/ 下的页面、样式、组件或前端接口调用代码。",
+      "source_feature": "F-002",
+      "acceptanceCriteria": [],
+      "technicalChecks": [
+        "客户列表项无金额",
+        "另一客户看不到",
+        "分页信封"
+      ],
+      "externalServices": [],
+      "dependencies": [
+        "T-014"
+      ],
+      "priority": 80,
+      "context_files": [
+        {
+          "path": "docs/PRD.md",
+          "section": "REQ-002 方案报价"
+        },
+        {
+          "path": "docs/tech-spec.md",
+          "section": "二、前后端怎么分工，接口怎么拆 > API-014 / API-015 报价列表与详情"
+        },
+        {
+          "path": "docs/tech-spec.md",
+          "section": "六、接口失败异常设计"
+        }
+      ],
+      "rules_files": [
+        "specification/default/backend/api-design.md",
+        "specification/default/backend/tech-stack.md",
+        "specification/default/backend/layers.md",
+        "specification/default/backend/error-handling.md",
+        "specification/default/backend/workflow.md",
+        "specification/default/shared/security.md",
+        "specification/default/shared/naming.md",
+        "specification/default/shared/env-policy.md"
+      ],
+      "write_scope": [
+        "backend/src/api/routes/quotes.py",
+        "backend/tests/test_quotes.py"
+      ],
+      "status": "pending",
+      "retry_count": 0,
+      "notes": ""
+    },
+    {
+      "id": "T-016",
+      "title": "API-015 GET /api/quotes/{quote_id} 报价详情",
+      "type": "backend",
+      "description": "API-015 GET /api/quotes/{quote_id}。同一 quotes 路由追加详情投影。 只实现这一个自有接口：按技术方案核对成功响应、失败响应和处理步骤。不把整条用户链路放进本任务，不修改 frontend/ 下的页面、样式、组件或前端接口调用代码。",
+      "source_feature": "F-002",
+      "acceptanceCriteria": [
+        "[AC-003] 给定客户、一个可用于报价的产品或配置版本，以及尚未审核的报价 → 提交报价 → 客户页面只有进度，没有价格和费用明细；有报价查看或审核权限的员工能打开同一条并看到金额、成本和内部意见。代发起人若有查看权限，可以查看，但不能审核或发布自己发起的这一条。另一位客户看不到这条进度和金额。自审限制按记录和操作者判断，刷新、退出重登或等待后仍然有效。",
+        "[AC-005] 给定一条被退回的报价 → 客户打开该记录 → 进度为未通过，看不到金额，页面不提供在这一条上修改后再提交。客户可以按 AC-023 另发新请求。",
+        "[AC-014] 给定一条已经另行发布的客户版报价 → 客户打开页面 → 能看到产品或配置版本、种子价表中实际存在的费用行、适用商务条件、有效期和金额。没有依据的费用不编造，并说明未包含。看不到成本、利润、内部意见和无权查看的日志。首版正式客户文件是这个已发布页面，不承诺另行下载文件。"
+      ],
+      "technicalChecks": [
+        "pending_* 与 rejected 客户仅进度；published 才给 QuoteCustomerView",
+        "永不返回 cost/profit/internal_comment",
+        "员工 StaffView 可见金额与内部意见；代发起人可看不可审",
+        "另一客户 404"
+      ],
+      "externalServices": [],
+      "dependencies": [
+        "T-015"
+      ],
+      "priority": 90,
+      "context_files": [
+        {
+          "path": "docs/PRD.md",
+          "section": "REQ-002 方案报价"
+        },
+        {
+          "path": "docs/PRD.md",
+          "section": "权限矩阵"
+        },
+        {
+          "path": "docs/tech-spec.md",
+          "section": "二、前后端怎么分工，接口怎么拆 > API-014 / API-015 报价列表与详情"
+        },
+        {
+          "path": "docs/tech-spec.md",
+          "section": "六、接口失败异常设计"
+        }
+      ],
+      "rules_files": [
+        "specification/default/backend/api-design.md",
+        "specification/default/backend/tech-stack.md",
+        "specification/default/backend/layers.md",
+        "specification/default/backend/error-handling.md",
+        "specification/default/backend/workflow.md",
+        "specification/default/shared/security.md",
+        "specification/default/shared/naming.md",
+        "specification/default/shared/env-policy.md"
+      ],
+      "write_scope": [
+        "backend/src/api/routes/quotes.py",
+        "backend/tests/test_quotes.py"
+      ],
+      "status": "pending",
+      "retry_count": 0,
+      "notes": ""
+    },
+    {
+      "id": "T-017",
+      "title": "API-016 POST /api/quotes/{quote_id}/reviews 报价审核",
+      "type": "backend",
+      "description": "API-016 POST /api/quotes/{quote_id}/reviews。同一 quotes 路由追加审核。无模型。 只实现这一个自有接口：按技术方案核对成功响应、失败响应和处理步骤。不把整条用户链路放进本任务，不修改 frontend/ 下的页面、样式、组件或前端接口调用代码。",
+      "source_feature": "F-002",
+      "acceptanceCriteria": [
+        "[AC-004] 适用条件为「批准后还须另行发布」。给定一条待审核报价 → 有权限且不是代发起人的审核人通过，但尚未发布 → 客户仍只看到待发布，看不到产品金额、费用明细和客户版。审核人可以把该条交给发布，不能仅凭通过让客户看到金额。"
+      ],
+      "technicalChecks": [
+        "approve → pending_publish，不创建客户版快照",
+        "reject → rejected；客户不可 PATCH",
+        "自审或无 quote_review 403；状态不允许 409"
+      ],
+      "externalServices": [],
+      "dependencies": [
+        "T-016"
+      ],
+      "priority": 100,
+      "context_files": [
+        {
+          "path": "docs/PRD.md",
+          "section": "REQ-002 方案报价"
+        },
+        {
+          "path": "docs/PRD.md",
+          "section": "权限矩阵"
+        },
+        {
+          "path": "docs/tech-spec.md",
+          "section": "二、前后端怎么分工，接口怎么拆 > API-016 报价审核"
+        },
+        {
+          "path": "docs/tech-spec.md",
+          "section": "六、接口失败异常设计"
+        }
+      ],
+      "rules_files": [
+        "specification/default/backend/api-design.md",
+        "specification/default/backend/tech-stack.md",
+        "specification/default/backend/layers.md",
+        "specification/default/backend/error-handling.md",
+        "specification/default/backend/workflow.md",
+        "specification/default/shared/security.md",
+        "specification/default/shared/naming.md",
+        "specification/default/shared/env-policy.md"
+      ],
+      "write_scope": [
+        "backend/src/api/routes/quotes.py",
+        "backend/tests/test_quotes.py"
+      ],
+      "status": "pending",
+      "retry_count": 0,
+      "notes": ""
+    },
+    {
+      "id": "T-018",
+      "title": "API-017 POST /api/quotes/{quote_id}/commerce-confirmations 商务确认价表",
+      "type": "backend",
+      "description": "API-017 POST /api/quotes/{quote_id}/commerce-confirmations。同一 quotes 路由追加商务确认。禁止把价格版本选择权交给客户。 只实现这一个自有接口：按技术方案核对成功响应、失败响应和处理步骤。不把整条用户链路放进本任务，不修改 frontend/ 下的页面、样式、组件或前端接口调用代码。",
+      "source_feature": "F-002",
+      "acceptanceCriteria": [],
+      "technicalChecks": [
+        "客户调用 403",
+        "price_version_id 必填",
+        "权限 commerce_confirm",
+        "成功后进入 pending_review 或契约允许的待审"
+      ],
+      "externalServices": [],
+      "dependencies": [
+        "T-017"
+      ],
+      "priority": 110,
+      "context_files": [
+        {
+          "path": "docs/PRD.md",
+          "section": "REQ-002 方案报价"
+        },
+        {
+          "path": "docs/tech-spec.md",
+          "section": "二、前后端怎么分工，接口怎么拆 > API-017 商务确认"
+        },
+        {
+          "path": "docs/tech-spec.md",
+          "section": "六、接口失败异常设计"
+        }
+      ],
+      "rules_files": [
+        "specification/default/backend/api-design.md",
+        "specification/default/backend/tech-stack.md",
+        "specification/default/backend/layers.md",
+        "specification/default/backend/error-handling.md",
+        "specification/default/backend/workflow.md",
+        "specification/default/shared/security.md",
+        "specification/default/shared/naming.md",
+        "specification/default/shared/env-policy.md"
+      ],
+      "write_scope": [
+        "backend/src/api/routes/quotes.py",
+        "backend/tests/test_quotes.py"
+      ],
+      "status": "pending",
+      "retry_count": 0,
+      "notes": ""
+    },
+    {
+      "id": "T-019",
+      "title": "API-018 POST /api/quotes/{quote_id}/discount-approvals 折扣审批",
+      "type": "backend",
+      "description": "API-018 POST /api/quotes/{quote_id}/discount-approvals。同一 quotes 路由追加折扣审批。 只实现这一个自有接口：按技术方案核对成功响应、失败响应和处理步骤。不把整条用户链路放进本任务，不修改 frontend/ 下的页面、样式、组件或前端接口调用代码。",
+      "source_feature": "F-002",
+      "acceptanceCriteria": [],
+      "technicalChecks": [
+        "AI 不得调用本接口",
+        "权限 discount_approve",
+        "approve/reject",
+        "通过前页面/客户投影无已批准价格"
+      ],
+      "externalServices": [],
+      "dependencies": [
+        "T-018"
+      ],
+      "priority": 120,
+      "context_files": [
+        {
+          "path": "docs/PRD.md",
+          "section": "REQ-002 方案报价"
+        },
+        {
+          "path": "docs/tech-spec.md",
+          "section": "二、前后端怎么分工，接口怎么拆 > API-018 折扣审批"
+        },
+        {
+          "path": "docs/tech-spec.md",
+          "section": "六、接口失败异常设计"
+        }
+      ],
+      "rules_files": [
+        "specification/default/backend/api-design.md",
+        "specification/default/backend/tech-stack.md",
+        "specification/default/backend/layers.md",
+        "specification/default/backend/error-handling.md",
+        "specification/default/backend/workflow.md",
+        "specification/default/shared/security.md",
+        "specification/default/shared/naming.md",
+        "specification/default/shared/env-policy.md"
+      ],
+      "write_scope": [
+        "backend/src/api/routes/quotes.py",
+        "backend/tests/test_quotes.py"
+      ],
+      "status": "pending",
+      "retry_count": 0,
+      "notes": ""
+    },
+    {
+      "id": "T-020",
+      "title": "API-019 POST /api/quotes/{quote_id}/publications 发布客户版",
+      "type": "backend",
+      "description": "API-019 POST /api/quotes/{quote_id}/publications。同一 quotes 路由追加发布。 只实现这一个自有接口：按技术方案核对成功响应、失败响应和处理步骤。不把整条用户链路放进本任务，不修改 frontend/ 下的页面、样式、组件或前端接口调用代码。",
+      "source_feature": "F-002",
+      "acceptanceCriteria": [
+        "[AC-022] 给定一条已审核通过、尚未发布的报价，以及一名有发布权限的人 → 该人发布 → 归属客户看到 AC-014 的客户版。发布前客户看不到这些字段。"
+      ],
+      "technicalChecks": [
+        "仅 pending_publish 可发布；生成客户版快照 status=published",
+        "权限 quote_publish 且非代发起人",
+        "发布不是第二次批准；无下载文件"
+      ],
+      "externalServices": [],
+      "dependencies": [
+        "T-019"
+      ],
+      "priority": 130,
+      "context_files": [
+        {
+          "path": "docs/PRD.md",
+          "section": "REQ-002 方案报价"
+        },
+        {
+          "path": "docs/decisions.md",
+          "section": "D-010 报价批准、已发布查看、标书归档和合同签署"
+        },
+        {
+          "path": "docs/tech-spec.md",
+          "section": "二、前后端怎么分工，接口怎么拆 > API-019 发布客户版"
+        },
+        {
+          "path": "docs/tech-spec.md",
+          "section": "六、接口失败异常设计"
+        }
+      ],
+      "rules_files": [
+        "specification/default/backend/api-design.md",
+        "specification/default/backend/tech-stack.md",
+        "specification/default/backend/layers.md",
+        "specification/default/backend/error-handling.md",
+        "specification/default/backend/workflow.md",
+        "specification/default/shared/security.md",
+        "specification/default/shared/naming.md",
+        "specification/default/shared/env-policy.md"
+      ],
+      "write_scope": [
+        "backend/src/api/routes/quotes.py",
+        "backend/tests/test_quotes.py"
+      ],
+      "status": "pending",
+      "retry_count": 0,
+      "notes": ""
+    },
+    {
+      "id": "T-021",
+      "title": "API-020 POST /api/quotes/{quote_id}/resubmissions 报价内部重提",
+      "type": "backend",
+      "description": "API-020 POST /api/quotes/{quote_id}/resubmissions。同一 quotes 路由追加内部重提。客户另发新请求不走本接口。 只实现这一个自有接口：按技术方案核对成功响应、失败响应和处理步骤。不把整条用户链路放进本任务，不修改 frontend/ 下的页面、样式、组件或前端接口调用代码。",
+      "source_feature": "F-002",
+      "acceptanceCriteria": [
+        "[AC-024] 给定一条状态为未通过的记录，以及一名有修改权限的内部人员 → 该人修改内容并重新提交审核 → 该条回到待审核，客户仍不能自己编辑这条已拒内容。重新提交的人不能审核这一次重新提交的内容。若原代发起人不是这次重提的人，他仍然不能审核或发布自己当初发起的这一条。客户在再次通过或发布前只看到进度。"
+      ],
+      "technicalChecks": [
+        "仅内部人员；客户 403",
+        "rejected 修改后 pending_review；resubmitted_by 不能再审这一条",
+        "原代发起人限制仍有效"
+      ],
+      "externalServices": [],
+      "dependencies": [
+        "T-020"
+      ],
+      "priority": 140,
+      "context_files": [
+        {
+          "path": "docs/PRD.md",
+          "section": "跨条目验收"
+        },
+        {
+          "path": "docs/tech-spec.md",
+          "section": "二、前后端怎么分工，接口怎么拆 > API-020 报价内部重提"
+        },
+        {
+          "path": "docs/tech-spec.md",
+          "section": "六、接口失败异常设计"
+        }
+      ],
+      "rules_files": [
+        "specification/default/backend/api-design.md",
+        "specification/default/backend/tech-stack.md",
+        "specification/default/backend/layers.md",
+        "specification/default/backend/error-handling.md",
+        "specification/default/backend/workflow.md",
+        "specification/default/shared/security.md",
+        "specification/default/shared/naming.md",
+        "specification/default/shared/env-policy.md"
+      ],
+      "write_scope": [
+        "backend/src/api/routes/quotes.py",
+        "backend/tests/test_quotes.py"
+      ],
+      "status": "pending",
+      "retry_count": 0,
+      "notes": ""
+    },
+    {
+      "id": "T-022",
+      "title": "API-021 POST /api/tenders 发起标书",
+      "type": "backend",
+      "description": "API-021 POST /api/tenders。tenders.py 唯一首次写入。依赖 T-009 工具与模型客户端。 只实现这一个自有接口：按技术方案核对成功响应、失败响应和处理步骤。不把整条用户链路放进本任务，不修改 frontend/ 下的页面、样式、组件或前端接口调用代码。",
+      "source_feature": "F-004",
+      "acceptanceCriteria": [
+        "[AC-027] 给定尚未提供招标要求的标书请求 → 提交 → 页面说明无法生成标书，并列出要补的招标要求；不进入待审核。可以补齐后再发起。"
+      ],
+      "technicalChecks": [
+        "缺招标要求 status=insufficient 不进待审核",
+        "过期或超范围材料 usable=false，不得写成已齐备；AI 不签章",
+        "关键缺口阻止送审；假调用不得报真实模型通过",
+        "工具 search_qualifications、draft_tender_sections、diff_against_commitments"
+      ],
+      "externalServices": [
+        "DeepSeek Chat",
+        "种子知识文件"
+      ],
+      "dependencies": [
+        "T-009"
+      ],
+      "priority": 60,
+      "context_files": [
+        {
+          "path": "docs/PRD.md",
+          "section": "REQ-004 标书管理"
+        },
+        {
+          "path": "docs/tech-spec.md",
+          "section": "四、提示词与输出约束"
+        },
+        {
+          "path": "docs/decisions.md",
+          "section": "D-001 产品、价表与资质资料从哪里来"
+        },
+        {
+          "path": "docs/decisions.md",
+          "section": "D-005 所有模型调用改用 DeepSeek"
+        },
+        {
+          "path": "docs/decisions.md",
+          "section": "D-007 归属、记住、不送审、步骤时机和标书缺口"
+        },
+        {
+          "path": "docs/tech-spec.md",
+          "section": "二、前后端怎么分工，接口怎么拆 > API-021～API-025 标书"
+        },
+        {
+          "path": "docs/tech-spec.md",
+          "section": "六、接口失败异常设计"
+        }
+      ],
+      "rules_files": [
+        "specification/default/backend/api-design.md",
+        "specification/default/backend/tech-stack.md",
+        "specification/default/backend/layers.md",
+        "specification/default/backend/error-handling.md",
+        "specification/default/backend/workflow.md",
+        "specification/default/shared/security.md",
+        "specification/default/shared/naming.md",
+        "specification/default/shared/env-policy.md",
+        "specification/default/backend/plugin.md"
+      ],
+      "write_scope": [
+        "backend/src/api/routes/tenders.py",
+        "backend/src/services/tender_service.py",
+        "backend/src/plugins/search_qualifications.py",
+        "backend/src/plugins/draft_tender_sections.py",
+        "backend/src/plugins/diff_against_commitments.py",
+        "backend/src/prompts/tender.txt",
+        "backend/tests/test_tenders.py"
+      ],
+      "status": "pending",
+      "retry_count": 0,
+      "notes": ""
+    },
+    {
+      "id": "T-023",
+      "title": "API-022 GET /api/tenders 标书列表",
+      "type": "backend",
+      "description": "API-022 GET /api/tenders。同一 tenders 路由追加列表。 只实现这一个自有接口：按技术方案核对成功响应、失败响应和处理步骤。不把整条用户链路放进本任务，不修改 frontend/ 下的页面、样式、组件或前端接口调用代码。",
+      "source_feature": "F-004",
+      "acceptanceCriteria": [],
+      "technicalChecks": [
+        "审核前客户仅进度",
+        "分页",
+        "不可见 404 表现与无权相同"
+      ],
+      "externalServices": [],
+      "dependencies": [
+        "T-022"
+      ],
+      "priority": 70,
+      "context_files": [
+        {
+          "path": "docs/PRD.md",
+          "section": "REQ-004 标书管理"
+        },
+        {
+          "path": "docs/tech-spec.md",
+          "section": "二、前后端怎么分工，接口怎么拆 > API-021～API-025 标书"
+        },
+        {
+          "path": "docs/tech-spec.md",
+          "section": "六、接口失败异常设计"
+        }
+      ],
+      "rules_files": [
+        "specification/default/backend/api-design.md",
+        "specification/default/backend/tech-stack.md",
+        "specification/default/backend/layers.md",
+        "specification/default/backend/error-handling.md",
+        "specification/default/backend/workflow.md",
+        "specification/default/shared/security.md",
+        "specification/default/shared/naming.md",
+        "specification/default/shared/env-policy.md"
+      ],
+      "write_scope": [
+        "backend/src/api/routes/tenders.py",
+        "backend/tests/test_tenders.py"
+      ],
+      "status": "pending",
+      "retry_count": 0,
+      "notes": ""
+    },
+    {
+      "id": "T-024",
+      "title": "API-023 GET /api/tenders/{tender_id} 标书详情",
+      "type": "backend",
+      "description": "API-023 GET /api/tenders/{tender_id}。同一 tenders 路由追加详情。 只实现这一个自有接口：按技术方案核对成功响应、失败响应和处理步骤。不把整条用户链路放进本任务，不修改 frontend/ 下的页面、样式、组件或前端接口调用代码。",
+      "source_feature": "F-004",
+      "acceptanceCriteria": [
+        "[AC-026] 给定客户、一组招标要求和可用的资质资料 → 发起标书 → 审核前客户只看到进度；有权限且不是代发起人的审核人能看到响应、依据、满足状态、材料的有效期和适用范围，以及按模板生成的章节草稿。过期或超出适用范围的材料标成不可用。审核通过后，客户看到这些客户版内容，看不到内部意见和责任人内部备注。",
+        "[AC-057] 给定招标要求足够并进入标书生成 → 审核人打开草稿 → 能看到已生成的章节，而不是只有一行响应字段。偏离项单独标出。补遗影响和提交签章检查不在本条。提交归档和是否采纳按 AC-071、AC-072。",
+        "[AC-051] 给定标书或合同已经引用某个确定的配置或报价版本，该版本后来发生变化 → 打开标书或合同 → 页面标出需要复核的引用，不继续把旧引用说成仍然有效。"
+      ],
+      "technicalChecks": [
+        "审核人可见响应、依据、满足状态、材料有效期范围、章节草稿、偏离项",
+        "通过后客户版无内部意见；过期材料不可用",
+        "引用的配置/报价版本变化时 needs_rereview",
+        "无补遗、无签章检查接口"
+      ],
+      "externalServices": [],
+      "dependencies": [
+        "T-023"
+      ],
+      "priority": 80,
+      "context_files": [
+        {
+          "path": "docs/PRD.md",
+          "section": "REQ-004 标书管理"
+        },
+        {
+          "path": "docs/PRD.md",
+          "section": "REQ-002 方案报价"
+        },
+        {
+          "path": "docs/tech-spec.md",
+          "section": "二、前后端怎么分工，接口怎么拆 > API-021～API-025 标书"
+        },
+        {
+          "path": "docs/tech-spec.md",
+          "section": "六、接口失败异常设计"
+        }
+      ],
+      "rules_files": [
+        "specification/default/backend/api-design.md",
+        "specification/default/backend/tech-stack.md",
+        "specification/default/backend/layers.md",
+        "specification/default/backend/error-handling.md",
+        "specification/default/backend/workflow.md",
+        "specification/default/shared/security.md",
+        "specification/default/shared/naming.md",
+        "specification/default/shared/env-policy.md"
+      ],
+      "write_scope": [
+        "backend/src/api/routes/tenders.py",
+        "backend/tests/test_tenders.py"
+      ],
+      "status": "pending",
+      "retry_count": 0,
+      "notes": ""
+    },
+    {
+      "id": "T-025",
+      "title": "API-024 POST /api/tenders/{tender_id}/reviews 标书审核",
+      "type": "backend",
+      "description": "API-024 POST /api/tenders/{tender_id}/reviews。同一 tenders 路由追加审核。 只实现这一个自有接口：按技术方案核对成功响应、失败响应和处理步骤。不把整条用户链路放进本任务，不修改 frontend/ 下的页面、样式、组件或前端接口调用代码。",
+      "source_feature": "F-004",
+      "acceptanceCriteria": [],
+      "technicalChecks": [
+        "自审 403",
+        "通过即客户可见客户版，无另行发布",
+        "审核通过本身不写 adopted=true"
+      ],
+      "externalServices": [],
+      "dependencies": [
+        "T-024"
+      ],
+      "priority": 90,
+      "context_files": [
+        {
+          "path": "docs/PRD.md",
+          "section": "REQ-004 标书管理"
+        },
+        {
+          "path": "docs/PRD.md",
+          "section": "权限矩阵"
+        },
+        {
+          "path": "docs/tech-spec.md",
+          "section": "二、前后端怎么分工，接口怎么拆 > API-021～API-025 标书"
+        },
+        {
+          "path": "docs/tech-spec.md",
+          "section": "六、接口失败异常设计"
+        }
+      ],
+      "rules_files": [
+        "specification/default/backend/api-design.md",
+        "specification/default/backend/tech-stack.md",
+        "specification/default/backend/layers.md",
+        "specification/default/backend/error-handling.md",
+        "specification/default/backend/workflow.md",
+        "specification/default/shared/security.md",
+        "specification/default/shared/naming.md",
+        "specification/default/shared/env-policy.md"
+      ],
+      "write_scope": [
+        "backend/src/api/routes/tenders.py",
+        "backend/tests/test_tenders.py"
+      ],
+      "status": "pending",
+      "retry_count": 0,
+      "notes": ""
+    },
+    {
+      "id": "T-026",
+      "title": "API-025 POST /api/tenders/{tender_id}/resubmissions 标书内部重提",
+      "type": "backend",
+      "description": "API-025 POST /api/tenders/{tender_id}/resubmissions。同一 tenders 路由追加内部重提。AC-024 的报价形态已在 T-021 验收，本任务按同一规则覆盖标书。 只实现这一个自有接口：按技术方案核对成功响应、失败响应和处理步骤。不把整条用户链路放进本任务，不修改 frontend/ 下的页面、样式、组件或前端接口调用代码。",
+      "source_feature": "F-004",
+      "acceptanceCriteria": [],
+      "technicalChecks": [
+        "客户 403",
+        "重提人不能审这一次",
+        "rejected → pending_review"
+      ],
+      "externalServices": [],
+      "dependencies": [
+        "T-025"
+      ],
+      "priority": 100,
+      "context_files": [
+        {
+          "path": "docs/PRD.md",
+          "section": "跨条目验收"
+        },
+        {
+          "path": "docs/tech-spec.md",
+          "section": "二、前后端怎么分工，接口怎么拆 > API-021～API-025 标书"
+        },
+        {
+          "path": "docs/tech-spec.md",
+          "section": "六、接口失败异常设计"
+        }
+      ],
+      "rules_files": [
+        "specification/default/backend/api-design.md",
+        "specification/default/backend/tech-stack.md",
+        "specification/default/backend/layers.md",
+        "specification/default/backend/error-handling.md",
+        "specification/default/backend/workflow.md",
+        "specification/default/shared/security.md",
+        "specification/default/shared/naming.md",
+        "specification/default/shared/env-policy.md"
+      ],
+      "write_scope": [
+        "backend/src/api/routes/tenders.py",
+        "backend/tests/test_tenders.py"
+      ],
+      "status": "pending",
+      "retry_count": 0,
+      "notes": ""
+    },
+    {
+      "id": "T-027",
+      "title": "API-026 POST /api/contracts 发起合同检查",
+      "type": "backend",
+      "description": "API-026 POST /api/contracts。contracts.py 唯一首次写入。 只实现这一个自有接口：按技术方案核对成功响应、失败响应和处理步骤。不把整条用户链路放进本任务，不修改 frontend/ 下的页面、样式、组件或前端接口调用代码。",
+      "source_feature": "F-005",
+      "acceptanceCriteria": [
+        "[AC-028] 适用条件为已经提供合同正文，并且核对金额时有已发布报价或其他有效价格依据。给定客户、合同文本，以及已发布报价或已确认配置 → 发起合同检查 → 审核前客户只看到进度；审核人能看到产品、金额、承诺差异和偏离标准条款的位置。只有已确认配置、没有价格依据时，型号和数量可以核对，金额标成无法核实。审核通过后，客户看到这些差异、偏离和已提取的交付、验收、付款、质保事项，看不到内部意见。",
+        "[AC-029] 给定对象版本不明确，或要求系统直接签署、盖章、代替负责人批准的合同请求 → 提交 → 页面不生成已签署或已批准结果；版本不明时先要求确认版本，越权签署时说明不能代签。客户可以改提检查或确认版本后再继续。",
+        "[AC-058] 给定用户要做合同检查，但没有提供合同正文 → 提交 → 页面要求上传或贴出合同文本，不生成检查结果。可以补上文本后再继续。",
+        "[AC-059] 给定用户明确要求起草合同 → 提交 → 首版不生成合同草稿，也不把起草偷偷换成一次合同检查。页面说明当前做合同检查、履约事项提取，以及最终审核完成后的签署状态手动更新，并引导用户提供已有合同文本。起草、版本比较、履约状态更新和签署文件的外部解析不在本条。"
+      ],
+      "technicalChecks": [
+        "无合同正文不生成检查结果",
+        "intent=draft 不生成草稿，说明首版只做检查和履约提取",
+        "request_sign 或要求盖章 → status=cannot_sign，不生成已签署结果",
+        "版本不明 pending_clarify；仅有配置无价格依据时金额 unverifiable",
+        "假调用不得报真实模型通过；系统不签署不盖章"
+      ],
+      "externalServices": [
+        "DeepSeek Chat",
+        "种子知识文件"
+      ],
+      "dependencies": [
+        "T-009"
+      ],
+      "priority": 60,
+      "context_files": [
+        {
+          "path": "docs/PRD.md",
+          "section": "REQ-005 合同管理"
+        },
+        {
+          "path": "docs/tech-spec.md",
+          "section": "四、提示词与输出约束"
+        },
+        {
+          "path": "docs/decisions.md",
+          "section": "D-005 所有模型调用改用 DeepSeek"
+        },
+        {
+          "path": "docs/decisions.md",
+          "section": "D-010 报价批准、已发布查看、标书归档和合同签署"
+        },
+        {
+          "path": "docs/tech-spec.md",
+          "section": "二、前后端怎么分工，接口怎么拆 > API-026～API-030 合同"
+        },
+        {
+          "path": "docs/tech-spec.md",
+          "section": "六、接口失败异常设计"
+        }
+      ],
+      "rules_files": [
+        "specification/default/backend/api-design.md",
+        "specification/default/backend/tech-stack.md",
+        "specification/default/backend/layers.md",
+        "specification/default/backend/error-handling.md",
+        "specification/default/backend/workflow.md",
+        "specification/default/shared/security.md",
+        "specification/default/shared/naming.md",
+        "specification/default/shared/env-policy.md",
+        "specification/default/backend/plugin.md"
+      ],
+      "write_scope": [
+        "backend/src/api/routes/contracts.py",
+        "backend/src/services/contract_service.py",
+        "backend/src/plugins/diff_contract.py",
+        "backend/src/prompts/contract.txt",
+        "backend/tests/test_contracts.py"
+      ],
+      "status": "pending",
+      "retry_count": 0,
+      "notes": ""
+    },
+    {
+      "id": "T-028",
+      "title": "API-027 GET /api/contracts 合同列表",
+      "type": "backend",
+      "description": "API-027 GET /api/contracts。同一 contracts 路由追加列表。 只实现这一个自有接口：按技术方案核对成功响应、失败响应和处理步骤。不把整条用户链路放进本任务，不修改 frontend/ 下的页面、样式、组件或前端接口调用代码。",
+      "source_feature": "F-005",
+      "acceptanceCriteria": [],
+      "technicalChecks": [
+        "审核前客户仅进度",
+        "分页"
+      ],
+      "externalServices": [],
+      "dependencies": [
+        "T-027"
+      ],
+      "priority": 70,
+      "context_files": [
+        {
+          "path": "docs/PRD.md",
+          "section": "REQ-005 合同管理"
+        },
+        {
+          "path": "docs/tech-spec.md",
+          "section": "二、前后端怎么分工，接口怎么拆 > API-026～API-030 合同"
+        },
+        {
+          "path": "docs/tech-spec.md",
+          "section": "六、接口失败异常设计"
+        }
+      ],
+      "rules_files": [
+        "specification/default/backend/api-design.md",
+        "specification/default/backend/tech-stack.md",
+        "specification/default/backend/layers.md",
+        "specification/default/backend/error-handling.md",
+        "specification/default/backend/workflow.md",
+        "specification/default/shared/security.md",
+        "specification/default/shared/naming.md",
+        "specification/default/shared/env-policy.md"
+      ],
+      "write_scope": [
+        "backend/src/api/routes/contracts.py",
+        "backend/tests/test_contracts.py"
+      ],
+      "status": "pending",
+      "retry_count": 0,
+      "notes": ""
+    },
+    {
+      "id": "T-029",
+      "title": "API-028 GET /api/contracts/{contract_id} 合同详情",
+      "type": "backend",
+      "description": "API-028 GET /api/contracts/{contract_id}。同一 contracts 路由追加详情。 只实现这一个自有接口：按技术方案核对成功响应、失败响应和处理步骤。不把整条用户链路放进本任务，不修改 frontend/ 下的页面、样式、组件或前端接口调用代码。",
+      "source_feature": "F-005",
+      "acceptanceCriteria": [],
+      "technicalChecks": [
+        "通过后客户可见差异、偏离、履约事项，无内部谈判意见",
+        "引用版本变化标 needs_rereview",
+        "签署状态不替换已通过"
+      ],
+      "externalServices": [],
+      "dependencies": [
+        "T-028"
+      ],
+      "priority": 80,
+      "context_files": [
+        {
+          "path": "docs/PRD.md",
+          "section": "REQ-005 合同管理"
+        },
+        {
+          "path": "docs/PRD.md",
+          "section": "权限矩阵"
+        },
+        {
+          "path": "docs/tech-spec.md",
+          "section": "二、前后端怎么分工，接口怎么拆 > API-026～API-030 合同"
+        },
+        {
+          "path": "docs/tech-spec.md",
+          "section": "六、接口失败异常设计"
+        }
+      ],
+      "rules_files": [
+        "specification/default/backend/api-design.md",
+        "specification/default/backend/tech-stack.md",
+        "specification/default/backend/layers.md",
+        "specification/default/backend/error-handling.md",
+        "specification/default/backend/workflow.md",
+        "specification/default/shared/security.md",
+        "specification/default/shared/naming.md",
+        "specification/default/shared/env-policy.md"
+      ],
+      "write_scope": [
+        "backend/src/api/routes/contracts.py",
+        "backend/tests/test_contracts.py"
+      ],
+      "status": "pending",
+      "retry_count": 0,
+      "notes": ""
+    },
+    {
+      "id": "T-030",
+      "title": "API-029 POST /api/contracts/{contract_id}/reviews 合同审核",
+      "type": "backend",
+      "description": "API-029 POST /api/contracts/{contract_id}/reviews。同一 contracts 路由追加审核。 只实现这一个自有接口：按技术方案核对成功响应、失败响应和处理步骤。不把整条用户链路放进本任务，不修改 frontend/ 下的页面、样式、组件或前端接口调用代码。",
+      "source_feature": "F-005",
+      "acceptanceCriteria": [],
+      "technicalChecks": [
+        "自审 403",
+        "审核接口不调用签署状态接口",
+        "通过不代签不盖章"
+      ],
+      "externalServices": [],
+      "dependencies": [
+        "T-029"
+      ],
+      "priority": 90,
+      "context_files": [
+        {
+          "path": "docs/PRD.md",
+          "section": "REQ-005 合同管理"
+        },
+        {
+          "path": "docs/tech-spec.md",
+          "section": "二、前后端怎么分工，接口怎么拆 > API-026～API-030 合同"
+        },
+        {
+          "path": "docs/tech-spec.md",
+          "section": "六、接口失败异常设计"
+        }
+      ],
+      "rules_files": [
+        "specification/default/backend/api-design.md",
+        "specification/default/backend/tech-stack.md",
+        "specification/default/backend/layers.md",
+        "specification/default/backend/error-handling.md",
+        "specification/default/backend/workflow.md",
+        "specification/default/shared/security.md",
+        "specification/default/shared/naming.md",
+        "specification/default/shared/env-policy.md"
+      ],
+      "write_scope": [
+        "backend/src/api/routes/contracts.py",
+        "backend/tests/test_contracts.py"
+      ],
+      "status": "pending",
+      "retry_count": 0,
+      "notes": ""
+    },
+    {
+      "id": "T-031",
+      "title": "API-030 POST /api/contracts/{contract_id}/resubmissions 合同内部重提",
+      "type": "backend",
+      "description": "API-030 POST /api/contracts/{contract_id}/resubmissions。同一 contracts 路由追加内部重提。 只实现这一个自有接口：按技术方案核对成功响应、失败响应和处理步骤。不把整条用户链路放进本任务，不修改 frontend/ 下的页面、样式、组件或前端接口调用代码。",
+      "source_feature": "F-005",
+      "acceptanceCriteria": [],
+      "technicalChecks": [
+        "客户 403",
+        "重提人不能审这一次"
+      ],
+      "externalServices": [],
+      "dependencies": [
+        "T-030"
+      ],
+      "priority": 100,
+      "context_files": [
+        {
+          "path": "docs/PRD.md",
+          "section": "跨条目验收"
+        },
+        {
+          "path": "docs/tech-spec.md",
+          "section": "二、前后端怎么分工，接口怎么拆 > API-026～API-030 合同"
+        },
+        {
+          "path": "docs/tech-spec.md",
+          "section": "六、接口失败异常设计"
+        }
+      ],
+      "rules_files": [
+        "specification/default/backend/api-design.md",
+        "specification/default/backend/tech-stack.md",
+        "specification/default/backend/layers.md",
+        "specification/default/backend/error-handling.md",
+        "specification/default/backend/workflow.md",
+        "specification/default/shared/security.md",
+        "specification/default/shared/naming.md",
+        "specification/default/shared/env-policy.md"
+      ],
+      "write_scope": [
+        "backend/src/api/routes/contracts.py",
+        "backend/tests/test_contracts.py"
+      ],
+      "status": "pending",
+      "retry_count": 0,
+      "notes": ""
+    },
+    {
+      "id": "T-032",
+      "title": "API-031 POST /api/diagnoses 提交诊断",
+      "type": "backend",
+      "description": "API-031 POST /api/diagnoses。diagnoses.py 唯一首次写入。正式报修不在本任务。 只实现这一个自有接口：按技术方案核对成功响应、失败响应和处理步骤。不把整条用户链路放进本任务，不修改 frontend/ 下的页面、样式、组件或前端接口调用代码。",
+      "source_feature": "F-003",
+      "acceptanceCriteria": [
+        "[AC-007] 给定足以形成报告的故障描述，且员工尚未审核 → 提交诊断 → 客户页面只有处理状态和下一步提示，没有报告正文、工单草稿内容和正式工单号；有诊断审核权限且不是代发起人的人能看到报告，并能看到已经生成的工单草稿。另一位客户看不到这条进度和内容。",
+        "[AC-010] 给定故障描述尚不足以形成报告 → 提交 → 页面列出需要补充的内容，保留已输入的故障描述，不显示已确诊结论，不生成工单草稿，不显示正式工单号。可以补充资料后继续。",
+        "[AC-016] 给定排查过程中资料接口不可用，或已经完成三轮仍不能判断原因 → 结束自动排查 → 生成部分报告和工单草稿，不把未确定的原因写成已确诊，不显示正式工单号。审核前，客户只看到处理状态、需要补充的资料和下一步提示，看不到报告正文；有诊断权限且不是代发起人的员工能看到部分报告。审核通过后，客户看到允许披露的部分结论、证据缺口和后续动作。紧急风险不走本条，仍按 AC-017 立即展示。",
+        "[AC-017] 给定描述中出现冒烟、异味或异常发热等紧急风险 → 提交 → 普通排查停止，页面立即显示安全指引和交接路径，不等待普通报告审核，也不等待正式工单号。",
+        "[AC-054] 给定一次普通故障诊断 → 自动排查最多三轮，一轮是计划、执行、反思，首轮计入；诊断调用累计最多 12 次，失败和重试计入；同一只读请求最多自动重试一次。补资料、暂停后恢复或计划版本改变，都不把轮次和次数清零。第三轮结束后再补充的资料只登记保存，不自动继续诊断。报告、工单和交接不能用来继续取证或绕过上限。客户页面只看到停止原因和下一步，不展示轮次和额度的内部计数。公司内人员在思考过程中可以看到这些轮次和次数。",
+        "[AC-055] 给定一次诊断进入结果展示 → 页面分开显示任务是否已交付、故障原因是否确定、设备是否已验证恢复、工单是否提交、人员是否接单。没有实际接单回执时不显示已接单。单次设备在线不写成已恢复，也不自动关单。"
+      ],
+      "technicalChecks": [
+        "紧急关键词立即 safety_guidance/handoff，不等待审核",
+        "资料不足 need_more 不建草稿；形成报告同时建 kind=draft 且 official_number 空",
+        "轮次最多 3（含首轮）、调用最多 12、只读重试 1；暂停不清零；第三轮后再补资料只保存",
+        "客户投影审核前无报告正文和草稿正文；accepted 仅在有接单回执时为 true",
+        "假调用不得报真实模型通过"
+      ],
+      "externalServices": [
+        "DeepSeek Chat",
+        "种子知识文件"
+      ],
+      "dependencies": [
+        "T-009"
+      ],
+      "priority": 60,
+      "context_files": [
+        {
+          "path": "docs/PRD.md",
+          "section": "REQ-003 故障诊断"
+        },
+        {
+          "path": "docs/tech-spec.md",
+          "section": "四、提示词与输出约束"
+        },
+        {
+          "path": "docs/tech-spec.md",
+          "section": "七、项目本地层级设计 > 配置表（仅字段名）"
+        },
+        {
+          "path": "docs/decisions.md",
+          "section": "D-002 正式工单创建到哪里"
+        },
+        {
+          "path": "docs/decisions.md",
+          "section": "D-005 所有模型调用改用 DeepSeek"
+        },
+        {
+          "path": "docs/tech-spec.md",
+          "section": "二、前后端怎么分工，接口怎么拆 > API-031 提交诊断"
+        },
+        {
+          "path": "docs/tech-spec.md",
+          "section": "六、接口失败异常设计"
+        }
+      ],
+      "rules_files": [
+        "specification/default/backend/api-design.md",
+        "specification/default/backend/tech-stack.md",
+        "specification/default/backend/layers.md",
+        "specification/default/backend/error-handling.md",
+        "specification/default/backend/workflow.md",
+        "specification/default/shared/security.md",
+        "specification/default/shared/naming.md",
+        "specification/default/shared/env-policy.md",
+        "specification/default/backend/plugin.md"
+      ],
+      "write_scope": [
+        "backend/src/api/routes/diagnoses.py",
+        "backend/src/services/diagnosis_service.py",
+        "backend/src/plugins/search_fault_knowledge.py",
+        "backend/src/plugins/create_ticket_draft.py",
+        "backend/src/prompts/diagnosis.txt",
+        "backend/tests/test_diagnoses.py"
+      ],
+      "status": "pending",
+      "retry_count": 0,
+      "notes": ""
+    },
+    {
+      "id": "T-033",
+      "title": "API-032 GET /api/diagnoses 诊断列表",
+      "type": "backend",
+      "description": "API-032 GET /api/diagnoses。同一 diagnoses 路由追加列表。 只实现这一个自有接口：按技术方案核对成功响应、失败响应和处理步骤。不把整条用户链路放进本任务，不修改 frontend/ 下的页面、样式、组件或前端接口调用代码。",
+      "source_feature": "F-003",
+      "acceptanceCriteria": [],
+      "technicalChecks": [
+        "客户列表无报告正文",
+        "另一客户不可见"
+      ],
+      "externalServices": [],
+      "dependencies": [
+        "T-032"
+      ],
+      "priority": 70,
+      "context_files": [
+        {
+          "path": "docs/PRD.md",
+          "section": "REQ-003 故障诊断"
+        },
+        {
+          "path": "docs/tech-spec.md",
+          "section": "二、前后端怎么分工，接口怎么拆 > API-032 / API-033 诊断列表与详情"
+        },
+        {
+          "path": "docs/tech-spec.md",
+          "section": "六、接口失败异常设计"
+        }
+      ],
+      "rules_files": [
+        "specification/default/backend/api-design.md",
+        "specification/default/backend/tech-stack.md",
+        "specification/default/backend/layers.md",
+        "specification/default/backend/error-handling.md",
+        "specification/default/backend/workflow.md",
+        "specification/default/shared/security.md",
+        "specification/default/shared/naming.md",
+        "specification/default/shared/env-policy.md"
+      ],
+      "write_scope": [
+        "backend/src/api/routes/diagnoses.py",
+        "backend/tests/test_diagnoses.py"
+      ],
+      "status": "pending",
+      "retry_count": 0,
+      "notes": ""
+    },
+    {
+      "id": "T-034",
+      "title": "API-033 GET /api/diagnoses/{diagnosis_id} 诊断详情",
+      "type": "backend",
+      "description": "API-033 GET /api/diagnoses/{diagnosis_id}。同一 diagnoses 路由追加详情投影。 只实现这一个自有接口：按技术方案核对成功响应、失败响应和处理步骤。不把整条用户链路放进本任务，不修改 frontend/ 下的页面、样式、组件或前端接口调用代码。",
+      "source_feature": "F-003",
+      "acceptanceCriteria": [],
+      "technicalChecks": [
+        "审核前客户仅状态、补资料提示和下一步",
+        "员工可见报告、草稿、轮次次数；客户投影不含轮次",
+        "拒绝后无正文且无客户 PATCH",
+        "另一客户 404"
+      ],
+      "externalServices": [],
+      "dependencies": [
+        "T-033"
+      ],
+      "priority": 80,
+      "context_files": [
+        {
+          "path": "docs/PRD.md",
+          "section": "REQ-003 故障诊断"
+        },
+        {
+          "path": "docs/PRD.md",
+          "section": "权限矩阵"
+        },
+        {
+          "path": "docs/PRD.md",
+          "section": "思考过程给谁看"
+        },
+        {
+          "path": "docs/tech-spec.md",
+          "section": "二、前后端怎么分工，接口怎么拆 > API-032 / API-033 诊断列表与详情"
+        },
+        {
+          "path": "docs/tech-spec.md",
+          "section": "六、接口失败异常设计"
+        }
+      ],
+      "rules_files": [
+        "specification/default/backend/api-design.md",
+        "specification/default/backend/tech-stack.md",
+        "specification/default/backend/layers.md",
+        "specification/default/backend/error-handling.md",
+        "specification/default/backend/workflow.md",
+        "specification/default/shared/security.md",
+        "specification/default/shared/naming.md",
+        "specification/default/shared/env-policy.md"
+      ],
+      "write_scope": [
+        "backend/src/api/routes/diagnoses.py",
+        "backend/tests/test_diagnoses.py"
+      ],
+      "status": "pending",
+      "retry_count": 0,
+      "notes": ""
+    },
+    {
+      "id": "T-035",
+      "title": "API-034 POST /api/diagnoses/{diagnosis_id}/reviews 诊断审核",
+      "type": "backend",
+      "description": "API-034 POST /api/diagnoses/{diagnosis_id}/reviews。同一 diagnoses 路由追加审核。 只实现这一个自有接口：按技术方案核对成功响应、失败响应和处理步骤。不把整条用户链路放进本任务，不修改 frontend/ 下的页面、样式、组件或前端接口调用代码。",
+      "source_feature": "F-003",
+      "acceptanceCriteria": [
+        "[AC-008] 给定一份待审核诊断报告和已经生成的工单草稿 → 有权限且不是代发起人的审核人通过 → 客户能看到报告中的已核实事实、疑似原因、证据、缺口和下一步，仍看不到正式工单号。通过本身不创建正式工单。",
+        "[AC-009] 给定一条被退回的诊断 → 客户打开该记录 → 进度为未通过，看不到报告正文和工单内容，页面不提供在这一条上修改后再提交。客户可以按 AC-023 另发新请求。"
+      ],
+      "technicalChecks": [
+        "通过不调用正式报修，仍无正式工单号",
+        "自审 403",
+        "客户仍不可就地重提"
+      ],
+      "externalServices": [],
+      "dependencies": [
+        "T-034"
+      ],
+      "priority": 90,
+      "context_files": [
+        {
+          "path": "docs/PRD.md",
+          "section": "REQ-003 故障诊断"
+        },
+        {
+          "path": "docs/tech-spec.md",
+          "section": "二、前后端怎么分工，接口怎么拆 > API-034 / API-035 诊断审核与重提"
+        },
+        {
+          "path": "docs/tech-spec.md",
+          "section": "六、接口失败异常设计"
+        }
+      ],
+      "rules_files": [
+        "specification/default/backend/api-design.md",
+        "specification/default/backend/tech-stack.md",
+        "specification/default/backend/layers.md",
+        "specification/default/backend/error-handling.md",
+        "specification/default/backend/workflow.md",
+        "specification/default/shared/security.md",
+        "specification/default/shared/naming.md",
+        "specification/default/shared/env-policy.md"
+      ],
+      "write_scope": [
+        "backend/src/api/routes/diagnoses.py",
+        "backend/tests/test_diagnoses.py"
+      ],
+      "status": "pending",
+      "retry_count": 0,
+      "notes": ""
+    },
+    {
+      "id": "T-036",
+      "title": "API-035 POST /api/diagnoses/{diagnosis_id}/resubmissions 诊断内部重提",
+      "type": "backend",
+      "description": "API-035 POST /api/diagnoses/{diagnosis_id}/resubmissions。同一 diagnoses 路由追加内部重提。 只实现这一个自有接口：按技术方案核对成功响应、失败响应和处理步骤。不把整条用户链路放进本任务，不修改 frontend/ 下的页面、样式、组件或前端接口调用代码。",
+      "source_feature": "F-003",
+      "acceptanceCriteria": [],
+      "technicalChecks": [
+        "客户 403",
+        "重提人不能审这一次"
+      ],
+      "externalServices": [],
+      "dependencies": [
+        "T-035"
+      ],
+      "priority": 100,
+      "context_files": [
+        {
+          "path": "docs/PRD.md",
+          "section": "跨条目验收"
+        },
+        {
+          "path": "docs/tech-spec.md",
+          "section": "二、前后端怎么分工，接口怎么拆 > API-034 / API-035 诊断审核与重提"
+        },
+        {
+          "path": "docs/tech-spec.md",
+          "section": "六、接口失败异常设计"
+        }
+      ],
+      "rules_files": [
+        "specification/default/backend/api-design.md",
+        "specification/default/backend/tech-stack.md",
+        "specification/default/backend/layers.md",
+        "specification/default/backend/error-handling.md",
+        "specification/default/backend/workflow.md",
+        "specification/default/shared/security.md",
+        "specification/default/shared/naming.md",
+        "specification/default/shared/env-policy.md"
+      ],
+      "write_scope": [
+        "backend/src/api/routes/diagnoses.py",
+        "backend/tests/test_diagnoses.py"
+      ],
+      "status": "pending",
+      "retry_count": 0,
+      "notes": ""
+    },
+    {
+      "id": "T-037",
+      "title": "API-036 POST /api/diagnoses/{diagnosis_id}/ticket-submissions 正式报修",
+      "type": "backend",
+      "description": "API-036 POST /api/diagnoses/{diagnosis_id}/ticket-submissions。同一 diagnoses 路由追加正式报修。无模型。 只实现这一个自有接口：按技术方案核对成功响应、失败响应和处理步骤。不把整条用户链路放进本任务，不修改 frontend/ 下的页面、样式、组件或前端接口调用代码。",
+      "source_feature": "F-003",
+      "acceptanceCriteria": [
+        "[AC-018] 给定一次已经发出的正式报修，返回超时，创建结果尚未核实 → 暂停再次创建 → 页面状态为提交结果未知，不显示新的正式工单号。核实成功后才显示实际工单号；核实为未创建时，看到未创建，而不是第二条工单。",
+        "[AC-025] 给定一份已通过审核的诊断和对应工单草稿，且尚未正式报修 → 有正式报修授权的人提交报修并创建成功 → 归属客户看到正式工单号。该号码只表示本助手内创建成功，不表示外部售后已受理或已派工。没有这步授权时，客户只看到报告，看不到正式工单号。",
+        "[AC-056] 给定正式报修 → 创建失败时说明未创建，可以在原请求上处理后重试；结果未知时先核实，核实前不建第二条；核实成功后显示已有工单号；核实为未创建时显示未创建。允许的重试沿用同一业务请求，不另起一条重复报修。"
+      ],
+      "technicalChecks": [
+        "幂等键 ticket:{diagnosis_id}；超时 ticket_submit_unknown 且不新建第二张",
+        "ticket_provider=local 本系统发号；号码只在本助手内有效",
+        "无授权或自审 403；未通过审核或已有成功号 409",
+        "可用配置模拟超时以验收未知状态"
+      ],
+      "externalServices": [
+        "本系统工单表"
+      ],
+      "dependencies": [
+        "T-036"
+      ],
+      "priority": 110,
+      "context_files": [
+        {
+          "path": "docs/PRD.md",
+          "section": "REQ-003 故障诊断"
+        },
+        {
+          "path": "docs/decisions.md",
+          "section": "D-002 正式工单创建到哪里"
+        },
+        {
+          "path": "docs/tech-spec.md",
+          "section": "二、前后端怎么分工，接口怎么拆 > API-036 正式报修"
+        },
+        {
+          "path": "docs/tech-spec.md",
+          "section": "六、接口失败异常设计"
+        }
+      ],
+      "rules_files": [
+        "specification/default/backend/api-design.md",
+        "specification/default/backend/tech-stack.md",
+        "specification/default/backend/layers.md",
+        "specification/default/backend/error-handling.md",
+        "specification/default/backend/workflow.md",
+        "specification/default/shared/security.md",
+        "specification/default/shared/naming.md",
+        "specification/default/shared/env-policy.md"
+      ],
+      "write_scope": [
+        "backend/src/api/routes/diagnoses.py",
+        "backend/src/services/ticket_submission_service.py",
+        "backend/tests/test_diagnoses.py"
+      ],
+      "status": "pending",
+      "retry_count": 0,
+      "notes": ""
+    },
+    {
+      "id": "T-038",
+      "title": "API-037 GET /api/tickets/{ticket_id} 工单详情",
+      "type": "backend",
+      "description": "API-037 GET /api/tickets/{ticket_id}。tickets 路由唯一写入者。依赖正式报修已能创建记录。 只实现这一个自有接口：按技术方案核对成功响应、失败响应和处理步骤。不把整条用户链路放进本任务，不修改 frontend/ 下的页面、样式、组件或前端接口调用代码。",
+      "source_feature": "F-003",
+      "acceptanceCriteria": [],
+      "technicalChecks": [
+        "客户仅当 official_number 成功才看到号",
+        "草稿正文仅员工",
+        "无权限 404"
+      ],
+      "externalServices": [
+        "本系统工单表"
+      ],
+      "dependencies": [
+        "T-037"
+      ],
+      "priority": 120,
+      "context_files": [
+        {
+          "path": "docs/PRD.md",
+          "section": "权限矩阵"
+        },
+        {
+          "path": "docs/tech-spec.md",
+          "section": "二、前后端怎么分工，接口怎么拆 > API-037 工单详情"
+        },
+        {
+          "path": "docs/tech-spec.md",
+          "section": "六、接口失败异常设计"
+        }
+      ],
+      "rules_files": [
+        "specification/default/backend/api-design.md",
+        "specification/default/backend/tech-stack.md",
+        "specification/default/backend/layers.md",
+        "specification/default/backend/error-handling.md",
+        "specification/default/backend/workflow.md",
+        "specification/default/shared/security.md",
+        "specification/default/shared/naming.md",
+        "specification/default/shared/env-policy.md"
+      ],
+      "write_scope": [
+        "backend/src/api/routes/tickets.py",
+        "backend/tests/test_tickets.py"
+      ],
+      "status": "pending",
+      "retry_count": 0,
+      "notes": ""
+    },
+    {
+      "id": "T-039",
+      "title": "API-038 GET /api/conversations/search 搜索已归档会话",
+      "type": "backend",
+      "description": "API-038 GET /api/conversations/search。写在 conversations 路由。依赖 T-009 完成后该文件不再被消息任务占用。 只实现这一个自有接口：按技术方案核对成功响应、失败响应和处理步骤。不把整条用户链路放进本任务，不修改 frontend/ 下的页面、样式、组件或前端接口调用代码。",
+      "source_feature": "F-006",
+      "acceptanceCriteria": [
+        "[AC-066] 给定一条未归档会话，以及另一名员工 → 该员工搜索 → 搜索结果里没有这条会话。发起人自己的历史列表仍能打开它。已归档且当前员工本来就能查看的记录，搜索可以返回，不因此看到无权查看的记录。"
+      ],
+      "technicalChecks": [
+        "只返回已归档且当前内部人员本来就能查看的会话",
+        "未归档会话不返回，包括发起人自己的",
+        "非内部人员 403；未登录 401",
+        "不代替 API-005 历史列表"
+      ],
+      "externalServices": [],
+      "dependencies": [
+        "T-009"
+      ],
+      "priority": 60,
+      "context_files": [
+        {
+          "path": "docs/PRD.md",
+          "section": "REQ-006 搜索、评价与取消"
+        },
+        {
+          "path": "docs/decisions.md",
+          "section": "D-009 本版只做内部人员界面，并收紧搜索、评价和取消"
+        },
+        {
+          "path": "docs/tech-spec.md",
+          "section": "二、前后端怎么分工，接口怎么拆 > API-038 搜索会话"
+        },
+        {
+          "path": "docs/tech-spec.md",
+          "section": "六、接口失败异常设计"
+        }
+      ],
+      "rules_files": [
+        "specification/default/backend/api-design.md",
+        "specification/default/backend/tech-stack.md",
+        "specification/default/backend/layers.md",
+        "specification/default/backend/error-handling.md",
+        "specification/default/backend/workflow.md",
+        "specification/default/shared/security.md",
+        "specification/default/shared/naming.md",
+        "specification/default/shared/env-policy.md"
+      ],
+      "write_scope": [
+        "backend/src/api/routes/conversations.py",
+        "backend/tests/test_conversations.py"
+      ],
+      "status": "pending",
+      "retry_count": 0,
+      "notes": ""
+    },
+    {
+      "id": "T-040",
+      "title": "API-039 POST /api/records/{record_id}/ratings 点选评价",
+      "type": "backend",
+      "description": "API-039 POST /api/records/{record_id}/ratings。records.py 唯一首次写入。 只实现这一个自有接口：按技术方案核对成功响应、失败响应和处理步骤。不把整条用户链路放进本任务，不修改 frontend/ 下的页面、样式、组件或前端接口调用代码。",
+      "source_feature": "F-006",
+      "acceptanceCriteria": [
+        "[AC-067] 给定一条有结果的助手回复 → 内部人员点赞 → 记为满意；点踩 → 记为不满意。评价记在该员工账户下，并计入满意度。未点选或只做文字纠错 → 只记行为埋点，满意度不变。再点同一个图标 → 取消这次评价，满意度随之去掉这一条。只有已经采纳并归档的版本才进入待人工审核队列；审核通过前，知识库内容不变。客户账户上的评价不出现在这个员工账户的评价里。"
+      ],
+      "technicalChecks": [
+        "点赞满意、点踩不满意、再点同一选择取消",
+        "评价记在当前账户；客户评价不并入员工账户",
+        "仅已采纳归档版本进入 knowledge_status=pending_review，审核通过前不入库",
+        "未点选和文字纠错不走本接口"
+      ],
+      "externalServices": [],
+      "dependencies": [
+        "T-009"
+      ],
+      "priority": 60,
+      "context_files": [
+        {
+          "path": "docs/PRD.md",
+          "section": "REQ-006 搜索、评价与取消"
+        },
+        {
+          "path": "docs/decisions.md",
+          "section": "D-009 本版只做内部人员界面，并收紧搜索、评价和取消"
+        },
+        {
+          "path": "docs/tech-spec.md",
+          "section": "二、前后端怎么分工，接口怎么拆 > API-039 点选评价"
+        },
+        {
+          "path": "docs/tech-spec.md",
+          "section": "六、接口失败异常设计"
+        }
+      ],
+      "rules_files": [
+        "specification/default/backend/api-design.md",
+        "specification/default/backend/tech-stack.md",
+        "specification/default/backend/layers.md",
+        "specification/default/backend/error-handling.md",
+        "specification/default/backend/workflow.md",
+        "specification/default/shared/security.md",
+        "specification/default/shared/naming.md",
+        "specification/default/shared/env-policy.md"
+      ],
+      "write_scope": [
+        "backend/src/api/routes/records.py",
+        "backend/tests/test_records.py"
+      ],
+      "status": "pending",
+      "retry_count": 0,
+      "notes": ""
+    },
+    {
+      "id": "T-041",
+      "title": "API-040 POST /api/records/{record_id}/cancellations 取消任务",
+      "type": "backend",
+      "description": "API-040 POST /api/records/{record_id}/cancellations。同一 records 路由追加取消。 只实现这一个自有接口：按技术方案核对成功响应、失败响应和处理步骤。不把整条用户链路放进本任务，不修改 frontend/ 下的页面、样式、组件或前端接口调用代码。",
+      "source_feature": "F-006",
+      "acceptanceCriteria": [
+        "[AC-068] 给定一条处理中或待审核的业务任务 → 内部人员取消 → 任务停止继续执行。页面仍能看到原来的请求、已生成结果、当时进度和已填写归属，并标明 bad case。这次取消计一次任务完成，采纳数和满意度都不变。尚未生成可交付结果时，结果生成完成率的分子不增加；尚未归档时，端到端完成率的分子不增加。"
+      ],
+      "technicalChecks": [
+        "仅处理中或待审核；否则 409",
+        "停止执行、保留内容、bad_case=true、完成计数+1、不增加采纳和满意",
+        "不删除记录"
+      ],
+      "externalServices": [],
+      "dependencies": [
+        "T-040"
+      ],
+      "priority": 70,
+      "context_files": [
+        {
+          "path": "docs/PRD.md",
+          "section": "REQ-006 搜索、评价与取消"
+        },
+        {
+          "path": "docs/PRD.md",
+          "section": "结果生成后再归档，归档不等于审批"
+        },
+        {
+          "path": "docs/tech-spec.md",
+          "section": "二、前后端怎么分工，接口怎么拆 > API-040 取消任务"
+        },
+        {
+          "path": "docs/tech-spec.md",
+          "section": "六、接口失败异常设计"
+        }
+      ],
+      "rules_files": [
+        "specification/default/backend/api-design.md",
+        "specification/default/backend/tech-stack.md",
+        "specification/default/backend/layers.md",
+        "specification/default/backend/error-handling.md",
+        "specification/default/backend/workflow.md",
+        "specification/default/shared/security.md",
+        "specification/default/shared/naming.md",
+        "specification/default/shared/env-policy.md"
+      ],
+      "write_scope": [
+        "backend/src/api/routes/records.py",
+        "backend/tests/test_records.py"
+      ],
+      "status": "pending",
+      "retry_count": 0,
+      "notes": ""
+    },
+    {
+      "id": "T-042",
+      "title": "API-041 POST /api/selections/{selection_id}/business-approvals 业务批准",
+      "type": "backend",
+      "description": "API-041 POST /api/selections/{selection_id}/business-approvals。写在 selections 路由，依赖技术确认链路完成。 只实现这一个自有接口：按技术方案核对成功响应、失败响应和处理步骤。不把整条用户链路放进本任务，不修改 frontend/ 下的页面、样式、组件或前端接口调用代码。",
+      "source_feature": "F-006",
+      "acceptanceCriteria": [
+        "[AC-069] 给定一条已经采纳并归档、技术上可用于报价的结果，且还没有业务批准 → 内部人员要用它发起正式报价 → 页面说明需要业务批准，不生成正式报价。有权限且不是本条代发起人的人批准后，才进入报价；报价随后仍要审核，并另行发布。校验通过、可用于报价和采纳归档都不显示成业务已批准。代发起人不能批准自己这条。"
+      ],
+      "technicalChecks": [
+        "未采纳或技术上不能用于报价 409",
+        "代发起人批准自己的记录 403",
+        "写入批准后才可正式报价；不改报价进度、不发布",
+        "校验通过/可用于报价/采纳归档都不得显示成业务已批准"
+      ],
+      "externalServices": [],
+      "dependencies": [
+        "T-013"
+      ],
+      "priority": 100,
+      "context_files": [
+        {
+          "path": "docs/PRD.md",
+          "section": "REQ-006 搜索、评价与取消"
+        },
+        {
+          "path": "docs/PRD.md",
+          "section": "选型状态，避免把校验通过写成业务批准"
+        },
+        {
+          "path": "docs/decisions.md",
+          "section": "D-010 报价批准、已发布查看、标书归档和合同签署"
+        },
+        {
+          "path": "docs/tech-spec.md",
+          "section": "二、前后端怎么分工，接口怎么拆 > API-041 业务批准"
+        },
+        {
+          "path": "docs/tech-spec.md",
+          "section": "六、接口失败异常设计"
+        }
+      ],
+      "rules_files": [
+        "specification/default/backend/api-design.md",
+        "specification/default/backend/tech-stack.md",
+        "specification/default/backend/layers.md",
+        "specification/default/backend/error-handling.md",
+        "specification/default/backend/workflow.md",
+        "specification/default/shared/security.md",
+        "specification/default/shared/naming.md",
+        "specification/default/shared/env-policy.md"
+      ],
+      "write_scope": [
+        "backend/src/api/routes/selections.py",
+        "backend/tests/test_selections.py"
+      ],
+      "status": "pending",
+      "retry_count": 0,
+      "notes": ""
+    },
+    {
+      "id": "T-043",
+      "title": "API-042 GET /api/published-records/{record_id} 内部调用查看已发布内容",
+      "type": "backend",
+      "description": "API-042 GET /api/published-records/{record_id}。published_records 路由唯一写入者。依赖报价发布接口。 只实现这一个自有接口：按技术方案核对成功响应、失败响应和处理步骤。不把整条用户链路放进本任务，不修改 frontend/ 下的页面、样式、组件或前端接口调用代码。",
+      "source_feature": "F-006",
+      "acceptanceCriteria": [
+        "[AC-070] 给定一条已发布报价 → 另一名内部人员调用查看 → 能看到该已发布版本的产品或配置、费用、适用条件、有效期和金额，用于业务参考。看不到成本、利润、内部意见，也看不到未发布版本的正文，页面不提供下载文件。未发布记录不因本条对其他用户开放。"
+      ],
+      "technicalChecks": [
+        "仅已发布版本的产品/配置、费用、条件、有效期、金额",
+        "无成本利润内部意见，无下载文件",
+        "未发布 404，不扩大未发布权限"
+      ],
+      "externalServices": [],
+      "dependencies": [
+        "T-020"
+      ],
+      "priority": 140,
+      "context_files": [
+        {
+          "path": "docs/PRD.md",
+          "section": "REQ-006 搜索、评价与取消"
+        },
+        {
+          "path": "docs/decisions.md",
+          "section": "D-010 报价批准、已发布查看、标书归档和合同签署"
+        },
+        {
+          "path": "docs/tech-spec.md",
+          "section": "二、前后端怎么分工，接口怎么拆 > API-042 调用查看已发布内容"
+        },
+        {
+          "path": "docs/tech-spec.md",
+          "section": "六、接口失败异常设计"
+        }
+      ],
+      "rules_files": [
+        "specification/default/backend/api-design.md",
+        "specification/default/backend/tech-stack.md",
+        "specification/default/backend/layers.md",
+        "specification/default/backend/error-handling.md",
+        "specification/default/backend/workflow.md",
+        "specification/default/shared/security.md",
+        "specification/default/shared/naming.md",
+        "specification/default/shared/env-policy.md"
+      ],
+      "write_scope": [
+        "backend/src/api/routes/published_records.py",
+        "backend/tests/test_published_records.py"
+      ],
+      "status": "pending",
+      "retry_count": 0,
+      "notes": ""
+    },
+    {
+      "id": "T-044",
+      "title": "API-043 POST /api/tenders/{tender_id}/submission-archives 标书提交归档",
+      "type": "backend",
+      "description": "API-043 POST /api/tenders/{tender_id}/submission-archives。写在 tenders 路由，依赖标书重提链路完成以免并行写同一文件。 只实现这一个自有接口：按技术方案核对成功响应、失败响应和处理步骤。不把整条用户链路放进本任务，不修改 frontend/ 下的页面、样式、组件或前端接口调用代码。",
+      "source_feature": "F-004",
+      "acceptanceCriteria": [
+        "[AC-071] 给定标书文档的首版或改版，用户已经更新内容 → 用户归档这次提交 → 页面留下这次提交版本和提交归档标记。这个标记不等于该版本已被采纳，也不代替助手结果的「已归档」。"
+      ],
+      "technicalChecks": [
+        "留下提交版本和提交归档标记，adopted 仍为 false",
+        "没有可归档更新 409",
+        "不代替助手结果归档"
+      ],
+      "externalServices": [],
+      "dependencies": [
+        "T-026"
+      ],
+      "priority": 110,
+      "context_files": [
+        {
+          "path": "docs/PRD.md",
+          "section": "REQ-006 搜索、评价与取消"
+        },
+        {
+          "path": "docs/decisions.md",
+          "section": "D-010 报价批准、已发布查看、标书归档和合同签署"
+        },
+        {
+          "path": "docs/tech-spec.md",
+          "section": "二、前后端怎么分工，接口怎么拆 > API-043 标书提交归档"
+        },
+        {
+          "path": "docs/tech-spec.md",
+          "section": "六、接口失败异常设计"
+        }
+      ],
+      "rules_files": [
+        "specification/default/backend/api-design.md",
+        "specification/default/backend/tech-stack.md",
+        "specification/default/backend/layers.md",
+        "specification/default/backend/error-handling.md",
+        "specification/default/backend/workflow.md",
+        "specification/default/shared/security.md",
+        "specification/default/shared/naming.md",
+        "specification/default/shared/env-policy.md"
+      ],
+      "write_scope": [
+        "backend/src/api/routes/tenders.py",
+        "backend/tests/test_tenders.py"
+      ],
+      "status": "pending",
+      "retry_count": 0,
+      "notes": ""
+    },
+    {
+      "id": "T-045",
+      "title": "API-044 POST /api/tenders/{tender_id}/adoption-updates 标书采纳手动更新",
+      "type": "backend",
+      "description": "API-044 POST /api/tenders/{tender_id}/adoption-updates。同一 tenders 路由追加采纳手动更新。 只实现这一个自有接口：按技术方案核对成功响应、失败响应和处理步骤。不把整条用户链路放进本任务，不修改 frontend/ 下的页面、样式、组件或前端接口调用代码。",
+      "source_feature": "F-004",
+      "acceptanceCriteria": [
+        "[AC-072] 给定一条已经按 AC-071 提交归档的标书 → 手动审核完成，并且有权限的人再手动更新是否采纳 → 页面才显示采纳结果。只归档，或只完成审核而没有这次手动更新，都不显示已采纳。AI 不代为更新。"
+      ],
+      "technicalChecks": [
+        "未提交归档或未完成手动审核 409",
+        "审核通过本身不写 adopted=true",
+        "留下操作者"
+      ],
+      "externalServices": [],
+      "dependencies": [
+        "T-044"
+      ],
+      "priority": 120,
+      "context_files": [
+        {
+          "path": "docs/PRD.md",
+          "section": "REQ-006 搜索、评价与取消"
+        },
+        {
+          "path": "docs/decisions.md",
+          "section": "D-010 报价批准、已发布查看、标书归档和合同签署"
+        },
+        {
+          "path": "docs/tech-spec.md",
+          "section": "二、前后端怎么分工，接口怎么拆 > API-044 标书采纳手动更新"
+        },
+        {
+          "path": "docs/tech-spec.md",
+          "section": "六、接口失败异常设计"
+        }
+      ],
+      "rules_files": [
+        "specification/default/backend/api-design.md",
+        "specification/default/backend/tech-stack.md",
+        "specification/default/backend/layers.md",
+        "specification/default/backend/error-handling.md",
+        "specification/default/backend/workflow.md",
+        "specification/default/shared/security.md",
+        "specification/default/shared/naming.md",
+        "specification/default/shared/env-policy.md"
+      ],
+      "write_scope": [
+        "backend/src/api/routes/tenders.py",
+        "backend/tests/test_tenders.py"
+      ],
+      "status": "pending",
+      "retry_count": 0,
+      "notes": ""
+    },
+    {
+      "id": "T-046",
+      "title": "API-045 POST /api/contracts/{contract_id}/signing-status 合同签署状态",
+      "type": "backend",
+      "description": "API-045 POST /api/contracts/{contract_id}/signing-status。写在 contracts 路由，依赖合同重提链路完成。 只实现这一个自有接口：按技术方案核对成功响应、失败响应和处理步骤。不把整条用户链路放进本任务，不修改 frontend/ 下的页面、样式、组件或前端接口调用代码。",
+      "source_feature": "F-005",
+      "acceptanceCriteria": [
+        "[AC-073] 给定合同检查已经完成最终审核 → 业务人员手动更新签署状态 → 页面显示该人员写入的签署状态，并留下操作者。最终审核通过本身不把状态改成已签署。审核未完成时不能更新签署状态。系统不代签、不盖章。签署状态不替换「已通过」。"
+      ],
+      "technicalChecks": [
+        "最终审核未完成 409",
+        "进度保持已通过，签署状态单独显示",
+        "不代签、不盖章、不把签署文件送外部系统"
+      ],
+      "externalServices": [],
+      "dependencies": [
+        "T-031"
+      ],
+      "priority": 110,
+      "context_files": [
+        {
+          "path": "docs/PRD.md",
+          "section": "REQ-006 搜索、评价与取消"
+        },
+        {
+          "path": "docs/PRD.md",
+          "section": "REQ-005 合同管理"
+        },
+        {
+          "path": "docs/decisions.md",
+          "section": "D-010 报价批准、已发布查看、标书归档和合同签署"
+        },
+        {
+          "path": "docs/tech-spec.md",
+          "section": "二、前后端怎么分工，接口怎么拆 > API-045 合同签署状态"
+        },
+        {
+          "path": "docs/tech-spec.md",
+          "section": "六、接口失败异常设计"
+        }
+      ],
+      "rules_files": [
+        "specification/default/backend/api-design.md",
+        "specification/default/backend/tech-stack.md",
+        "specification/default/backend/layers.md",
+        "specification/default/backend/error-handling.md",
+        "specification/default/backend/workflow.md",
+        "specification/default/shared/security.md",
+        "specification/default/shared/naming.md",
+        "specification/default/shared/env-policy.md"
+      ],
+      "write_scope": [
+        "backend/src/api/routes/contracts.py",
+        "backend/tests/test_contracts.py"
+      ],
+      "status": "pending",
+      "retry_count": 0,
+      "notes": ""
+    },
+    {
+      "id": "T-047",
+      "title": "内部人员主流程联调",
+      "type": "integration",
+      "description": "不新做接口。把已实现接口按内部人员主流程串起来：登录 → 工作台与助手分开 → 五插件或自然语言发起 → 上传作为输入 → 选型/报价/标书/合同/诊断 → 非自审审核、商务确认、发布、正式报修 → 搜索、评价、取消、归档、业务批准、已发布查看、标书提交归档与合同签署状态。可改 frontend 的接口地址或 Mock 开关，不改页面结构和样式。本版无客户使用界面；客户投影用客户账号打接口核对，页面只验内部人员端。无 Key 时生成类只走假调用，不得写成真实模型通过。",
+      "source_feature": "F-007",
+      "acceptanceCriteria": [
+        "[AC-019] 给定没有相应业务或项目权限的人 → 打开一条不属于授权范围的选型、报价、标书、合同、诊断报告或工单，或调用对应读取、下载接口 → 页面显示权限不足，接口也不返回价格、报告、标书、合同、成本和内部意见。只隐藏按钮不能通过本条。该人不能继续审核或发布。同一客户的另一个项目资料不能拿来填这一条。",
+        "[AC-023] 给定一条状态为未通过的报价、标书、合同或诊断 → 客户不修改该条，而是另发一条新请求 → 旧记录保持未通过且仍不能就地重提；新请求作为新的一条进入对应流程。",
+        "[AC-032] 给定已登记且口令正确的账号 → 登录 → 进入 Dashboard，随后只能按该账号的客户归属和权限看到记录。",
+        "[AC-060] 给定一次业务动作完成 → 有查看权限的员工打开该记录 → 能定位到这次请求、客户、所属项目或「未分项目」、业务版本、引用依据、关键动作、审批或发布结果，以及工单创建结果。客户版不因此展示成本、内部意见或审计明细。这不是经营分析，也不提供审计日志导出。",
+        "[AC-062] 给定同一次验收分别用模拟调用和真实模型调用 → 模拟结果只证明页面、权限和状态流转。真实生成质量必须在实际调用且资料有效时单独记录。没有真实调用时，不能把生成类验收写成真实模型通过。",
+        "[AC-065] 给定一条已生成的可交付结果 → 结果下方出现归档询问，而不是弹窗。用户点击「采纳并归档」且保存成功 → 记录一次采纳，并留下客户、地区、项目、版本和操作者。再次点击、刷新或重新打开不重复计数。保存失败时保留已填内容并提示重试，不计入采纳。「暂不归档」保留结果。归档后的进度标签不变，「已归档」只是保存标记，不表示审核通过、发布、签署或正式报修。满意度不由归档代替。演示只展示这四项口径，不新增经营分析页面。"
+      ],
+      "technicalChecks": [
+        "前端 VITE_USE_MOCK=false 指向 /api，登录内部账号进入 Dashboard，只能看到授权记录",
+        "助手走完选型到报价（含业务批准）、标书、合同检查、诊断到正式报修的内部人员路径，状态与权限按钮符合 PRD",
+        "处理中可轮询详情；不要送审的报价保持处理中；紧急诊断立刻出指引",
+        "搜索不到未归档会话；点赞点踩与取消在真实接口上生效；归档表单非弹窗且成功才计采纳",
+        "AC-019：页面权限不足且接口不返回价格/报告/成本/内部意见，只藏按钮不算通过",
+        "无 DeepSeek Key 时明确记录假调用边界；有 Key 且授权付费时另记真实生成，二者不得混报"
+      ],
+      "externalServices": [
+        "DeepSeek Chat",
+        "种子知识文件",
+        "本系统工单表"
+      ],
+      "dependencies": [
+        "T-001",
+        "T-002",
+        "T-003",
+        "T-004",
+        "T-005",
+        "T-006",
+        "T-007",
+        "T-008",
+        "T-009",
+        "T-010",
+        "T-011",
+        "T-012",
+        "T-013",
+        "T-014",
+        "T-015",
+        "T-016",
+        "T-017",
+        "T-018",
+        "T-019",
+        "T-020",
+        "T-021",
+        "T-022",
+        "T-023",
+        "T-024",
+        "T-025",
+        "T-026",
+        "T-027",
+        "T-028",
+        "T-029",
+        "T-030",
+        "T-031",
+        "T-032",
+        "T-033",
+        "T-034",
+        "T-035",
+        "T-036",
+        "T-037",
+        "T-038",
+        "T-039",
+        "T-040",
+        "T-041",
+        "T-042",
+        "T-043",
+        "T-044",
+        "T-045",
+        "T-046"
+      ],
+      "priority": 200,
+      "context_files": [
+        {
+          "path": "docs/PRD.md",
+          "section": "用户目标与完整流程"
+        },
+        {
+          "path": "docs/PRD.md",
+          "section": "用户流程图"
+        },
+        {
+          "path": "docs/PRD.md",
+          "section": "核心交互时序图"
+        },
+        {
+          "path": "docs/PRD.md",
+          "section": "界面约定"
+        },
+        {
+          "path": "docs/PRD.md",
+          "section": "权限矩阵"
+        },
+        {
+          "path": "docs/tech-spec.md",
+          "section": "一、用户要完成什么"
+        },
+        {
+          "path": "docs/tech-spec.md",
+          "section": "二、前后端怎么分工，接口怎么拆"
+        },
+        {
+          "path": "docs/tech-spec.md",
+          "section": "七、项目本地层级设计 > 外部服务清单"
+        },
+        {
+          "path": "docs/tech-spec.md",
+          "section": "七、项目本地层级设计 > REQ / AC 覆盖"
+        },
+        {
+          "path": "docs/ui-style.md",
+          "section": "四、界面清单与页面设计"
+        },
+        {
+          "path": "docs/prototypes/index.html",
+          "section": "/login"
+        },
+        {
+          "path": "docs/prototypes/index.html",
+          "section": "/dashboard"
+        },
+        {
+          "path": "docs/prototypes/index.html",
+          "section": "/assistant"
+        },
+        {
+          "path": "docs/prototypes/index.html",
+          "section": "/review"
+        },
+        {
+          "path": "docs/decisions.md",
+          "section": "D-005 所有模型调用改用 DeepSeek"
+        },
+        {
+          "path": "docs/decisions.md",
+          "section": "D-011 确认本版需求稿和技术方案"
+        }
+      ],
+      "rules_files": [
+        "specification/default/frontend/api-client.md",
+        "specification/default/frontend/acceptance.md",
+        "specification/default/backend/api-design.md",
+        "specification/default/shared/security.md",
+        "specification/default/shared/env-policy.md"
+      ],
+      "write_scope": [
+        "frontend/src/services/",
+        "frontend/src/mocks/",
+        "frontend/.env.example"
+      ],
+      "status": "pending",
+      "retry_count": 0,
+      "notes": ""
+    }
+  ]
+}

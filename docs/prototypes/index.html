@@ -88,16 +88,19 @@
     .nav-btn { height: 40px; text-align: left; padding: 0 12px; border: 0; background: transparent; }
     .nav-btn:hover { background: #fff; }
     .nav-btn.current { background: #fff; color: #0B6E5A; font-weight: 600; box-shadow: 0 1px 2px rgba(31, 41, 51, 0.06); }
-    .history { flex: 1; min-height: 80px; overflow: auto; margin-top: 8px; padding-top: 0; }
+    .history { flex: 1; min-height: 80px; overflow-x: hidden; overflow-y: auto; margin-top: 8px; padding-top: 0; }
     .history-label { margin: 4px 4px 8px; padding: 12px 8px 0; border-top: 1px solid #E5E7EB; font-size: 12px; line-height: 16px; font-weight: 600; letter-spacing: 0.06em; color: #8B95A1; }
-    .history-row { position: relative; display: flex; align-items: center; width: 100%; min-height: 36px; border-radius: 8px; }
+    .history-search { display: block; margin: 0 4px 8px; }
+    .history-search input { height: 36px; border-radius: 8px; font-size: 13px; }
+    .history-row { position: relative; display: flex; align-items: center; width: 100%; max-width: 100%; min-height: 36px; border-radius: 8px; overflow: hidden; }
     .history-row:hover, .history-row.menu-open, .history-empty:hover { background: #fff; }
     .history-row.current .history-item { color: #0B6E5A; font-weight: 600; }
     .history-item, .history-empty { display: flex; align-items: center; gap: 8px; width: 100%; min-width: 0; min-height: 36px; padding: 6px 8px; border: 0; border-radius: 8px; background: transparent; text-align: left; color: #5C6770; }
-    .history-item { flex: 1; }
+    .history-item { flex: 1; overflow: hidden; }
     .history-item:hover, .history-empty:hover { color: #1F2933; }
-    .history-item .history-title { display: block; overflow: hidden; min-width: 0; text-overflow: ellipsis; white-space: nowrap; }
+    .history-item .history-title { display: block; width: 100%; overflow: hidden; min-width: 0; text-overflow: ellipsis; white-space: nowrap; }
     .history-title-text { display: inline-block; white-space: nowrap; }
+    .history-row:hover .history-title, .history-row.menu-open .history-title { text-overflow: clip; }
     .history-age { flex: none; width: 36px; margin-right: 8px; text-align: right; font-size: 12px; line-height: 16px; font-variant-numeric: tabular-nums; color: #5C6770; }
     .history-row:hover .history-age, .history-row.menu-open .history-age { visibility: hidden; }
     .history-more { display: none; position: absolute; right: 4px; width: 28px; height: 28px; align-items: center; justify-content: center; border: 0; border-radius: 6px; background: transparent; color: #1F2933; }
@@ -108,10 +111,6 @@
     .history-pop button { display: block; width: 100%; min-height: 36px; padding: 8px 10px; border: 0; border-radius: 6px; background: transparent; text-align: left; color: #9B1C1C; }
     .history-pop button:hover { background: #FDECEC; }
     @keyframes history-marquee { 0%, 12% { transform: translateX(0); } 88%, 100% { transform: translateX(var(--shift, 0px)); } }
-    @media (prefers-reduced-motion: reduce) {
-      .history-row:hover .history-title, .history-row.menu-open .history-title { overflow-x: auto; }
-      .history-title-text { animation: none !important; }
-    }
     .side-foot { margin-top: auto; padding: 12px 4px 0; border-top: 1px solid #E5E7EB; }
     .user-row { display: flex; align-items: center; gap: 8px; }
     .avatar { width: 32px; height: 32px; border-radius: 50%; background: #0B6E5A; color: #fff; display: inline-flex; align-items: center; justify-content: center; font-weight: 600; flex: none; }
@@ -138,9 +137,59 @@
     .composer-tools { display: flex; align-items: center; gap: 8px; }
     .thread { flex: 1; overflow: auto; }
     .thread-inner, .composer-wrap { width: min(860px, 100%); margin: 0 auto; }
-    .thread-inner { padding: 32px 24px 16px; }
+    .thread-inner { padding: 72px 24px 16px; }
     .empty-hello { margin: 48px 0; font-size: 22px; font-weight: 600; }
+    .turn { display: flex; margin: 0 0 14px; }
+    .turn-user { justify-content: flex-end; }
+    .turn-ai { justify-content: flex-start; }
+    .bubble { max-width: min(78%, 520px); padding: 10px 14px; border-radius: 16px; line-height: 22px; }
+    .turn-user .bubble { background: #0B6E5A; color: #fff; border-bottom-right-radius: 6px; }
+    .turn-ai .bubble { max-width: min(100%, 720px); background: #F4F6F8; color: #1F2933; border: 1px solid #E5E7EB; border-bottom-left-radius: 6px; }
+    .bubble p { margin: 0; }
+    .turn-answer { display: block; }
+    .answer-col { width: 100%; min-width: 0; }
+    .cot { margin: 0 0 12px; padding: 12px 14px; background: #F7F8FA; border: 1px solid #E5E7EB; border-radius: 12px; }
+    .cot p { margin: 0 0 8px; }
+    .cot-row { display: flex; align-items: center; gap: 8px; width: 100%; min-height: 36px; margin: 0 0 4px; padding: 4px 8px; border: 0; border-radius: 8px; background: transparent; text-align: left; }
+    .cot-row .badge { margin-top: 0; margin-left: auto; }
+    .reply-tools { display: flex; justify-content: flex-start; gap: 8px; margin: 8px 0 4px; padding: 0; }
+    .answer-col .archive-ask,
+    .answer-col .bind-ask,
+    .answer-col .remember-ask { width: 100%; margin: 0; padding: 0 0 12px; }
+    .icon-tool { width: 40px; height: 40px; border-radius: 10px; border: 1px solid #E5E7EB; background: #fff; color: #5C6770; display: inline-flex; align-items: center; justify-content: center; }
+    .icon-tool:hover { background: #F7F8FA; color: #1F2933; }
+    .icon-tool.current { color: #0B6E5A; border-color: #B7D9CF; background: #E7F3EF; }
+    .icon-tool.down.current { color: #9B2C2C; border-color: #E7C1C1; background: #F8EEEE; }
     .block { margin: 0 0 16px; }
+    .trace-board, .result-board { margin: 0 0 20px; padding: 16px; background: #fff; border: 1px solid #E5E7EB; border-radius: 16px; }
+    .trace-head, .result-head { display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; }
+    .trace-head strong, .result-head h2 { font-size: 18px; line-height: 26px; }
+    .result-head .badge { margin-top: 2px; }
+    .trace-bar { height: 4px; margin: 12px 0; background: #E7EEEF; border-radius: 4px; overflow: hidden; }
+    .trace-bar span { display: block; height: 100%; background: #0B6E5A; }
+    .trace-phase { margin: 12px 0 6px; color: #5C6770; font-size: 12px; font-weight: 600; }
+    .trace-step { display: flex; align-items: center; gap: 10px; width: 100%; min-height: 44px; margin: 0 0 6px; padding: 8px 10px; border: 1px solid #E5E7EB; border-radius: 10px; background: #F7F8FA; text-align: left; }
+    .trace-step[aria-expanded="true"] { background: #fff; border-color: #B7D9CF; }
+    .trace-index { width: 22px; height: 22px; border-radius: 50%; background: #0B6E5A; color: #fff; font-size: 12px; display: inline-flex; align-items: center; justify-content: center; flex: none; }
+    .trace-main { flex: 1; min-width: 0; }
+    .trace-kind { display: block; color: #5C6770; font-size: 12px; line-height: 16px; }
+    .trace-title { display: block; font-weight: 600; }
+    .trace-detail { margin: -2px 0 8px 32px; padding: 10px 12px; background: #F7F8FA; border-radius: 10px; }
+    .trace-detail p { margin: 0 0 6px; }
+    .stat-row, .card-grid { display: grid; gap: 12px; }
+    .stat-row { grid-template-columns: repeat(2, minmax(0, 1fr)); margin: 16px 0; }
+    .stat, .result-card { padding: 12px; background: #F7F8FA; border-radius: 12px; }
+    .stat span, .result-card h3 { display: block; color: #5C6770; font-size: 12px; line-height: 16px; font-weight: 600; }
+    .stat strong { display: block; margin-top: 4px; font-size: 16px; line-height: 24px; }
+    .card-grid { grid-template-columns: 1fr; }
+    .result-card { background: #fff; border: 1px solid #E5E7EB; }
+    .result-card.internal { background: #F8F1E7; border-color: #E7D3B0; }
+    .result-card h3 { margin: 0 0 8px; }
+    .result-card p { margin: 0; white-space: pre-line; }
+    @media (min-width: 960px) {
+      .stat-row { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+      .card-grid { grid-template-columns: 1fr 1fr; }
+    }
     .composer-wrap { padding: 0 24px 20px; }
     .composer-box { background: rgba(255,255,255,0.92); border-radius: 20px; box-shadow: 0 4px 12px -4px rgba(0,0,0,0.06), 0 0 0 1px rgba(0,0,0,0.06); padding: 4px 6px 8px; }
     .composer-box:focus-within { box-shadow: 0 4px 12px -4px rgba(0,0,0,0.08), 0 0 0 1px rgba(0,0,0,0.14); }
@@ -167,11 +216,11 @@
     .metric-note { margin: 12px 0 0; color: #5C6770; font-size: 12px; line-height: 18px; }
     @media (max-width: 768px) { .archive-fields { grid-template-columns: 1fr; } }
     .suggest { width: min(860px, 100%); margin: 4px auto 0; padding: 8px 24px 0; }
-    .suggest-item { position: relative; display: flex; align-items: center; gap: 12px; width: 100%; min-height: 56px; padding: 0 4px; border: 0; background: transparent; text-align: left; color: #5C6770; font-size: 14px; font-weight: 400; line-height: 22px; }
+    .suggest-item { position: relative; display: flex; align-items: flex-start; gap: 12px; width: 100%; min-height: 56px; padding: 12px 4px; border: 0; background: transparent; text-align: left; color: #5C6770; font-size: 14px; font-weight: 400; line-height: 22px; }
     .suggest-item::after { content: ""; position: absolute; left: 0; right: 0; bottom: 0; height: 1px; background: #E5E7EB; }
     .suggest-item:last-child::after { display: none; }
     .suggest-item:hover { background: #F7F8FA; color: #1F2933; }
-    .suggest-text { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .suggest-text { flex: 1; min-width: 0; white-space: normal; }
     .suggest-chip { flex: none; display: inline-flex; align-items: center; height: 24px; max-width: 140px; padding: 0 8px; border-radius: 8px; background: #F4F6F8; color: #5C6770; font-size: 12px; font-weight: 600; }
     .suggest-arrow { flex: none; color: #8B95A1; }
     .review { flex: 1; min-height: 0; display: flex; padding-top: 64px; }
@@ -212,11 +261,36 @@
     const PASSWORD = "demo123";
     const PLUGINS = ["产品选型", "方案报价", "标书管理", "合同管理", "故障诊断"];
     const EXAMPLES = {
-      "产品选型": ["户用约 8kW 并网，请推荐适用型号并写明依据", "这套配置和原有汇流箱能否混接", "并网电压不满足时，这版能不能用于报价", "海上平台这种条件，种子里有没有合适型号"],
-      "方案报价": ["对可用于报价的这版配置做正式报价", "指定 HM-HMS-2000 做单产品报价", "按当前混接组合报价，不要借用别的选型", "价表冲突时先不要写出金额"],
-      "标书管理": ["按已给的招标要求整理响应和满足情况", "核对这些资质材料是否还在有效期内", "章节草稿和已发布报价有没有不一致", "招标要求还没给全，请先说明缺什么"],
-      "合同管理": ["对照已发布报价，检查这份合同的产品和金额", "标出偏离标准条款的位置", "提取交付、验收、付款和质保事项", "还没有合同正文，请说明现在能做什么"],
-      "故障诊断": ["逆变器告警后停机，请先说明要补充什么", "帮我整理已核实事实、疑似原因和证据缺口", "现场有焦糊味，请立刻停止普通排查", "报告通过后，正式报修需要单独授权"]
+      "产品选型": [
+        { intent: "选型推荐", text: "选型推荐：客户张敏，项目户用并网，地区华东。负荷约 8kW，交流 220V 单相 50Hz，屋顶安装。请给出适用型号、数量和依据。" },
+        { intent: "配置校验", text: "配置校验：逆变器 HM-HMS-2000 1 台，储能电池 5kWh 1 台，交流耦合，电网 220V 单相 50Hz，地区华东，屋顶安装。请检查兼容、数量和并网保护，并写明依据。" },
+        { intent: "方案比较", text: "方案比较：地区华东，项目户用并网，负荷 8kW，交流 220V 单相 50Hz。方案 A 为 HM-HMS-2000 配 5kWh 电池；方案 B 为 HM-HMT-3000 配 10kWh 电池。请对比功率、容量和扩容条件。" },
+        { intent: "配置变更", text: "配置变更：配置编号 S-001，项目户用并网，现为 HM-HMS-2000 配 5kWh 电池，地区华东，电网 220V 单相 50Hz。请把容量改为 10kWh，重新校验兼容和数量。" }
+      ],
+      "方案报价": [
+        { intent: "报价测算", text: "报价测算：客户张敏，项目户用并网，地区华东，型号 HM-HMS-2000 1 台。设备费 ¥6,800，辅材费 ¥400，含税，不含安装。请给出金额，不生成正式报价文件。" },
+        { intent: "报价生成", text: "报价生成：客户张敏，项目户用并网，地区华东，型号 HM-HMS-2000 1 台，设备费 ¥6,800，辅材费 ¥400，金额 ¥7,200，含税不含安装，有效期至 2026-12-31。请生成报价草稿。" },
+        { intent: "报价检查", text: "报价检查：报价 Q-001，地区华东，型号 HM-HMS-2000 1 台，设备费 ¥6,800，辅材费 ¥400，金额 ¥7,200，含税不含安装，有效期至 2026-12-31。请核对是否漏掉运输或调试。" },
+        { intent: "报价变更", text: "报价变更：报价 Q-001，地区华东，型号 HM-HMS-2000 1 台，金额 ¥7,200，含税不含安装。请把有效期由 2026-11-30 改为 2026-12-31，数量仍为 1 台，不对外发送。" }
+      ],
+      "标书管理": [
+        { intent: "招标分析", text: "招标分析：项目园区招标，地区华东，截止 2026-12-15。招标要求：资格为有效期内的逆变器认证；技术为户用并网约 8kW、交流 220V；商务为含税报价与已发布报价一致。请列出要求、满足情况和缺口。" },
+        { intent: "投标材料匹配", text: "投标材料匹配：项目园区招标，地区华东，型号 HM-HMS-2000。招标要求的材料是逆变器认证、厂家授权、近三年同类业绩，均需在 2026-12-31 前有效，适用范围含华东。" },
+        { intent: "响应编写", text: "响应编写：项目园区招标，型号 HM-HMS-2000，交流 220V 单相 50Hz，功率约 8kW。招标要求的条款 3.1 为并网保护，条款 3.2 为认证在有效期内。请标明依据和是否满足。" },
+        { intent: "标书检查", text: "标书检查：项目园区招标，型号 HM-HMS-2000，已发布金额 ¥7,200，含税不含安装，有效期至 2026-12-31。资质材料有效期至 2026-12-31，适用范围华东。请核对型号、金额和材料是否一致。" }
+      ],
+      "合同管理": [
+        { intent: "合同审核", text: "合同审核：合同正文载明买方张敏，项目户用并网，地区华东，产品 HM-HMS-2000 1 台，金额 ¥7,200，含税不含安装，与已发布报价一致。请核对产品和金额。" },
+        { intent: "履约事项提取", text: "履约事项提取：合同正文约定交付为生效后 15 日发货，验收为到货后 7 日内，付款为预付 30%、验收后 70%，质保 5 年。请提取事项、触发条件和凭证。" },
+        { intent: "合同版本比较", text: "合同版本比较：合同正文有两段。批准稿金额 ¥7,200、质保 5 年；客户修改稿金额 ¥7,000、质保 3 年。请标出条款差异。系统不签署。" },
+        { intent: "履约状态管理", text: "履约状态管理：合同正文中的验收事项当前为未完成，凭证是到货单尚未提交。请整理事项和凭证。本请求不更新履约状态，也不签署。" }
+      ],
+      "故障诊断": [
+        { intent: "设备离线", text: "故障诊断：型号 HM-HMS-2000，告警代码 E01，2026-11-09 09:40 起设备离线。现场交流 220V 单相，人员已离开设备。请按已有事实自主排查。" },
+        { intent: "功率受限", text: "故障诊断：型号 HM-HMS-2000，告警代码 P12，2026-11-09 10:15 起功率受限，输出约 3kW，低于约 8kW 负荷。交流 220V 单相，固件未知。请自主排查。" },
+        { intent: "通信告警", text: "故障诊断：型号 HM-HMS-2000，告警代码 C07，2026-11-09 11:05 起通信告警，DTU 与逆变器中断。现场网络为有线。请自主排查。" },
+        { intent: "告警停机", text: "故障诊断：型号 HM-HMS-2000，告警代码 S21，2026-11-09 14:20 告警后停机。交流 220V 单相 50Hz，并网保护曾动作一次。请自主排查。" }
+      ]
     };
     const PROGRESS = ["处理中", "待审核", "待技术确认", "待商务确认", "待发布", "已发布", "已通过", "未通过", "提交结果未知"];
     const TYPE_NAME = { selection: "选型", quote: "报价", bid: "标书", contract: "合同", diagnosis: "诊断" };
@@ -248,6 +322,28 @@
       "报价需要地区才能确定价表。请补充地区，例如华东。这次还没有生成报价，也还没有归档。": "A quote needs a region before the price list can be chosen. Add a region, for example East China. No quote has been generated or filed yet.",
       "当前会话没有唯一可报价配置。其他客户或项目下的选型不能直接拿来报价。请先在本次会话完成选型，或明确指出你有查看权限的那一条。": "This conversation does not have one quote-ready configuration. A selection from another customer or project cannot be reused. Finish a selection here, or name the one you are allowed to view.",
       "演示口径，不是真实经营统计。": "Demo definitions, not live business statistics.",
+      "搜索已归档会话": "Search filed conversations",
+      "未归档会话不会出现在搜索结果里。": "Unfiled conversations do not appear in search.",
+      "业务批准": "Business approval",
+      "这份已采纳结果要正式用于报价，需要业务批准。校验通过和采纳归档都不是批准。": "This adopted result needs business approval before a formal quote. A passed check and filing are not approval.",
+      "不能批准自己发起或自己归档的这一条。": "You cannot approve a record you started or filed.",
+      "已由这位同事完成业务批准。报价仍要另行审核和发布。": "A colleague has given business approval. The quote still needs review and a separate publication.",
+      "作为业务参考查看": "View as business reference",
+      "这是已发布内容，供内部人员调用查看。不含成本、利润和内部意见，也不能下载。": "This is published content for internal reference. It omits cost, margin, and internal notes, and it cannot be downloaded.",
+      "更新后归档（首版）": "File the updated first version",
+      "更新后归档（改版）": "File the updated revision",
+      "手动审核": "Review manually",
+      "手动更新为采纳": "Manually mark adopted",
+      "手动更新为不采纳": "Manually mark not adopted",
+      "提交已归档。这还不是采纳，需要先手动审核，再手动更新是否采纳。": "The submission is filed. That is not adoption. Review it manually, then update the adoption decision manually.",
+      "手动审核已完成。是否采纳还要再手动更新。": "The manual review is done. Adoption still needs a separate manual update.",
+      "更新签署状态": "Update signing status",
+      "签署状态": "Signing status",
+      "最终审核完成后，由业务人员手动更新签署状态。审核通过不会自动变成已签署。": "After the final review, a business user updates the signing status manually. Passing review does not sign it.",
+      "满意": "Satisfied", "不满意": "Not satisfied",
+      "点选才记入满意度，并进入知识库审核队列。未点选不计满意，也不入库。": "Only a clicked rating counts as satisfaction and enters the knowledge review queue. Skipping it does not.",
+      "取消": "Cancel",
+      "已取消，保留为 bad case。这次计一次任务完成，不计采纳，不计满意。": "Cancelled and kept as a bad case. This counts as one completion, not as adoption or satisfaction.",
       "结果生成完成率": "Result completion", "端到端完成率": "End-to-end completion", "采纳率": "Adoption", "用户满意度": "Satisfaction",
       "满意来自明确评价，本次演示还没有评价，不能用归档代替。": "Satisfaction comes from an explicit rating. This demo has no rating, so filing does not count as satisfaction.",
       "确定本次归属": "Use this attribution", "沿用已记住": "Use remembered", "本次归属": "This task",
@@ -265,6 +361,21 @@
       "尚未送审的报价内容": "Quotation not yet submitted",
       "演示步骤": "Demo steps",
       "演示步骤，不表示真实模型或工具已经执行。": "Demo steps. They do not mean a real model or tool has run.",
+      "演示流程，不表示真实模型或工具已经执行。点开一步可看入参、出参和成败。": "Demo flow. It does not mean a real model or tool has run. Open a step to see inputs, outputs, and whether it succeeded.",
+      "已处理": "Elapsed", "已加载技能": "Skills loaded", "思考": "Thinking", "秒": "s",
+      "点赞": "Like", "点踩": "Dislike", "在新任务中继续": "Continue in a new task",
+      "点赞计入满意，点踩计入不满意。未点选不计。": "A like counts as satisfied, a dislike as unsatisfied. Skipping it does not count.",
+      "规划与调用": "Plan and calls", "执行过程": "Run", "初版结果": "First result", "正在生成初版结果": "Writing the first result", "入参": "Input", "出参": "Output", "来源": "Source", "成败": "Outcome",
+      "这条记录生成时没有留下可回放的执行过程。": "This record was created without a replayable execution trace.",
+      "还没有其他有权限的人批准，这次没有生成报价。": "No authorized colleague has approved this yet, so no quote was created.",
+      "成功": "Succeeded", "失败": "Failed", "未执行": "Not run", "进行中": "Running", "规划": "Plan", "执行": "Execute", "SKILL": "Skill", "Tool": "Tool", "RAG": "RAG",
+      "Plan": "Plan", "Execute": "Execute", "Observe": "Observe", "Reasoning": "Reasoning", "Reflect": "Reflect",
+      "改写识别": "Rewrite", "意图命中": "Intent matched", "结果汇总": "Summarize the result",
+      "选型推荐": "Recommend", "配置校验": "Check configuration", "方案比较": "Compare options", "配置变更": "Change configuration",
+      "报价测算": "Estimate", "报价生成": "Create quote", "报价检查": "Check quote", "报价变更": "Revise quote",
+      "招标分析": "Read the tender", "投标材料匹配": "Match bid materials", "响应编写": "Write the response", "标书检查": "Check the bid",
+      "合同审核": "Check the contract", "履约事项提取": "Extract obligations", "合同版本比较": "Compare contract text", "履约状态管理": "Obligation status",
+      "设备离线": "Device offline", "功率受限": "Power limited", "通信告警": "Communication alarm", "告警停机": "Alarm shutdown",
       "请通知现场人员。还没有交接回执，不能写成已经交接完成。": "Notify people on site. There is no handover receipt, so this is not a completed handover.",
       "正在确认是否有紧急风险。": "Checking for an immediate hazard.",
       "正在识别当前请求。": "Identifying this request.",
@@ -345,9 +456,9 @@
     function initialState() {
       return {
         email: "", userId: null, seq: 5000, loginError: "", lang: "zh", navOpen: false, sideHidden: false, reviewDetail: false,
-        selectedRecordId: "Q-1002", selectedReviewId: "Q-1002", historyMenuId: "",
+        selectedRecordId: "Q-1002", selectedReviewId: "Q-1002", historyMenuId: "", historyQuery: "", referenceId: "", actionError: "",
         composer: { text: "", plugin: "", proxy: "", project: "", attributionSet: false, attributionSource: "", fileNote: "", voiceNote: "", listening: false, askRemember: false, busy: false, busyStep: "", error: "", archiveId: "", archiveOpen: false, archiveDraft: null, archiveError: "", pending: null, taskOpen: false, known: { customer: "", region: "", project: "" } },
-        demoStats: { started: 0, deliverable: 0, archived: 0, adopted: 0 },
+        demoStats: { started: 0, deliverable: 0, archived: 0, adopted: 0, completed: 0 },
         remembered: {},
         messages: { "cust-zhang": [], "cust-dealer": [], "staff-li": [], "staff-zhou": [] },
         records: [
@@ -495,9 +606,12 @@
       if (u && path === "/login") return "/dashboard";
       return path;
     }
-    function addMessage(userId, who, html) {
+    function addMessage(userId, who, html, extra) {
       if (!state.messages[userId]) state.messages[userId] = [];
-      state.messages[userId].push({ who, html });
+      const message = { who: who, html: html || "" };
+      if (extra) Object.keys(extra).forEach((key) => { message[key] = extra[key]; });
+      state.messages[userId].push(message);
+      return message;
     }
     function newId(prefix) { state.seq += 1; return prefix + "-" + state.seq; }
     function ownerFor(u) {
@@ -576,7 +690,13 @@
       const dot = state.lang === "en" ? ". " : "。";
       const colon = state.lang === "en" ? ": " : "：";
       const pause = state.lang === "en" ? "; " : "；";
-      if (staff && record.demoSteps && record.demoSteps.length) {
+      if (state.referenceId === record.id && record.status === "已发布" && record.published) {
+        blocks.push(["业务参考", t("这是已发布内容，供内部人员调用查看。不含成本、利润和内部意见，也不能下载。")]);
+        blocks.push(["当前进度", t("已发布")]);
+        blocks.push(["已发布内容", quoteLines(record.published)]);
+        return blocks;
+      }
+      if (staff && record.demoSteps && record.demoSteps.length && !record.trace) {
         blocks.push(["演示步骤", t("演示步骤，不表示真实模型或工具已经执行。") + "\n" + record.demoSteps.map((step, index) => (index + 1) + ". " + step).join("\n")]);
       }
       if (record.deliverable || record.archived) {
@@ -640,6 +760,13 @@
         blocks.push(["下一步", t(record.customerText)]);
       }
       if (staff && record.internalComment) blocks.push(["仅内部可见", t(record.internalComment)]);
+      if (record.businessApproved) blocks.push(["业务批准", t("已由这位同事完成业务批准。报价仍要另行审核和发布。") + (NAMES[record.businessApprovedBy] ? " " + NAMES[record.businessApprovedBy] : "")]);
+      if (record.submissionArchived) blocks.push(["提交归档", (record.submissionKind || "") + "。" + t("提交已归档。这还不是采纳，需要先手动审核，再手动更新是否采纳。")]);
+      if (record.bidReviewed && record.bidAdopted == null) blocks.push(["标书审核", t("手动审核已完成。是否采纳还要再手动更新。")]);
+      if (record.bidAdopted != null) blocks.push(["标书采纳", (record.bidAdopted ? "已采纳" : "不采纳") + " · " + (NAMES[record.bidAdoptedBy] || "") + "。由手动更新写入。"]);
+      if (record.signingStatus) blocks.push(["签署状态", record.signingStatus + " · " + (NAMES[record.signingBy] || "") + "。" + t("最终审核完成后，由业务人员手动更新签署状态。审核通过不会自动变成已签署。")]);
+      if (record.rating) blocks.push(["评价", t(record.rating) + " · " + (NAMES[record.ratingBy] || "") + (record.knowledgeStatus ? " · " + t(record.knowledgeStatus) : "")]);
+      if (record.badCase) blocks.push(["取消结果", t("已取消，保留为 bad case。这次计一次任务完成，不计采纳，不计满意。")]);
       if (!blocks.length) blocks.push(["下一步", t("请继续补充信息。")]);
       return blocks;
     }
@@ -678,6 +805,183 @@
     function demoNote(steps) {
       return '<p class="muted">' + esc(t("演示步骤，不表示真实模型或工具已经执行。")) + '</p><ol>' + steps.map((step) => '<li>' + esc(step) + '</li>').join("") + '</ol>';
     }
+    function bidReady(text) {
+      if (/还没给全|缺什么|请先说明|信息不足|是否必需|无法判断|过期/.test(text)) return false;
+      return /非必需|可以交给人工|偏离可以|资格为|条款 3\.|招标要求的材料|标书检查|已发布金额/.test(text);
+    }
+    function contractReady(text) {
+      return /这份合同|合同正文|已有合同/.test(text);
+    }
+    function rewriteQuery(text) {
+      const source = String(text || "").replace(/\s+/g, " ").trim();
+      const bits = [];
+      const customer = mentionedCustomer(source);
+      const project = mentionedProject(source);
+      const region = mentionedRegion(source);
+      if (customer) bits.push("客户" + customer);
+      if (project) bits.push("项目" + project);
+      if (region) bits.push("地区" + region);
+      const model = source.match(/HM-[A-Z0-9-]+/);
+      if (model) bits.push("型号" + model[0]);
+      const alarm = source.match(/告警代码\s*([A-Z]\d+)/);
+      if (alarm) bits.push("告警代码" + alarm[1]);
+      const qty = source.match(/(\d+)\s*台/);
+      if (qty) bits.push("数量" + qty[1] + "台");
+      if (/约\s*8kW|8kW/.test(source)) bits.push("负荷约8kW");
+      if (/220V/.test(source)) bits.push("交流220V");
+      if (/单相/.test(source)) bits.push("单相");
+      if (/50Hz/.test(source)) bits.push("50Hz");
+      const head = (source.split(/：|。/)[0] || "").trim();
+      const title = head && head.length <= 8 ? head : "改写";
+      return title + "：" + (bits.length ? bits.join("，") : source.slice(0, 80)) + "。";
+    }
+    function secondaryIntent(plugin, text) {
+      const rules = {
+        "产品选型": [["选型推荐", /选型推荐/], ["配置校验", /配置校验/], ["方案比较", /方案比较/], ["配置变更", /配置变更/]],
+        "方案报价": [["报价测算", /报价测算|不生成正式报价文件/], ["报价检查", /报价检查/], ["报价变更", /报价变更/], ["报价生成", /报价生成|生成报价草稿/]],
+        "标书管理": [["投标材料匹配", /投标材料匹配/], ["响应编写", /响应编写/], ["标书检查", /标书检查/], ["招标分析", /招标分析/]],
+        "合同管理": [["履约事项提取", /履约事项提取/], ["合同版本比较", /合同版本比较/], ["履约状态管理", /履约状态管理/], ["合同审核", /合同审核/]],
+        "故障诊断": [["通信告警", /通信告警|通信/], ["功率受限", /功率受限|输出约/], ["告警停机", /告警后停机|停机/], ["设备离线", /设备离线|离线/]]
+      };
+      const row = (rules[plugin] || []).find((pair) => pair[1].test(text));
+      return row ? row[0] : "";
+    }
+    function openingSteps(kind, text, plugin) {
+      const raw = String(text || "").slice(0, 160);
+      const rewritten = rewriteQuery(text);
+      const selected = ["产品选型", "方案报价", "标书管理", "合同管理", "故障诊断"].includes(plugin) && kind === plugin;
+      let ok = "成功";
+      let output = "";
+      if (selected) {
+        const second = secondaryIntent(plugin, text);
+        output = second ? "一级意图已选择：" + plugin + "。二级意图：" + second + "。" : "一级意图已选择：" + plugin + "。没有识别到二级意图。";
+        if (!second) ok = "失败";
+      } else if (plugin && kind && kind !== plugin) {
+        output = "已选择「" + plugin + "」，当前句识别为「" + kind + "」。";
+      } else if (kind) output = "一级意图：" + kind + "。";
+      else { ok = "失败"; output = "未能判断业务类型。"; }
+      return [
+        traceStep("执行", "改写识别", "改写识别", "成功", raw, rewritten, ""),
+        traceStep("执行", "意图命中", "意图命中", ok, rewritten, output, "")
+      ];
+    }
+    function summarize(ok, input, output) {
+      return traceStep("执行", "结果汇总", "结果汇总", ok, input, output, "");
+    }
+    function reactDiagnosis(text) {
+      const ask = String(text || "").slice(0, 160);
+      const scene = /通信告警|通信/.test(text) ? "通信告警" : (/功率受限|输出约/.test(text) ? "功率受限" : (/告警后停机|停机/.test(text) ? "告警停机" : "设备离线"));
+      const code = /E01/.test(text) ? "E01" : (/P12/.test(text) ? "P12" : (/C07/.test(text) ? "C07" : "S21"));
+      const hint = scene === "通信告警" ? "DTU 中断与通信告警对得上" : (scene === "功率受限" ? "输出低于负荷，与运行限制对得上" : (scene === "告警停机" ? "并网保护动作与停机对得上" : "离线与采集或链路中断对得上"));
+      return [
+        traceStep("Plan", "SKILL", "取证计划", "成功", ask, "先查 HM-HMS-2000 的状态和告警 " + code + "，再按型号与故障码检索依据。不预设原因，也不正式报修。", ""),
+        traceStep("Execute", "Tool", "query_device_status", "成功", "{model:\"HM-HMS-2000\",alarm:\"" + code + "\"}", "已取到状态和告警时间。", "演示：设备状态"),
+        traceStep("Observe", "Tool", "状态与日志", "成功", "query_device_status 的出参", "现象是" + scene + "。现场没有紧急风险迹象。固件版本还不在这条日志里。", ""),
+        traceStep("Reasoning", "SKILL", "对照现象", "成功", "第一轮观察", hint + "，证据不够排除。", ""),
+        traceStep("Reflect", "SKILL", "是否够下结论", "成功", "当前证据", "还不能确定原因。下一轮补查固件和通信，并检索故障码。不进入正式报修。", ""),
+        traceStep("Plan", "SKILL", "补查计划", "成功", "上一轮 Reflect", "补查固件版本和通信记录，再用型号加故障码检索受控依据。", ""),
+        traceStep("Execute", "RAG", "检索故障码依据", "成功", "{model:\"HM-HMS-2000\",code:\"" + code + "\"}", "命中该故障码的受控说明，并标出未覆盖项。", "种子资料"),
+        traceStep("Observe", "RAG", "依据与缺口", "成功", "检索出参", "依据覆盖告警含义。固件版本和现场通信报文仍然缺失。", "种子资料"),
+        traceStep("Reasoning", "SKILL", "可能原因", "成功", "两轮观察", "疑似原因按证据排列：" + scene + " 相关的通信或保护限制在前，硬件损坏没有证据支持。原因仍未确定。", ""),
+        traceStep("Reflect", "SKILL", "阶段结论", "成功", "可能原因和缺口", "可以形成阶段报告和工单草稿。不写成已恢复，也不提交正式报修。", "")
+      ];
+    }
+    function traceStep(phase, kind, title, ok, input, output, source) {
+      return { phase: phase, kind: kind, title: title, ok: ok, input: input, output: output, source: source || "" };
+    }
+    function makeTrace(kind, text, record) {
+      const askOnly = kind === "故障诊断" && /要补充什么|请先说明|信息不足|不清楚型号/.test(text);
+      const steps = openingSteps(kind, text, state.composer.plugin || "");
+      if (kind === "故障诊断" && !askOnly) return steps.concat(reactDiagnosis(text));
+      const ask = String(text || "").slice(0, 120);
+      if (kind === "产品选型") {
+        const miss = /无法匹配|没有合适|海上平台/.test(text);
+        const bad = /校验失败/.test(text);
+        const gap = /缺兼容/.test(text);
+        steps.push(traceStep("执行", "RAG", "检索产品种子", miss ? "失败" : "成功", ask, miss ? "没有命中可用型号" : "HM-HMS-2000", miss ? "种子资料未覆盖该条件" : "种子资料：户用并网 6–10kW"));
+        steps.push(traceStep("执行", "Tool", "check_grid_voltage", miss ? "未执行" : (bad ? "失败" : "成功"), "{model:\"HM-HMS-2000\"}", miss ? "检索未命中，检查未执行" : (bad ? "电网电压不满足" : "符合"), ""));
+        steps.push(traceStep("执行", "Tool", "check_protection", miss || bad || gap ? "未执行" : "成功", "{model:\"HM-HMS-2000\"}", gap ? "兼容依据缺失，这项未执行" : (miss || bad ? "前置未通过，这项未执行" : "符合"), ""));
+        steps.push(summarize( "成功", "上面各步的出参", miss ? "无法匹配" : bad ? "校验失败，不能用于正式报价" : gap ? "待技术确认" : "可用于报价。尚未归档，也还没有业务批准。", ""));
+      } else if (kind === "方案报价") {
+        const region = mentionedRegion(text) || (state.composer.known && state.composer.known.region) || "";
+        steps.push(traceStep("执行", "Tool", "select_price_list", region ? "成功" : "失败", "{region:\"" + (region || "") + "\"}", region ? "使用" + region + "价表" : "缺少地区，没有生成报价", region ? "价表：" + region : ""));
+        if (region) {
+          const blocked = record && (record.status === "无法报价" || record.status === "待商务确认");
+          steps.push(traceStep("执行", "RAG", "读取价表行", blocked && record.status === "待商务确认" ? "失败" : "成功", record && record.version ? record.version : ask, record && record.status === "待商务确认" ? "价表缺失或冲突" : "设备费与辅材费", "种子价表"));
+          steps.push(traceStep("执行", "Tool", "calculate_quote", blocked ? "失败" : "成功", "{version:\"" + ((record && record.version) || "") + "\"}", blocked ? (record.customerText || record.status) : "金额已算出，尚未发布", ""));
+          steps.push(summarize( "成功", "调用结果", blocked ? "没有进入可发布报价" : "初版报价已生成，进度仍待审核或处理中。", ""));
+        }
+      } else if (kind === "标书管理") {
+        const expired = /过期/.test(text);
+        const ready = bidReady(text);
+        steps.push(traceStep("执行", "RAG", "读取招标要求", expired ? "成功" : (ready ? "成功" : "失败"), ask, !ready && !expired ? "没有关键招标要求原文" : "已读取要求", "用户给出的招标材料"));
+        steps.push(traceStep("执行", "Tool", "check_material_validity", expired ? "失败" : (ready ? "成功" : "未执行"), "{materials:\"资质、授权、业绩\"}", expired ? "必需材料过期，没有有效替代" : (ready ? "有效期与适用范围已核对" : "要求未齐，材料检查未执行"), ""));
+        steps.push(summarize( "成功", "响应和材料结果", expired || !ready ? "这次不送审" : "带标注的章节草稿", ""));
+      } else if (kind === "合同管理") {
+        const noBody = !contractReady(text);
+        steps.push(traceStep("执行", "RAG", "读取合同正文", noBody ? "失败" : "成功", ask, noBody ? "没有合同正文" : "已读取正文", noBody ? "" : "用户给出的合同文本"));
+        steps.push(traceStep("执行", "Tool", "compare_published_quote", noBody ? "未执行" : "成功", "{source:\"已发布报价\"}", noBody ? "没有正文，比对未执行" : "产品和金额差异已标出", "已发布报价"));
+        steps.push(summarize( "成功", "比对结果", noBody ? "没有建立检查记录，也不签署" : "初版检查已生成。签署状态不会自动更新。", ""));
+      } else if (kind === "故障诊断") {
+        const askOnly = /要补充什么|请先说明|信息不足|不清楚型号/.test(text);
+        steps.push(traceStep("执行", "Tool", "collect_fault_facts", askOnly ? "失败" : "成功", ask, askOnly ? "缺型号、告警代码或时间" : "已整理已知事实，原因未确定", ""));
+        steps.push(traceStep("执行", "SKILL", "故障诊断", askOnly ? "未执行" : "成功", "已核实事实", askOnly ? "还没开始排查，没有工单草稿" : "形成报告和工单草稿。没有正式报修。", ""));
+      } else if (kind === "紧急风险") {
+        steps.push(traceStep("执行", "SKILL", "紧急风险", "成功", ask, "停止普通排查", ""));
+        steps.push(traceStep("执行", "Tool", "ordinary_diagnosis", "未执行", "{}", "普通排查已停止", ""));
+        steps.push(summarize( "成功", "安全指引", "请通知现场人员。没有交接回执。", ""));
+      } else if (kind === "资料查询") {
+        steps.push(traceStep("执行", "RAG", "检索参数资料", "成功", ask, "HM-HMS-2000 覆盖约 8kW 户用并网", "种子资料"));
+        steps.push(traceStep("执行", "SKILL", "资料查询", "成功", "检索结果", "只返回答料，不建业务记录。", ""));
+      } else if (kind === "缺参数") {
+        steps.push(traceStep("执行", "Tool", "select_price_list", "未执行", "{}", "缺功率或并网条件，价表调用未执行", ""));
+        steps.push(summarize( "失败", ask, "任务还在，但没有建立正式报价。", ""));
+      } else if (kind === "合同起草") {
+        steps.push(traceStep("执行", "SKILL", "合同起草", "失败", ask, "首版不起草，也不签署。", ""));
+      } else {
+        steps.push(summarize("失败", ask, "没有进入五类业务，没有建立记录。"));
+      }
+      if (record && record.status) steps[steps.length - 1].output = steps[steps.length - 1].output + " 进度：" + record.status;
+      return steps;
+    }
+    function traceHtml(steps, scope, shown) {
+      if (!steps || !steps.length) return "";
+      const visible = steps.slice(0, Math.max(0, shown));
+      let phase = "";
+      const rows = visible.map((step, index) => {
+        const key = scope + "-" + index;
+        const open = state.traceOpen === key;
+        const running = scope === "live" && index === visible.length - 1 && visible.length < steps.length;
+        const label = running ? "进行中" : (step.ok || "成功");
+        const tone = label === "失败" ? "danger" : (label === "未执行" || label === "进行中" ? "caution" : "signal");
+        const phaseLabel = step.phase !== phase ? (phase = step.phase, '<p class="trace-phase">' + esc(t(step.phase)) + '</p>') : "";
+        const detail = open ? '<div class="trace-detail"><p><strong>' + esc(t("入参")) + '</strong><br>' + esc(step.input || "—") + '</p><p><strong>' + esc(t("出参")) + '</strong><br>' + esc(step.output || "—") + '</p>' + (step.source ? '<p><strong>' + esc(t("来源")) + '</strong><br>' + esc(step.source) + '</p>' : '') + '<p><strong>' + esc(t("成败")) + '</strong><br>' + esc(t(label)) + '</p></div>' : "";
+        return phaseLabel + '<button type="button" class="trace-step" data-act="trace-open" data-key="' + esc(key) + '" aria-expanded="' + open + '"><span class="trace-index">' + (index + 1) + '</span><span class="trace-main"><span class="trace-kind">' + esc(t(step.kind)) + '</span><span class="trace-title">' + esc(step.title) + '</span></span><span class="badge ' + tone + '">' + esc(t(label)) + '</span></button>' + detail;
+      }).join("");
+      const pct = Math.round(visible.length / steps.length * 100);
+      return '<section class="trace-board"><div class="trace-head"><div><p class="muted">' + esc(t("执行过程")) + '</p><strong>' + esc(t("规划与调用")) + '</strong></div><span>' + visible.length + '/' + steps.length + '</span></div><div class="trace-bar"><span style="width:' + pct + '%"></span></div><p class="muted">' + esc(t("演示流程，不表示真实模型或工具已经执行。点开一步可看入参、出参和成败。")) + '</p>' + rows + '</section>';
+    }
+    function resultPieces(record, staff) {
+      return sections(record, staff).filter((pair) => pair[0] !== "演示步骤" && !(pair[0] === "说明" && pair[1] === t(record.status)));
+    }
+    function resultBoard(record, staff, limit) {
+      const cards = resultPieces(record, staff);
+      if (limit === 0) return '<section class="result-board"><p class="muted">' + esc(t("正在生成初版结果")) + "</p></section>";
+      const showAll = limit == null;
+      const tiles = [[t("进度"), isProgress(record.status) ? t(record.status) : t(record.status || "说明")], [t("保存"), record.archived ? t("已归档") : (record.deliverable ? t("尚未归档") : "—")], [t("版本"), record.version || "—"], [t("归属"), NAMES[record.ownerId] || t("未归档")]];
+      const tileHtml = tiles.map((pair) => '<div class="stat"><span>' + esc(pair[0]) + '</span><strong>' + esc(String(pair[1])) + '</strong></div>').join("");
+      const visibleCards = showAll ? cards : cards.slice(0, Math.max(0, limit - 2));
+      const cardHtml = visibleCards.map((pair) => {
+        const internal = /内部|成本/.test(pair[0]);
+        return '<article class="result-card' + (internal ? ' internal' : '') + '"><h3>' + esc(t(pair[0])) + '</h3><p>' + esc(pair[1]) + '</p></article>';
+      }).join("");
+      const badgeTone = record.status === "可用于报价" ? "signal" : (tone(record.status) || "caution");
+      const badge = record.status && (showAll || limit >= 1) ? '<span class="badge ' + badgeTone + '">' + esc(t(record.status)) + '</span>' : "";
+      const head = (showAll || limit >= 1) ? '<div class="result-head"><div><p class="muted">' + esc(t("初版结果")) + ' · ' + esc(t(TYPE_NAME[record.type] || "记录")) + '</p><h2>' + esc(t(record.title)) + '</h2></div>' + badge + '</div>' : "";
+      const stats = (showAll || limit >= 2) ? '<div class="stat-row">' + tileHtml + '</div>' : "";
+      const grid = visibleCards.length ? '<div class="card-grid">' + cardHtml + '</div>' : "";
+      return '<section class="result-board">' + head + stats + grid + '</section>';
+    }
     function onSend() {
       const u = user();
       const text = state.composer.text.trim();
@@ -687,21 +991,88 @@
         state.composer.error = "先写下需求。";
         save(); render(); return;
       }
+      const spoken = [text, state.composer.fileNote].filter(Boolean).join("\n");
+      addMessage(u.id, "用户", "<p>" + esc(spoken).replace(/\n/g, "<br>") + "</p>");
+      state.stickChat = true;
+      state.composer.sentAt = Date.now();
       const kind = resolveKind(text, plugin);
       const business = ["产品选型", "方案报价", "标书管理", "合同管理", "故障诊断", "紧急风险"].includes(kind);
       if (business) noteTask(kind);
       state.composer.busy = true;
-      state.composer.busyStep = kind === "紧急风险" ? "正在确认是否有紧急风险。" : "正在识别当前请求。";
+      state.composer.stoppedTrace = null;
+      state.composer.previewTrace = u.staff ? makeTrace(kind, text, null) : null;
+      state.composer.runCursor = (state.composer.previewTrace || []).length ? 1 : 0;
+      state.composer.stepRunning = !!state.composer.runCursor;
+      state.composer.unfold = null;
+      state.traceOpen = "";
+      state.composer.busyStep = (state.composer.previewTrace && state.composer.previewTrace[0] && state.composer.previewTrace[0].title) || (kind === "紧急风险" ? "正在确认是否有紧急风险。" : "正在识别当前请求。");
       state.composer.error = "";
       save(); render();
-      const shot = { text, plugin, kind, holdReview: /不要送审|确认后再发布/.test(text), userId: u.id };
-      setTimeout(() => finishSend(shot), 650);
+      const shot = { text, plugin, kind, holdReview: /不要送审|确认后再发布/.test(text), userId: u.id, unfold: !!(u.staff && (state.composer.previewTrace || []).length) };
+      if (state.runTimer) clearTimeout(state.runTimer);
+      const pump = () => {
+        if (!state.composer.busy || state.composer.unfold != null) return;
+        const trace = state.composer.previewTrace || [];
+        if (!u.staff || !trace.length) { finishSend(shot); return; }
+        if (state.composer.stepRunning) {
+          state.composer.stepRunning = false;
+          save(); render();
+          if (state.composer.runCursor >= trace.length) {
+            state.runTimer = setTimeout(() => finishSend(shot), 640);
+            return;
+          }
+          state.runTimer = setTimeout(pump, 380);
+          return;
+        }
+        state.composer.runCursor += 1;
+        state.composer.stepRunning = true;
+        if (trace[state.composer.runCursor - 1]) state.composer.busyStep = trace[state.composer.runCursor - 1].title;
+        save(); render();
+        state.runTimer = setTimeout(pump, 700);
+      };
+      state.runTimer = setTimeout(pump, 700);
+    }
+    function settleReply(shot, u) {
+      if (shot && shot.unfold && u && u.staff && u.id === shot.userId) {
+        state.composer.busy = true;
+        state.composer.unfold = 0;
+        state.composer.previewTrace = null;
+        state.composer.stepRunning = false;
+        state.composer.runCursor = 0;
+        state.stickChat = true;
+        save(); render();
+        if (state.runTimer) clearTimeout(state.runTimer);
+        state.runTimer = setTimeout(growPage, 640);
+        return;
+      }
+      state.composer.busy = false;
+      state.composer.unfold = null;
+      save(); render();
+    }
+    function growPage() {
+      if (!state.composer.busy || state.composer.unfold == null) return;
+      const u = user();
+      if (!u) { state.composer.busy = false; state.composer.unfold = null; save(); render(); return; }
+      const list = state.messages[u.id] || [];
+      const last = list[list.length - 1];
+      const record = last && last.recordId ? state.records.find((item) => item.id === last.recordId) : null;
+      const total = record ? 2 + resultPieces(record, !!u.staff).length : 1;
+      state.composer.unfold = (state.composer.unfold || 0) + 1;
+      state.stickChat = true;
+      save(); render();
+      if (state.composer.unfold < total) state.runTimer = setTimeout(growPage, 560);
+      else state.runTimer = setTimeout(() => {
+        state.composer.busy = false;
+        state.composer.unfold = null;
+        state.stickChat = true;
+        save(); render();
+      }, 560);
     }
     function finishSend(shot) {
       const u = user();
-      state.composer.busy = false;
       state.composer.busyStep = "";
-      if (!u || u.id !== shot.userId) { save(); render(); return; }
+      state.stickChat = true;
+      if (!u || u.id !== shot.userId) { state.composer.busy = false; state.composer.unfold = null; save(); render(); return; }
       const textIn = shot.text;
       let kind = shot.kind;
       let holdReview = shot.holdReview;
@@ -724,12 +1095,18 @@
       if (foundProject) state.composer.known.project = foundProject;
       const ownerId = "";
       const project = "";
-      const say = (html, steps) => addMessage(u.id, "助手", "<p>" + html + "</p>" + (u.staff && steps ? demoNote(steps) : ""));
+      const say = (html) => {
+        const trace = u.staff ? makeTrace(kind, text, null) : null;
+        addMessage(u.id, "助手", "<p>" + html + "</p>", { trace: trace, elapsed: Math.max(0, Date.now() - (state.composer.sentAt || Date.now())), reply: true });
+        state.composer.stoppedTrace = null;
+        state.composer.previewTrace = null;
+        state.traceOpen = "";
+      };
       if (kind === "方案报价" && !state.composer.known.region) {
         state.composer.pending = { kind, text, holdReview };
         say("报价需要地区才能确定价表。请补充地区，例如华东。这次还没有生成报价，也还没有归档。", ["识别为方案报价。", "还缺地区，不能确定价表。", "没有生成报价，也没有归档。"]);
         state.composer.text = "";
-        save(); render(); return;
+        settleReply(shot, u); return;
       }
       if (kind === "资料查询") {
         say("这是资料查询，没有创建选型，也没有指定项目。种子资料中的 HM-HMS-2000 覆盖约 8kW 户用并网。没有写在种子里的型号，首版不能编造参数。", ["识别为资料查询。", "没有建立业务记录。"]);
@@ -742,7 +1119,11 @@
         const safety = "立即停止普通排查。离开设备，切断可以安全断开的电源，不要继续触碰冒烟、焦糊或异常发热的部位，并通知现场人员。";
         const steps = ["识别到冒烟、焦糊或异常发热。", "已选的普通意图停止。", "结果先留在当前会话，没有默认客户。", "没有交接回执，不能写成已经交接完成。"];
         const record = { id: newId("D"), type: "diagnosis", title: text, ownerId, project, createdBy: u.id, status: "已停止普通排查", emergency: true, report: "", draftTicket: "", formalTicket: "", accepted: false, safety, demoSteps: steps, endedAt: Date.now() };
+        record.trace = makeTrace(kind, text, record);
+        state.composer.stoppedTrace = null;
+        state.composer.previewTrace = null;
         keepResult(record);
+        addMessage(u.id, "助手", "", { recordId: record.id, trace: record.trace, elapsed: Math.max(0, Date.now() - (state.composer.sentAt || Date.now())), reply: true });
         state.composer.text = "";
       } else if (!kind) {
         say("还不能判断要做选型、报价、标书、合同还是故障诊断。请改写，或点下面的插件。这次没有建立记录。", ["意图还不明确。", "没有建立业务记录。"]);
@@ -754,25 +1135,42 @@
           if (record) {
             record.demoSteps = demoStepsFor(record, holdReview);
             record.region = state.composer.known.region || "";
+            record.trace = makeTrace(kind, text, record);
+            state.composer.stoppedTrace = null;
+            state.composer.previewTrace = null;
             keepResult(record);
+            addMessage(u.id, "助手", "", { recordId: record.id, trace: record.trace, elapsed: Math.max(0, Date.now() - (state.composer.sentAt || Date.now())), reply: true });
             state.composer.text = "";
             state.composer.fileNote = "";
+          } else if (u.staff) {
+            const trace = makeTrace(kind, text, null);
+            if (state.composer.approvalId) trace.push(traceStep("执行", "SKILL", "业务批准", "失败", "已采纳且可用于报价的结果", "还没有其他有权限的人批准，这次没有生成报价。", ""));
+            const last = (state.messages[u.id] || [])[(state.messages[u.id] || []).length - 1];
+            if (last && last.who === "助手" && !last.recordId && !last.trace) {
+              last.trace = trace;
+              last.elapsed = Math.max(0, Date.now() - (state.composer.sentAt || Date.now()));
+              last.reply = true;
+            } else addMessage(u.id, "助手", "", { trace: trace, elapsed: Math.max(0, Date.now() - (state.composer.sentAt || Date.now())), reply: true });
+            state.composer.stoppedTrace = null;
+            state.composer.previewTrace = null;
+            state.traceOpen = "";
           }
         }
       }
       if (kind !== "缺参数") state.composer.error = "";
-      save(); render();
+      settleReply(shot, u);
     }
     function blockedReply(kind, text) {
       if (kind === "标书管理") {
         if (/过期/.test(text)) return { html: "必需材料已过期，没有有效替代。不能把过期材料标成可用，这次不送审。请补上有效材料。", steps: ["识别为标书。", "必需材料过期。", "阻止送审。"] };
         if (/是否必需|无法判断/.test(text)) return { html: "还不能判断这项材料是不是必需。请先确认。确认前不送审。", steps: ["识别为标书。", "无法判断材料是否必需。", "不自动放行。"] };
-        if (/非必需|可以交给人工|偏离可以/.test(text)) return null;
+        if (/非必需|可以交给人工|偏离可以/.test(text) || bidReady(text)) return null;
         return { html: "还没有关键招标要求的原文或文件版本。「按已给的招标要求」不能证明文件已经收到。这次不送审，也没有生成章节。请补上招标要求。", steps: ["识别为标书。", "缺少关键招标要求。", "阻止送审，没有生成章节。"] };
       }
       if (kind === "合同管理") {
         if (/版本不明/.test(text)) return { html: "请确认对照的是哪一版已发布报价或已确认配置。确认前不检查，系统也不会签署或盖章。", steps: ["识别为合同检查。", "对照版本不明。", "没有建立检查记录。"] };
         if (/盖章|代签/.test(text)) return { html: "系统不能签署、盖章或代替负责人批准。", steps: ["识别到签章请求。", "首版不签章。"] };
+        if (/这份合同|合同正文|已有合同/.test(text) || contractReady(text)) return null;
         return { html: "还没有合同正文，不能核对型号、金额或抽取事项。请先提供正文。", steps: ["识别为合同检查。", "没有合同正文。", "没有建立检查记录。"] };
       }
       if (kind === "故障诊断" && /要补充什么|请先说明|信息不足|不清楚型号/.test(text)) {
@@ -801,17 +1199,31 @@
         if (/无法匹配|没有合适|海上平台/.test(text)) return { id: newId("S"), type: "selection", title: text, ownerId, project: state.composer.project, createdBy, status: "无法匹配", quoteEligible: false, version: "未生成", models: [], checks: [], customerText: "无法给出型号。请修改条件后再发送。" };
         if (/校验失败/.test(text)) return { id: newId("S"), type: "selection", title: text, ownerId, project: state.composer.project, createdBy, status: "校验失败", quoteEligible: false, version: "配置未通过", models: [{ name: "HM-HMS-2000", reason: "功率接近，但并网电压不满足", evidence: "种子资料：电压范围不符合" }], checks: [{ name: "电网电压范围", result: "不满足" }], customerText: "电网电压不满足，不能用于正式报价。" };
         if (/缺兼容/.test(text)) return { id: newId("S"), type: "selection", title: text, ownerId, project: state.composer.project, createdBy, status: "待技术确认", quoteEligible: false, version: "配置待确认", models: [{ name: "HM-HMT-3000", reason: "功率接近，兼容依据不足", evidence: "种子资料没有这条混接记录" }], checks: [{ name: "与旧设备兼容", result: "未执行" }], customerText: "" };
+        if (/方案比较/.test(text)) return { id: newId("S"), type: "selection", title: text, ownerId, project: state.composer.project, createdBy, status: "可用于报价", quoteEligible: true, version: "方案 A", models: [{ name: "HM-HMS-2000", reason: "方案 A，覆盖约 8kW 户用并网", evidence: "种子资料：户用并网 6–10kW" }, { name: "HM-HMT-3000", reason: "方案 B，容量更大，超出当前约 8kW 负荷", evidence: "种子资料没有把 10kWh 方案写成这一负荷的首选" }], checks: [{ name: "功率与容量", result: "已对比" }, { name: "扩容条件", result: "方案 B 扩容空间更大" }], customerText: "" };
+        if (/配置变更/.test(text)) return { id: newId("S"), type: "selection", title: text, ownerId, project: state.composer.project, createdBy, status: "可用于报价", quoteEligible: true, version: "配置 S-001", models: [{ name: "HM-HMS-2000", reason: "容量由 5kWh 改为 10kWh 后仍覆盖约 8kW", evidence: "种子资料：户用并网 6–10kW" }], checks: [{ name: "兼容", result: "已重新核对，符合" }, { name: "数量", result: "已重新核对，符合" }], customerText: "" };
+        if (/配置校验/.test(text)) return { id: newId("S"), type: "selection", title: text, ownerId, project: state.composer.project, createdBy, status: "可用于报价", quoteEligible: true, version: "配置校验", models: [{ name: "HM-HMS-2000", reason: "与 5kWh 电池按交流耦合可以搭配", evidence: "种子资料：户用并网 6–10kW" }], checks: [{ name: "兼容", result: "已核对，符合" }, { name: "数量", result: "已核对，符合" }, { name: "并网保护", result: "已核对，符合" }], customerText: "" };
+        if (/选型推荐/.test(text)) return { id: newId("S"), type: "selection", title: text, ownerId, project: state.composer.project, createdBy, status: "可用于报价", quoteEligible: true, version: "选型推荐", models: [{ name: "HM-HMS-2000", reason: "按约 8kW、交流 220V 单相推荐 1 台", evidence: "种子资料：户用并网 6–10kW" }], checks: [{ name: "电网电压范围", result: "已核对，符合" }, { name: "并网保护配合", result: "已核对，符合" }], customerText: "" };
         return { id: newId("S"), type: "selection", title: text, ownerId, project: state.composer.project, createdBy, status: "可用于报价", quoteEligible: true, version: "配置 " + state.seq, models: [{ name: "HM-HMS-2000", reason: "覆盖约 8kW 户用并网", evidence: "种子资料：户用并网 6–10kW" }], checks: [{ name: "电网电压范围", result: "已核对，符合" }, { name: "并网保护配合", result: "已核对，符合" }], customerText: "" };
       }
       if (kind === "方案报价") {
         if (/缺少产品/.test(text)) return { id: newId("Q"), type: "quote", title: text, ownerId, project: state.composer.project, createdBy, status: "无法报价", customerText: "报价缺少产品。请先完成可用于报价的选型，或指定种子中的单一产品。这次不进入审核。" };
         if (/组合|混接/.test(text)) {
-          const target = state.records.find((r) => r.id === state.selectedRecordId && sameScope(r, createdBy) && r.type === "selection");
+          const target = state.records.find((r) => r.id === state.selectedRecordId && sameScope(r, createdBy) && r.type === "selection") || state.records.find((r) => r.id === state.selectedRecordId && r.type === "selection" && r.adopted);
+          if (needsBusinessApproval(target, createdBy)) return null;
           if (!quoteReady(target)) return { id: newId("Q"), type: "quote", title: text, ownerId, project: "", createdBy, status: "无法报价", customerText: "当前这套组合还不能报价。未执行、待技术确认或校验失败的配置不能用，也不能借用其他客户或其他项目的选型。" };
           return quoteFrom(target.models[0].name + " / " + target.version, text, ownerId, createdBy, holdReview);
         } else if (/HM-HMS-2000|指定产品/.test(text)) {
-          return quoteFrom("HM-HMS-2000 / 指定产品", text, ownerId, createdBy, holdReview);
+          const quote = quoteFrom("HM-HMS-2000 / 指定产品", text, ownerId, createdBy, holdReview || /不生成正式报价文件/.test(text));
+          if (/报价检查/.test(text)) quote.internal.comment = "已核对设备费、辅材费和金额。运输和调试未单列，与不含安装一致，没有发现漏记的价表行。";
+          else if (/报价变更/.test(text)) quote.internal.comment = "有效期由 2026-11-30 改为 2026-12-31。数量仍为 1 台，金额仍为 ¥7,200。不对外发送。";
+          else if (/不生成正式报价文件/.test(text)) quote.internal.comment = "这是测算结果，不是正式报价文件。";
+          else if (/报价生成|生成报价草稿/.test(text)) quote.internal.comment = "报价草稿已生成，尚未发布。";
+          return quote;
         } else {
+          const picked = state.records.find((r) => r.id === state.selectedRecordId && r.type === "selection" && r.adopted && quoteReady(r));
+          const pending = state.records.filter((r) => r.type === "selection" && r.adopted && quoteReady(r) && !r.businessApproved && (r.createdBy === createdBy || r.archivedBy === createdBy));
+          if (needsBusinessApproval(picked || (pending.length === 1 ? pending[0] : null), createdBy)) return null;
+          if (picked && picked.businessApproved) return quoteFrom(picked.models[0].name + " / " + picked.version, text, ownerId, createdBy, holdReview);
           const owned = state.records.filter((r) => sameScope(r, createdBy) && r.type === "selection" && quoteReady(r));
           const selected = state.records.find((r) => r.id === state.selectedRecordId && sameScope(r, createdBy) && r.type === "selection");
           if (owned.length > 1 && !quoteReady(selected)) {
@@ -828,12 +1240,26 @@
         }
       }
       if (kind === "标书管理") {
-        return { id: newId("B"), type: "bid", title: text, ownerId, project: state.composer.project, createdBy, status: holdReview ? "处理中" : "待审核", holdReview: !!holdReview, version: "标书草稿", customerText: "非必需材料有缺口，或有一项偏离需要人工判断。这两项已标明。没有把过期材料写成可用，也没有在缺少招标要求时生成章节。", internalComment: "内部：只放行已标明的非必需缺口。", resubmittedBy: "" };
+        const response = /响应编写/.test(text) ? "条款 3.1 并网保护：满足，依据为种子资料中的并网保护配合。条款 3.2 认证有效期：材料有效期至 2026-12-31，适用范围含华东。签章检查不在本版。" : (/投标材料匹配/.test(text) ? "逆变器认证、厂家授权和近三年同类业绩均要求在 2026-12-31 前有效，适用范围含华东。演示种子按有效材料匹配，没有把过期材料写成可用。" : (/标书检查/.test(text) ? "型号 HM-HMS-2000 与已发布金额 ¥7,200、含税不含安装、有效期至 2026-12-31 一致。资质材料有效期和华东适用范围已核对。" : "招标要求已列出：资格为有效期内的逆变器认证，技术为约 8kW、交流 220V，商务为含税报价与已发布报价一致。截止 2026-12-15。没有发现关键缺口。"));
+        return { id: newId("B"), type: "bid", title: text, ownerId, project: state.composer.project, createdBy, status: holdReview ? "处理中" : "待审核", holdReview: !!holdReview, version: "标书草稿", customerText: response, internalComment: "内部：只依据这次查询里写明的招标要求和种子资料。", resubmittedBy: "" };
       }
       if (kind === "故障诊断") {
-        return { id: newId("D"), type: "diagnosis", title: text, ownerId, project: state.composer.project, createdBy, status: holdReview ? "处理中" : "待审核", holdReview: !!holdReview, emergency: false, version: "诊断", report: "演示预设：根据描述整理已有事实。原因尚未确定。", draftTicket: "草稿 " + newId("DRAFT"), formalTicket: "", accepted: false, safety: "", nextStep: "等待审核。通过前看不到报告正文。" };
+        const scene = /通信/.test(text) ? "通信告警" : (/功率受限|输出约/.test(text) ? "功率受限" : (/停机/.test(text) ? "告警停机" : "设备离线"));
+        const cause = scene === "通信告警" ? "疑似 DTU 与逆变器通信中断" : (scene === "功率受限" ? "疑似运行限制或保护降额" : (scene === "告警停机" ? "疑似并网保护动作后停机" : "疑似采集或链路中断"));
+        return { id: newId("D"), type: "diagnosis", title: text, ownerId, project: state.composer.project, createdBy, status: holdReview ? "处理中" : "待审核", holdReview: !!holdReview, emergency: false, version: "诊断", report: "已核实型号 HM-HMS-2000，告警时间已记录。现象是" + scene + "。" + cause + "。固件版本和通信报文仍缺。原因尚未确定。没有正式报修。", draftTicket: "草稿 " + newId("DRAFT"), formalTicket: "", accepted: false, safety: "", nextStep: "等待审核。通过前看不到报告正文。" };
+      }
+      if (kind === "合同管理") {
+        const body = /合同版本比较/.test(text) ? "批准稿金额 ¥7,200、质保 5 年；客户修改稿金额 ¥7,000、质保 3 年。差异已标出。本版不建立版本记录，也不签署。" : (/履约状态管理/.test(text) ? "验收事项当前为未完成，凭证是到货单尚未提交。已整理事项和凭证。本版不更新履约状态，也不签署。" : (/履约事项提取/.test(text) ? "已提取：交付为生效后 15 日发货；验收为到货后 7 日内；付款为预付 30%、验收后 70%；质保 5 年。系统不签署。" : "产品和金额与已发布报价一致：HM-HMS-2000 1 台，¥7,200，含税不含安装。系统不签署、不盖章。"));
+        return { id: newId("C"), type: "contract", title: text, ownerId, project: state.composer.project, createdBy, status: holdReview ? "处理中" : "待审核", holdReview: !!holdReview, version: "合同检查", customerText: body, internalComment: "内部谈判意见不给客户。", signingStatus: "" };
       }
       return null;
+    }
+    function needsBusinessApproval(selection, createdBy) {
+      if (!selection || !selection.adopted || !quoteReady(selection) || selection.businessApproved) return false;
+      state.composer.approvalId = selection.id;
+      state.selectedRecordId = selection.id;
+      addMessage(createdBy, "助手", "<p>" + esc(t("这份已采纳结果要正式用于报价，需要业务批准。校验通过和采纳归档都不是批准。")) + "</p>");
+      return true;
     }
     function quoteFrom(version, text, ownerId, createdBy, holdReview) {
       if (/价表冲突|价表缺失/.test(text)) return { id: newId("Q"), type: "quote", title: text, ownerId, project: state.composer.project, createdBy, status: "待商务确认", holdReview: false, version: "报价待确认", published: null, internal: { cost: "未定", margin: "未定", comment: "价表缺失或冲突，不能发布价格。" }, customerText: "" };
@@ -876,6 +1302,10 @@
       const u = user();
       document.getElementById("app").innerHTML = u ? shell(u, path) : loginPage();
       placeHistoryMenu();
+      if (state.stickChat) {
+        const thread = document.querySelector(".thread");
+        if (thread) thread.scrollTop = thread.scrollHeight;
+      }
     }
     function placeHistoryMenu() {
       const menu = document.querySelector(".history-pop");
@@ -909,14 +1339,16 @@
       const railNav = items.map(([href, label, act]) => '<button type="button" class="rail-btn' + (isCurrent(href, act) ? ' current' : '') + '" ' + (act === "new-task" ? 'data-act="new-task"' : 'data-go="' + href + '"') + ' aria-label="' + esc(t(label)) + '">' + railIcon[label] + '</button>').join('');
       const shown = state.lang === "en" ? (u.firstName || u.name) : u.name;
       const rail = '<aside class="rail"><button type="button" class="rail-mark" data-act="menu" aria-label="' + esc(t("显示侧边栏")) + '"><img src="hoymiles-mark.png" alt=""></button><nav class="rail-nav">' + railNav + '</nav><span class="avatar rail-user" aria-label="' + esc(shown) + '">' + esc(shown.slice(0, 1)) + '</span></aside>';
-      const historyRows = visibleRecords(u).slice().sort((a, b) => (b.endedAt || 0) - (a.endedAt || 0));
+      const historySource = visibleRecords(u).slice().sort((a, b) => (b.endedAt || 0) - (a.endedAt || 0));
+      const query = String(state.historyQuery || "").trim();
+      const historyRows = query ? historySource.filter((r) => r.archived && (String(r.title).includes(query) || String(r.id).includes(query))) : historySource;
       const plus = '<svg viewBox="0 0 24 24" aria-hidden="true" width="14" height="14"><path d="M5 12h14M12 5v14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>';
       const dots = '<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="5" cy="12" r="1.7"></circle><circle cx="12" cy="12" r="1.7"></circle><circle cx="19" cy="12" r="1.7"></circle></svg>';
-      const history = historyRows.length ? historyRows.map((r) => {
+      const history = '<label class="history-search"><input id="history-search" type="text" value="' + esc(state.historyQuery || "") + '" placeholder="' + esc(t("搜索已归档会话")) + '" aria-label="' + esc(t("搜索已归档会话")) + '"></label>' + (query ? '<p class="muted">' + esc(t("未归档会话不会出现在搜索结果里。")) + '</p>' : '') + (historyRows.length ? historyRows.map((r) => {
         const open = state.historyMenuId === r.id;
         const menu = open ? '<div class="history-pop" role="menu"><button type="button" role="menuitem" data-act="delete-history" data-id="' + esc(r.id) + '">' + esc(t("删除")) + '</button></div>' : "";
         return '<div class="history-row' + (state.selectedRecordId === r.id ? " current" : "") + (open ? " menu-open" : "") + '"><button type="button" class="history-item" data-act="open-record" data-id="' + esc(r.id) + '"><span class="history-title"><span class="history-title-text">' + esc(t(r.title)) + '</span></span></button><span class="history-age">' + esc(ageLabel(r.endedAt)) + '</span><button type="button" class="history-more" data-act="history-menu" data-id="' + esc(r.id) + '" aria-label="' + esc(t("更多")) + '" aria-expanded="' + open + '">' + dots + '</button>' + menu + '</div>';
-      }).join("") : '<button type="button" class="history-empty" data-act="new-task">' + plus + '<span>' + esc(t("开始你的第一个任务")) + '</span></button>';
+      }).join("") : '<button type="button" class="history-empty" data-act="new-task">' + plus + '<span>' + esc(t("开始你的第一个任务")) + '</span></button>');
       const foot = '<div class="side-foot"><div class="user-row"><span class="avatar" aria-hidden="true">' + esc(shown.slice(0, 1)) + '</span><div><div class="user-name">' + esc(shown) + '</div><div class="muted">' + esc(t(u.role)) + '</div></div></div><button class="btn-text" data-act="logout">' + esc(t("退出")) + '</button></div>';
       return '<div class="app' + (state.sideHidden ? ' side-hidden' : '') + '" data-page="' + path.slice(1) + '"><aside class="side' + (state.navOpen ? ' open' : '') + '"><div class="brand-row"><div class="brand"><img src="hoymiles-logo.png" alt="Hoymiles"></div>' + tools + '</div><nav class="nav">' + nav + '</nav><div class="history"><p class="history-label">' + esc(t("历史对话")) + '</p>' + history + '</div>' + foot + '</aside>' + rail + '<div class="main">' + langSwitch() + '<div class="page">' + body + '</div></div></div>';
     }
@@ -928,18 +1360,24 @@
     function dashboard(u) {
       const rows = visibleRecords(u);
       const list = rows.length ? rows.map((r) => recordButton(r, '', 'open-record')).join('') : '<p>' + esc(t("还没有记录。")) + '</p><button class="btn-text" data-act="new-task">' + esc(t("去新任务")) + '</button>';
+      const published = state.records.filter((r) => r.status === "已发布" && r.archived);
+      const references = published.length ? '<h2>' + esc(t("作为业务参考查看")) + '</h2>' + published.map((r) => '<button class="record" data-act="open-reference" data-id="' + esc(r.id) + '"><span class="rec-title">' + esc(t(r.title)) + '</span><span class="muted">' + esc(r.id) + ' · ' + esc(t("已发布")) + '</span></button>').join('') : '';
       const extra = u.staff ? '<p><button class="btn-secondary" data-go="/review">' + esc(t("去审核与发布")) + '</button></p>' : (rows.length ? '<p><button class="btn-text" data-act="new-task">' + esc(t("去新任务")) + '</button></p>' : '');
       const heading = state.lang === "en" ? esc(u.name) + "'s workspace" : esc(u.name) + "的工作台";
-      return '<div class="wrap"><h1>' + heading + '</h1><p class="muted">' + esc(t("这里只看你能查看的进度。发起业务请到助手。")) + '</p>' + list + extra + '</div>';
+      return '<div class="wrap"><h1>' + heading + '</h1><p class="muted">' + esc(t("这里只看你能查看的进度。发起业务请到助手。")) + '</p>' + list + references + extra + '</div>';
     }
     function metricLines() {
       const stats = state.demoStats || { started: 0, deliverable: 0, archived: 0, adopted: 0 };
       const rate = (part, whole) => whole ? Math.round(part / whole * 100) + "%（" + part + "/" + whole + "）" : "尚无";
-      return '<p class="metric-note">' + esc(t("演示口径，不是真实经营统计。")) + "<br>" + esc(t("结果生成完成率")) + " " + rate(stats.deliverable, stats.started) + "<br>" + esc(t("端到端完成率")) + " " + rate(stats.archived, stats.started) + "<br>" + esc(t("采纳率")) + " " + rate(stats.adopted, stats.deliverable) + "<br>" + esc(t("用户满意度")) + "：" + esc(t("满意来自明确评价，本次演示还没有评价，不能用归档代替。")) + "</p>";
+      const ratings = (state.records || []).filter((item) => item.rating);
+      const happy = ratings.filter((item) => item.rating === "满意").length;
+      const satisfaction = ratings.length ? t("点赞计入满意，点踩计入不满意。未点选不计。") + " " + happy + "/" + ratings.length + "。" : t("满意来自明确评价，本次演示还没有评价，不能用归档代替。");
+      const cancelled = stats.completed ? "<br>取消完成 " + stats.completed + "。取消计一次任务完成，不计采纳，不计满意。" : "";
+      return '<p class="metric-note">' + esc(t("演示口径，不是真实经营统计。")) + "<br>" + esc(t("结果生成完成率")) + " " + rate(stats.deliverable, stats.started) + "<br>" + esc(t("端到端完成率")) + " " + rate(stats.archived, stats.started) + "<br>" + esc(t("采纳率")) + " " + rate(stats.adopted, stats.deliverable) + "<br>" + esc(t("用户满意度")) + "：" + esc(satisfaction) + cancelled + "</p>";
     }
     function archivePanel(u) {
       const record = state.records.find((item) => item.id === state.composer.archiveId && item.createdBy === u.id && item.deliverable);
-      if (!record) return "";
+      if (!record || (state.selectedRecordId && state.selectedRecordId !== record.id)) return "";
       const metrics = u.staff ? metricLines() : "";
       if (record.archived) {
         return '<div class="archive-ask"><div class="archive-card"><p>' + esc(t("已归档")) + "。" + esc(NAMES[record.ownerId] || "") + " · " + esc(record.region || "") + " · " + esc(t(record.project || "未分项目")) + "。" + esc(t("操作者")) + " " + esc(NAMES[record.archivedBy] || "") + "。" + esc(record.id) + " · " + esc(record.version || "") + "</p><p>" + esc(t("这条结果已经归档。归属不能在这里再改，也不会再计一次采纳。")) + "</p>" + metrics + "</div></div>";
@@ -951,14 +1389,119 @@
       const options = ["", "户用并网", "经销项目", "园区招标", "未分项目"].map((name) => '<option value="' + esc(name) + '"' + (draft.project === name ? " selected" : "") + ">" + esc(name ? t(name) : t("请选择项目")) + "</option>").join("");
       return '<div class="archive-ask"><div class="archive-card"><p>' + esc(t("本次结果已生成。是否采纳并归档，方便后续跟进？")) + '</p><div class="archive-fields"><label><span class="field">' + esc(t("客户名称")) + '</span><input id="archive-customer" value="' + esc(draft.customer || "") + '"></label><label><span class="field">' + esc(t("地区")) + '</span><input id="archive-region" value="' + esc(draft.region || "") + '"></label><label><span class="field">' + esc(t("项目名称")) + '</span><select id="archive-project">' + options + "</select></label></div>" + (state.composer.archiveError ? '<p class="error">' + esc(t(state.composer.archiveError)) + "</p>" : "") + '<div class="composer-actions"><button type="button" class="btn-primary" data-act="archive-yes">' + esc(t("采纳并归档")) + '</button><button type="button" class="btn-secondary" data-act="archive-no">' + esc(t("暂不归档")) + "</button></div>" + metrics + "</div></div>";
     }
+    function actionPanel(u, record) {
+      if (!u || !u.staff || !record) return "";
+      const buttons = [];
+      const selfMade = record.createdBy === u.id || record.archivedBy === u.id;
+      if (record.type === "selection" && record.adopted && quoteReady(record) && !record.businessApproved) {
+        buttons.push('<p>' + esc(t("这份已采纳结果要正式用于报价，需要业务批准。校验通过和采纳归档都不是批准。")) + '</p>');
+        buttons.push('<button type="button" class="btn-primary" data-act="business-approve" data-id="' + esc(record.id) + '"' + (selfMade ? " disabled" : "") + '>' + esc(t("业务批准")) + '</button>');
+        if (selfMade) buttons.push('<p class="error">' + esc(t("不能批准自己发起或自己归档的这一条。")) + '</p>');
+      }
+      if (record.type === "bid" && !record.cancelled) {
+        if (!record.submissionArchived) buttons.push('<button type="button" class="btn-secondary" data-act="submission-archive" data-kind="first" data-id="' + esc(record.id) + '">' + esc(t("更新后归档（首版）")) + '</button><button type="button" class="btn-secondary" data-act="submission-archive" data-kind="revision" data-id="' + esc(record.id) + '">' + esc(t("更新后归档（改版）")) + '</button>');
+        else if (!record.bidReviewed) buttons.push('<p>' + esc(t("提交已归档。这还不是采纳，需要先手动审核，再手动更新是否采纳。")) + '</p><button type="button" class="btn-primary" data-act="bid-review" data-id="' + esc(record.id) + '"' + (record.createdBy === u.id ? " disabled" : "") + '>' + esc(t("手动审核")) + '</button>');
+        else if (record.bidAdopted == null) buttons.push('<p>' + esc(t("手动审核已完成。是否采纳还要再手动更新。")) + '</p><button type="button" class="btn-primary" data-act="bid-adopt" data-value="yes" data-id="' + esc(record.id) + '">' + esc(t("手动更新为采纳")) + '</button><button type="button" class="btn-secondary" data-act="bid-adopt" data-value="no" data-id="' + esc(record.id) + '">' + esc(t("手动更新为不采纳")) + '</button>');
+      }
+      if (record.type === "contract" && record.status === "已通过" && !record.signingStatus) {
+        buttons.push('<p>' + esc(t("最终审核完成后，由业务人员手动更新签署状态。审核通过不会自动变成已签署。")) + '</p><label><span class="field">' + esc(t("签署状态")) + '</span><input id="signing-status" placeholder="' + esc(t("签署状态")) + '"></label><button type="button" class="btn-primary" data-act="signing-save" data-id="' + esc(record.id) + '">' + esc(t("更新签署状态")) + '</button>');
+      }
+      if (!record.cancelled && (record.status === "处理中" || record.status === "待审核")) {
+        buttons.push('<button type="button" class="btn-secondary danger" data-act="cancel-task" data-id="' + esc(record.id) + '">' + esc(t("取消")) + '</button>');
+      }
+      if (!buttons.length && !state.actionError) return "";
+      return '<div class="archive-ask"><div class="archive-card">' + buttons.join("") + (state.actionError ? '<p class="error">' + esc(t(state.actionError)) + '</p>' : '') + '</div></div>';
+    }
+    function messageText(message) {
+      return String(message && message.html || "").replace(/<br\s*\/?>/gi, "\n").replace(/<[^>]+>/g, "").trim();
+    }
+    function cotHtml(trace, elapsed, scope, shown) {
+      if (!trace || !trace.length) return "";
+      const limit = shown == null ? trace.length : Math.max(0, shown);
+      const visible = trace.slice(0, limit);
+      if (!visible.length) return "";
+      const running = shown != null && scope === "live" && !!state.composer.stepRunning;
+      const last = visible[visible.length - 1];
+      const settled = running ? visible.slice(0, -1) : visible;
+      const seconds = Math.max(1, Math.round((elapsed || Math.max(visible.length, 1) * 720) / 1000));
+      const reactMode = trace.some((step) => step.phase === "Plan" || step.phase === "Reflect");
+      const reactStep = (step) => ["Plan", "Execute", "Observe", "Reasoning", "Reflect"].includes(step.phase);
+      const stepLabel = (step) => {
+        if (reactStep(step)) return t(step.phase) + " · " + step.title;
+        if (step.kind === "结果汇总" || step.kind === "改写识别" || step.kind === "意图命中") return t(step.kind);
+        return t(step.kind) + " · " + step.title;
+      };
+      const skills = settled.filter((step) => step.kind === "SKILL").map((step) => step.title);
+      const thought = settled.filter((step) => step.phase === "规划").map((step) => step.title).join("、");
+      const rowSource = reactMode ? settled : settled.filter((step) => step.phase === "执行");
+      const rows = rowSource.map((step, index) => {
+        const key = scope + "-do-" + index;
+        const open = state.traceOpen === key;
+        const toneName = step.ok === "失败" ? "danger" : (step.ok === "未执行" ? "caution" : "signal");
+        const detail = open ? '<div class="trace-detail"><p><strong>' + esc(t("入参")) + '</strong><br>' + esc(step.input || "—") + '</p><p><strong>' + esc(t("出参")) + '</strong><br>' + esc(step.output || "—") + '</p>' + (step.source ? '<p><strong>' + esc(t("来源")) + '</strong><br>' + esc(step.source) + '</p>' : '') + '<p><strong>' + esc(t("成败")) + '</strong><br>' + esc(t(step.ok || "成功")) + '</p></div>' : "";
+        return '<button type="button" class="cot-row" data-act="trace-open" data-key="' + esc(key) + '" aria-expanded="' + open + '"><span>' + esc(stepLabel(step)) + '</span><span class="badge ' + toneName + '">' + esc(t(step.ok || "成功")) + '</span></button>' + detail;
+      }).join("");
+      const active = running ? '<div class="cot-row"><span>' + esc(stepLabel(last)) + '</span><span class="badge caution">' + esc(t("进行中")) + "</span></div>" : "";
+      const thoughtLine = thought ? '<p><strong>' + esc(t("思考")) + "</strong> " + esc(thought) + "</p>" : "";
+      return '<section class="cot"><p><strong>' + esc(t("已处理")) + " " + seconds + " " + esc(t("秒")) + "</strong> · " + visible.length + "/" + trace.length + '</p><p><strong>' + esc(t("已加载技能")) + "</strong> " + esc(skills.join("、") || "—") + "</p>" + thoughtLine + rows + active + (running ? "" : '<p class="muted">' + esc(t("演示流程，不表示真实模型或工具已经执行。点开一步可看入参、出参和成败。")) + "</p>") + "</section>";
+    }
+    function replyTools(message, index, recordId) {
+      if (!message || !message.reply) return "";
+      const record = recordId ? state.records.find((item) => item.id === recordId) : null;
+      const reaction = (message && message.reaction) || (record && record.chatReaction) || (record && record.rating === "满意" ? "赞" : record && record.rating === "不满意" ? "踩" : "");
+      const indexAttr = index == null ? "" : ' data-index="' + index + '"';
+      const idAttr = recordId ? ' data-id="' + esc(recordId) + '"' : "";
+      const up = '<svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path d="M8 11v8H5v-8h3zm1.2 8h6.2a2 2 0 0 0 1.9-1.4l1.3-5.2A1.6 1.6 0 0 0 17 10h-3.2V6.4A2.4 2.4 0 0 0 11.4 4h-.2L9.2 11v8z" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/></svg>';
+      const down = '<svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path d="M8 13V5H5v8h3zm1.2-8h6.2a2 2 0 0 1 1.9 1.4l1.3 5.2A1.6 1.6 0 0 1 17 14h-3.2v3.6a2.4 2.4 0 0 1-2.4 2.4h-.2l-2-7V5z" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/></svg>';
+      const fork = '<svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path d="M7 4v11a3 3 0 0 0 3 3h3M10 7h4a3 3 0 0 1 3 3v2" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/><path d="M15 4l3-2 3 2M18 2v6" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+      return '<div class="reply-tools"><button type="button" class="icon-tool' + (reaction === "赞" ? " current" : "") + '" data-act="react" data-value="赞"' + indexAttr + idAttr + ' aria-label="' + esc(t("点赞")) + '" title="' + esc(t("点赞")) + '">' + up + '</button><button type="button" class="icon-tool down' + (reaction === "踩" ? " current" : "") + '" data-act="react" data-value="踩"' + indexAttr + idAttr + ' aria-label="' + esc(t("点踩")) + '" title="' + esc(t("点踩")) + '">' + down + '</button><button type="button" class="icon-tool" data-act="continue-task"' + indexAttr + idAttr + ' aria-label="' + esc(t("在新任务中继续")) + '" title="' + esc(t("在新任务中继续")) + '">' + fork + '</button></div>';
+    }
+    function aiTurn(parts) {
+      const body = parts.filter(Boolean).join("");
+      if (!body) return "";
+      return '<div class="turn turn-ai turn-answer"><div class="answer-col">' + body + '</div></div>';
+    }
     function assistant(u) {
-      const selected = state.records.find((r) => r.id === state.selectedRecordId && canSee(u, r));
-      const mine = (state.messages[u.id] || []).map((m) => '<div class="block"><strong>' + esc(t(m.who)) + '</strong>' + m.html + '</div>').join('');
-      const centered = !selected && !mine && !state.composer.busy;
-      const busy = state.composer.busy ? '<div class="block"><h2>' + esc(t("处理中")) + '</h2><p>' + esc(t(state.composer.busyStep || "正在识别当前请求。")) + '</p><p class="muted">' + esc(t("演示步骤，不表示真实模型或工具已经执行。")) + '</p></div>' : '';
-      const current = busy + (selected ? '<div class="block"><h2>' + esc(t("当前记录")) + ' ' + esc(selected.id) + '</h2>' + viewHtml(selected, !!u.staff) + '</div>' : (centered ? '<p class="empty-hello">' + esc(t("今天需要处理什么业务？")) + '</p>' : ''));
+      const history = state.messages[u.id] || [];
+      const used = {};
+      let dialog = "";
+      history.forEach((message, index) => {
+        if (message.who !== "助手") {
+          dialog += '<div class="turn turn-user"><div class="bubble">' + message.html + '</div></div>';
+          const next = history[index + 1];
+          const covered = next && next.who === "助手" && next.recordId;
+          const waiting = state.composer.busy && index === history.length - 1;
+          if (!covered && !waiting) {
+            const title = messageText(message);
+            const record = state.records.find((item) => canSee(u, item) && !used[item.id] && item.title === title);
+            if (record) {
+              used[record.id] = true;
+              const mine = state.composer.archiveId === record.id || state.selectedRecordId === record.id;
+              const extra = !state.composer.busy && mine ? (archivePanel(u) + actionPanel(u, record)) : "";
+              dialog += aiTurn([u.staff ? cotHtml(record.trace, record.elapsed, "old-" + record.id) : "", u.staff && !record.trace ? '<p class="muted">' + esc(t("这条记录生成时没有留下可回放的执行过程。")) + '</p>' : "", u.staff ? resultBoard(record, true) : '<div class="block">' + viewHtml(record, false) + '</div>', extra, replyTools({ reply: true, reaction: record.chatReaction }, null, record.id)]);
+            }
+          }
+          return;
+        }
+        const record = message.recordId ? state.records.find((item) => item.id === message.recordId && canSee(u, item)) : null;
+        if (record) used[record.id] = true;
+        const trace = message.trace || (record && record.trace) || (!message.recordId && index === history.length - 1 ? state.composer.stoppedTrace : null);
+        const mine = record && (state.composer.archiveId === record.id || state.selectedRecordId === record.id);
+        const extra = !state.composer.busy && mine ? (archivePanel(u) + actionPanel(u, record)) : "";
+        const folding = !!(state.composer.busy && state.composer.unfold != null && index === history.length - 1);
+        const text = message.html && (!folding || state.composer.unfold >= 1) ? '<div class="turn turn-ai"><div class="bubble">' + message.html + '</div></div>' : "";
+        dialog += aiTurn([u.staff ? cotHtml(trace, message.elapsed, "m-" + index) : "", text, record ? (u.staff ? resultBoard(record, true, folding ? state.composer.unfold : null) : '<div class="block">' + viewHtml(record, false) + '</div>') : "", extra, folding ? "" : replyTools(message, index, record && record.id)]);
+      });
+      const selected = state.records.find((item) => item.id === state.selectedRecordId && canSee(u, item));
+      if (!state.composer.busy && selected && !used[selected.id] && !history.some((message) => message.who !== "助手")) {
+        dialog = '<div class="turn turn-user"><div class="bubble"><p>' + esc(t(selected.title)) + '</p></div></div>' + aiTurn([u.staff ? cotHtml(selected.trace, selected.elapsed, "old-" + selected.id) : "", u.staff && !selected.trace ? '<p class="muted">' + esc(t("这条记录生成时没有留下可回放的执行过程。")) + '</p>' : "", u.staff ? resultBoard(selected, true) : '<div class="block">' + viewHtml(selected, false) + '</div>', archivePanel(u) + actionPanel(u, selected), replyTools({ reply: true, reaction: selected.chatReaction }, null, selected.id)]);
+      }
+      const centered = !dialog && !state.composer.busy;
+      const stepping = state.composer.busy && state.composer.unfold == null;
+      const live = stepping && u.staff ? aiTurn([cotHtml(state.composer.previewTrace, Math.max(0, Date.now() - (state.composer.sentAt || Date.now())), "live", state.composer.runCursor || 1)]) : "";
+      const livePlain = stepping && !u.staff ? '<div class="turn turn-ai"><div class="bubble"><p>' + esc(t(state.composer.busyStep || "正在识别当前请求。")) + '</p></div></div>' : "";
+      const current = dialog + live + livePlain + (centered ? '<p class="empty-hello">' + esc(t("今天需要处理什么业务？")) + '</p>' : "");
       const plugins = PLUGINS.map((name) => { const on = state.composer.plugin === name; return '<button type="button" class="plugin' + (on ? ' current' : '') + '" data-plugin="' + esc(name) + '" aria-pressed="' + (on ? 'true' : 'false') + '">' + esc(t(name)) + '</button>'; }).join('');
-      const filed = archivePanel(u);
       const fileLine = state.composer.fileNote ? '<p class="muted">' + esc(t("已作为本次输入解析：")) + esc(state.composer.fileNote) + '</p>' : '';
       const voiceLine = state.composer.voiceNote ? '<p class="muted">' + esc(t(state.composer.voiceNote)) + '</p>' : '';
       const plus = '<svg viewBox="0 0 24 24" aria-hidden="true" width="14" height="14"><path d="M12 5v14M5 12h14" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/></svg>';
@@ -966,8 +1509,8 @@
       const arrow = '<svg viewBox="0 0 24 24" aria-hidden="true" width="16" height="16"><path d="M12 19V6M6 11l6-6 6 6" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>';
       const corner = '<svg class="suggest-arrow" viewBox="0 0 24 24" aria-hidden="true" width="16" height="16"><path d="M7 17L17 7M9 7h8v8" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>';
       const chosen = EXAMPLES[state.composer.plugin] || [];
-      const suggest = centered && chosen.length ? '<div class="suggest">' + chosen.map((line) => '<button type="button" class="suggest-item" data-act="use-example" data-example="' + esc(t(line)) + '"><span class="suggest-text">' + esc(t(line)) + '</span><span class="suggest-chip">' + esc(t(state.composer.plugin)) + '</span>' + corner + '</button>').join('') + '</div>' : '';
-      return '<div class="assistant' + (centered ? ' is-center' : '') + '"><div class="thread"><div class="thread-inner">' + current + mine + filed + '</div></div><form class="composer-wrap" id="send-form"><div class="composer-box"><textarea class="draft" id="draft" aria-label="' + esc(t("任务内容")) + '" placeholder="' + esc(t("今天需要处理什么业务？")) + '">' + esc(state.composer.text) + '</textarea><div class="composer-bar"><div class="composer-left"><label class="round-btn round-add" aria-label="' + esc(t("添加附件")) + '">' + plus + '<input id="file" type="file" hidden></label><div class="plugins">' + plugins + '</div></div><div class="composer-tools"><button type="button" class="round-btn round-add' + (state.composer.listening ? ' listening' : '') + '" data-act="voice" aria-pressed="' + (state.composer.listening ? 'true' : 'false') + '" aria-label="' + esc(t(state.composer.listening ? "停止语音输入" : "语音输入")) + '">' + mic + '</button><button class="round-btn round-send" type="submit" aria-label="' + esc(t("发送")) + '">' + arrow + '</button></div></div>' + fileLine + voiceLine + (state.composer.error ? '<p class="error">' + esc(t(state.composer.error)) + '</p>' : '') + '</div></form>' + suggest + '</div>';
+      const suggest = centered && chosen.length ? '<div class="suggest">' + chosen.map((item) => { const line = item.text || item; const chip = item.intent || state.composer.plugin; return '<button type="button" class="suggest-item" data-act="use-example" data-example="' + esc(t(line)) + '"><span class="suggest-text">' + esc(t(line)) + '</span><span class="suggest-chip">' + esc(t(chip)) + '</span>' + corner + '</button>'; }).join('') + '</div>' : '';
+      return '<div class="assistant' + (centered ? ' is-center' : '') + '"><div class="thread"><div class="thread-inner">' + current + '</div></div><form class="composer-wrap" id="send-form"><div class="composer-box"><textarea class="draft" id="draft" aria-label="' + esc(t("任务内容")) + '" placeholder="' + esc(t("今天需要处理什么业务？")) + '">' + esc(state.composer.text) + '</textarea><div class="composer-bar"><div class="composer-left"><label class="round-btn round-add" aria-label="' + esc(t("添加附件")) + '">' + plus + '<input id="file" type="file" hidden></label><div class="plugins">' + plugins + '</div></div><div class="composer-tools"><button type="button" class="round-btn round-add' + (state.composer.listening ? ' listening' : '') + '" data-act="voice" aria-pressed="' + (state.composer.listening ? 'true' : 'false') + '" aria-label="' + esc(t(state.composer.listening ? "停止语音输入" : "语音输入")) + '">' + mic + '</button><button class="round-btn round-send" type="submit" aria-label="' + esc(t("发送")) + '">' + arrow + '</button></div></div>' + fileLine + voiceLine + (state.composer.error ? '<p class="error">' + esc(t(state.composer.error)) + '</p>' : '') + '</div></form>' + suggest + '</div>';
     }
     function review(u) {
       const rows = state.records.filter((r) => r.archived).map((r) => recordButton(r, state.selectedReviewId, 'pick-review')).join('');
@@ -985,7 +1528,7 @@
         else if (record.status === "待商务确认") top = why + '<button class="btn-primary" data-decision="commerce" data-id="' + record.id + '"' + disabled + '>' + esc(t("商务确认")) + '</button>';
         else if (record.status === "未通过" && u.staff) later = '<div class="later-action"><label><span class="field">' + esc(t("修改说明")) + '</span><textarea id="resubmit-note"></textarea></label><button class="btn-primary" data-act="resubmit" data-id="' + record.id + '">' + esc(t("修改后重提")) + '</button></div>';
       }
-      const detail = record ? '<button class="btn-text back-list" data-act="back-list">' + esc(t("返回列表")) + '</button><div class="sticky-status"><h1 class="detail-title">' + esc(t(record.title)) + '</h1><p class="muted">' + esc(record.id) + ' · ' + esc(NAMES[record.ownerId]) + ' · ' + esc(t(record.project)) + ' · ' + esc(t(record.version || '')) + '</p>' + top + '</div>' + viewHtml(record, true) + later : '';
+      const detail = record ? '<button class="btn-text back-list" data-act="back-list">' + esc(t("返回列表")) + '</button><div class="sticky-status"><h1 class="detail-title">' + esc(t(record.title)) + '</h1><p class="muted">' + esc(record.id) + ' · ' + esc(NAMES[record.ownerId]) + ' · ' + esc(t(record.project)) + ' · ' + esc(t(record.version || '')) + '</p>' + top + '</div>' + (record.trace ? traceHtml(record.trace, "review-" + record.id, 999) : '<p class="muted">' + esc(t("这条记录生成时没有留下可回放的执行过程。")) + '</p>') + resultBoard(record, true) + actionPanel(u, record) + later : '';
       return '<div class="review' + (state.reviewDetail ? ' show-detail' : '') + '"><div class="review-list">' + rows + '</div><div class="review-detail">' + detail + '</div></div>';
     }
 
@@ -1125,6 +1668,62 @@
       }
       if (button.dataset.act === "voice") { toggleVoice(); return; }
       if (button.dataset.act === "use-example") { state.composer.text = button.dataset.example || ""; state.composer.error = ""; save(); render(); return; }
+      if (button.dataset.act === "trace-open") { state.stickChat = false; state.traceOpen = state.traceOpen === button.dataset.key ? "" : button.dataset.key; save(); render(); return; }
+      if (button.dataset.act === "react") {
+        const current = user();
+        const list = current && state.messages[current.id];
+        const index = button.dataset.index === undefined || button.dataset.index === "" ? -1 : Number(button.dataset.index);
+        const message = list && index >= 0 ? list[index] : null;
+        if (!current) return;
+        const value = button.dataset.value;
+        const record = button.dataset.id ? state.records.find((item) => item.id === button.dataset.id) : null;
+        const reaction = (message && message.reaction) || (record && record.chatReaction) || (record && record.rating === "满意" ? "赞" : record && record.rating === "不满意" ? "踩" : "");
+        const next = reaction === value ? "" : value;
+        if (message) message.reaction = next;
+        if (record) {
+          record.chatReaction = next;
+          record.rating = next === "赞" ? "满意" : next === "踩" ? "不满意" : "";
+          record.ratingBy = next ? current.id : "";
+          record.knowledgeStatus = next && record.adopted ? "待人工审核" : (record.knowledgeStatus === "待人工审核" ? "" : record.knowledgeStatus);
+        }
+        save(); render(); return;
+      }
+      if (button.dataset.act === "continue-task") {
+        const current = user();
+        if (!current) return;
+        const list = state.messages[current.id] || [];
+        const index = button.dataset.index === undefined || button.dataset.index === "" ? -1 : Number(button.dataset.index);
+        let ai = index >= 0 ? list[index] : null;
+        let userMsg = null;
+        if (ai) {
+          for (let i = index - 1; i >= 0; i--) if (list[i].who !== "助手") { userMsg = list[i]; break; }
+        }
+        const recordId = button.dataset.id || (ai && ai.recordId) || "";
+        const record = state.records.find((item) => item.id === recordId);
+        if (!userMsg && record) userMsg = { who: "用户", html: "<p>" + esc(record.title) + "</p>" };
+        if (!ai && record) ai = { who: "助手", html: "", recordId: record.id, trace: record.trace, reply: true };
+        if (state.runTimer) { clearTimeout(state.runTimer); state.runTimer = null; }
+        state.messages[current.id] = [];
+        if (userMsg) state.messages[current.id].push(userMsg);
+        if (ai) state.messages[current.id].push(ai);
+        state.selectedRecordId = recordId;
+        state.composer.text = "";
+        state.composer.plugin = "";
+        state.composer.fileNote = "";
+        state.composer.error = "";
+        state.composer.busy = false;
+        state.composer.previewTrace = null;
+        state.composer.stoppedTrace = null;
+        state.composer.runCursor = 0;
+        state.composer.stepRunning = false;
+        state.composer.unfold = null;
+        state.traceOpen = "";
+        state.composer.pending = null;
+        state.referenceId = "";
+        state.actionError = "";
+        state.stickChat = true;
+        save(); go("/assistant"); return;
+      }
       if (button.dataset.act === "new-task") {
         if (micSession) {
           const currentMic = micSession;
@@ -1147,7 +1746,14 @@
         state.composer.listening = false;
         state.composer.error = "";
         state.composer.askRemember = false;
+        if (state.runTimer) { clearTimeout(state.runTimer); state.runTimer = null; }
         state.composer.busy = false;
+        state.composer.previewTrace = null;
+        state.composer.stoppedTrace = null;
+        state.composer.runCursor = 0;
+        state.composer.stepRunning = false;
+        state.composer.unfold = null;
+        state.traceOpen = "";
         state.composer.archiveId = "";
         state.composer.archiveOpen = false;
         state.composer.archiveDraft = null;
@@ -1158,6 +1764,8 @@
         state.composer.project = "";
         state.composer.attributionSet = false;
         state.composer.attributionSource = "";
+        state.referenceId = "";
+        state.actionError = "";
         if (!state.composer.known) state.composer.known = { customer: "", region: "", project: "" };
         save(); go("/assistant"); return;
       }
@@ -1173,7 +1781,8 @@
         state.historyMenuId = "";
         save(); render(); return;
       }
-      if (button.dataset.act === "open-record") { state.historyMenuId = ""; state.selectedRecordId = button.dataset.id; state.navOpen = false; save(); go("/assistant"); return; }
+      if (button.dataset.act === "open-record") { state.historyMenuId = ""; state.referenceId = ""; state.actionError = ""; state.selectedRecordId = button.dataset.id; state.navOpen = false; save(); go("/assistant"); return; }
+      if (button.dataset.act === "open-reference") { state.historyMenuId = ""; state.referenceId = button.dataset.id; state.selectedRecordId = button.dataset.id; state.actionError = ""; state.navOpen = false; save(); go("/assistant"); return; }
       if (button.dataset.act === "archive-no") {
         const customer = document.getElementById("archive-customer");
         const region = document.getElementById("archive-region");
@@ -1207,6 +1816,7 @@
         record.region = draft.region;
         record.archived = true;
         record.adopted = true;
+        if (record.rating) record.knowledgeStatus = "待人工审核";
         record.archivedBy = current.id;
         record.archivedAt = Date.now();
         if (!state.demoStats) state.demoStats = { started: 0, deliverable: 0, archived: 0, adopted: 0 };
@@ -1216,6 +1826,82 @@
         state.composer.archiveOpen = false;
         addMessage(current.id, "助手", "<p>" + esc(t("已归档。这只表示结果已保存，不代替当前进度，也不是审核通过、发布、签署或正式报修。")) + "</p>");
         if (current.id !== ownerId) addMessage(ownerId, "助手", viewHtml(record, false));
+        save(); render(); return;
+      }
+      if (button.dataset.act === "business-approve") {
+        const current = user();
+        const record = state.records.find((item) => item.id === button.dataset.id);
+        if (!current || !record || !record.adopted || record.businessApproved) return;
+        if (record.createdBy === current.id || record.archivedBy === current.id) {
+          state.actionError = "不能批准自己发起或自己归档的这一条。";
+          save(); render(); return;
+        }
+        record.businessApproved = true;
+        record.businessApprovedBy = current.id;
+        state.actionError = "";
+        save(); render(); return;
+      }
+      if (button.dataset.act === "submission-archive") {
+        const record = state.records.find((item) => item.id === button.dataset.id);
+        if (!record || record.type !== "bid" || record.submissionArchived) return;
+        record.submissionArchived = true;
+        record.submissionKind = button.dataset.kind === "revision" ? "改版" : "首版";
+        record.bidReviewed = false;
+        record.bidAdopted = null;
+        state.actionError = "";
+        save(); render(); return;
+      }
+      if (button.dataset.act === "bid-review") {
+        const current = user();
+        const record = state.records.find((item) => item.id === button.dataset.id);
+        if (!current || !record || !record.submissionArchived || record.bidReviewed) return;
+        if (record.createdBy === current.id) { state.actionError = "不能批准自己发起或自己归档的这一条。"; save(); render(); return; }
+        record.bidReviewed = true;
+        state.actionError = "";
+        save(); render(); return;
+      }
+      if (button.dataset.act === "bid-adopt") {
+        const current = user();
+        const record = state.records.find((item) => item.id === button.dataset.id);
+        if (!current || !record || !record.bidReviewed || record.bidAdopted != null) return;
+        record.bidAdopted = button.dataset.value === "yes";
+        record.bidAdoptedBy = current.id;
+        state.actionError = "";
+        save(); render(); return;
+      }
+      if (button.dataset.act === "signing-save") {
+        const current = user();
+        const record = state.records.find((item) => item.id === button.dataset.id);
+        const input = document.getElementById("signing-status");
+        const value = input ? input.value.trim() : "";
+        if (!current || !record || record.status !== "已通过") { state.actionError = "最终审核完成后，由业务人员手动更新签署状态。审核通过不会自动变成已签署。"; save(); render(); return; }
+        if (!value) { state.actionError = "请写下签署状态后再更新。"; save(); render(); return; }
+        record.signingStatus = value;
+        record.signingBy = current.id;
+        state.actionError = "";
+        save(); render(); return;
+      }
+      if (button.dataset.act === "rate") {
+        const current = user();
+        const record = state.records.find((item) => item.id === button.dataset.id);
+        if (!current || !record || !record.adopted || record.rating) return;
+        record.rating = button.dataset.value === "不满意" ? "不满意" : "满意";
+        record.ratingBy = current.id;
+        record.knowledgeStatus = "待人工审核";
+        state.actionError = "";
+        save(); render(); return;
+      }
+      if (button.dataset.act === "cancel-task") {
+        const record = state.records.find((item) => item.id === button.dataset.id);
+        if (!record || record.cancelled || !["处理中", "待审核"].includes(record.status)) return;
+        record.cancelled = true;
+        record.badCase = true;
+        if (!record.countedComplete) {
+          record.countedComplete = true;
+          if (!state.demoStats) state.demoStats = { started: 0, deliverable: 0, archived: 0, adopted: 0, completed: 0 };
+          state.demoStats.completed = (state.demoStats.completed || 0) + 1;
+        }
+        state.actionError = "";
         save(); render(); return;
       }
       if (button.dataset.act === "bind-owner") {
@@ -1269,15 +1955,15 @@
     document.getElementById("app").addEventListener("mouseover", (event) => {
       const row = event.target.closest(".history-row");
       if (!row || row.dataset.marquee) return;
-      if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
       const title = row.querySelector(".history-title");
       const text = row.querySelector(".history-title-text");
       if (!title || !text) return;
       const distance = text.scrollWidth - title.clientWidth;
       if (distance <= 2) return;
       text.style.setProperty("--shift", "-" + distance + "px");
-      title.style.textOverflow = "clip";
-      text.style.animation = "history-marquee " + Math.max(3, distance / 36) + "s linear infinite";
+      text.style.animation = "none";
+      void text.offsetWidth;
+      text.style.animation = "history-marquee " + Math.max(3.2, distance / 32) + "s linear infinite";
       row.dataset.marquee = "1";
     });
     document.getElementById("app").addEventListener("mouseout", (event) => {
@@ -1295,6 +1981,13 @@
     document.getElementById("app").addEventListener("input", (event) => {
       if (event.target.id === "draft") state.composer.text = event.target.value;
       if (event.target.id === "email") state.email = event.target.value;
+      if (event.target.id === "history-search") {
+        state.historyQuery = event.target.value;
+        const pos = event.target.selectionStart;
+        save(); render();
+        const again = document.getElementById("history-search");
+        if (again) { again.focus(); again.setSelectionRange(pos, pos); }
+      }
     });
     document.getElementById("app").addEventListener("change", (event) => {
       if (event.target.id === "file") {
