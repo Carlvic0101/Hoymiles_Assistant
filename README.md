@@ -27,6 +27,17 @@ GitHub：<https://github.com/Carlvic0101/Hoymiles_Assistant>。UI/UX skill 的�
 
 本轮交付的是 `docs/prototypes/` 下的静态前端，包含选型、报价、标书、合同、诊断的执行过程、业务结果与归档交互。没有接入真实业务后端，也不代表正式 SDD 开发任务完成。
 
+### 在线分享（2026-11-17 更新）
+
+访问地址：<https://hoymiles-sales-assistant.earnedsheep1.chatgpt.site>，网页及站点名称为 **Hoymiles Assistant**。已通过 Sites 发布为持链接可访问，无需 ChatGPT 账号，也不依赖本机开机。进入页面后使用下方体验账号登录。
+
+- 李航：`li.hang@hoymiles.local`；周宁：`zhou.ning@hoymiles.local`；口令均为 `demo123`。初次打开登录页时密码为空，体验者点击邮箱框选择账号后才自动填入密码，再点击登录即可，无须另行告知口令。手动修改邮箱、退出或刷新登录页后密码恢复为空；鼠标和键盘均可选择账号。页面登录仅体现当前前端角色交互，不是正式身份认证。
+- 五类业务入口和 20 条问题沿用当前前端。会话、归档与评价仍在访问者自己的浏览器 sessionStorage 中，不会跨设备同步或汇总给项目负责人。材料、价格及结果为预置展示内容，不能作为正式业务依据。
+- 线上不部署 ASR 服务；点击语音按钮会提示改用文字，不申请麦克风权限。没有上传后端、`.env`、开发文档或真实业务数据。
+- 发布工作目录：`C:/Users/Administrator/Documents/ChatGPT/禾迈Hoymiles_AI销售助手/sites/hoymiles-sales-assistant`，`.openai/hosting.json` 保存 Site ID `appgprj_6af2b9a686a481919398dcc8060205fe`；版本 3 已发布，Sites 源码提交 `f796e07ba1929d4619d0e87fcb6a29103dd5e5de`。这是托管产物目录，应用源码仍以本仓库为准。
+- 更新网站时，将本仓库 `docs/prototypes/` 的 `index.html`、`business-data.js`、`business-flow.js`、`business-view.js`、`ui-polish.css`、`login-bg.jpg`、`hoymiles-mark.png`、`hoymiles-logo.png` 同步到发布目录 `dist/`，复用现有 Site ID 发布，不要整库上传或重新建站。GitHub 推送与 Sites 发布是两个独立操作。
+- 验证：匿名访问页面及全部静态资源返回 HTTP 200；线上登录、五类问题列表、问题只填入输入框、发送生成诊断结果、审核页面及语音降级提示已实测；34 项前端逻辑检查通过。
+
 ### 重启前端预览
 
 在 PowerShell 中运行：
